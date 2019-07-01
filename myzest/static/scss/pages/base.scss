@@ -1,0 +1,30 @@
+html, body {
+	font-size: 14px;
+	height: 100%;
+}
+#myzest-nav {
+	background-color: $mz-darkblue;
+	@include thinshw(outset);
+}
+.brand-title {
+	font-family: 'Sahitya', serif;
+}
+#main-footer {
+	padding-top: 20px;
+	background-color: $mz-darkblue;
+	color: white;
+	@include thinshw(inset);
+
+	a {
+		text-decoration: none;
+		color: white;
+
+		&:hover {
+			color: $light-gray;
+		}
+	}
+}
+.copyright {
+	text-align: center;
+	font-size: .8rem;
+}

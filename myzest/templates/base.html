@@ -1,19 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
-    <title>My Zest</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+	<title>My Zest</title>
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/myzest.css') }}">
+	<script type="text/javascript" src="static/vendors/jquery/jquery-3.3.1.min.js"></script>
+
+	<!--Import Google Icon Font-->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!--Import materialize.css-->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+	<!-- Custom Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Donegal+One|Sahitya:700&display=swap" rel="stylesheet">
+
+	<!-- Custom CSS -->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/myzest.css') }}">
 
 </head>
 <body>
 
-<h1>Base template content</h1>
+<nav id="myzest-nav" class="navbar-fixed">
+	<div class="nav-wrapper container">
+		<a href="#" class="brand-logo brand-title left">MyZest</a>
+		<a href="#" data-target="side-menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
+		<ul class="right hide-on-med-and-down">
+			<li class="active"><a href="{{ url_for('home') }}">Home</a></li>
+		</ul>
+	</div>
+</nav>
+<ul class="sidenav" id="side-menu">
+	<li class="active"><a href="{{ url_for('home') }}">Home</a></li>
+</ul>
 
-    {% block content %}
-    {% endblock %}
+{% block content %}
+{% endblock %}
 
+<footer id="main-footer">
+	<div class="container">
+		<div class="row">
+			<section class="col s5 offset-s2">
+				<!-- support -->
+				<ul class="footer-links">
+					<li><a href="#">Site Map</a></li>
+					<li><a href="#">Contact Us</a></li>
+				</ul>
+			</section>
+			<!-- follow Us -->
+			<section class="col s5">
+				<ul class="footer-social">
+					<li><a href="#">Twitter</a></li>
+					<li><a href="#">Facebook</a></li>
+				</ul>
+			</section>
+			<!-- Subscription -->
+		</div>
+		<!-- app navigation links & copyrights -->
+		<div class="row">
+			<!-- Legal Info -->
+			<ul class="col s12 copyright">
+				<li>Copyright &copy 2019 MyZest. All Rights Reserved</li>
+				<li><a href="#">Privacy Policy</a></li>
+				<li><a href="#">Data Policy</a></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+
+<!-- Materialize JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<script>
+  $(document).ready(function(){
+    $('.sidenav').sidenav();
+  });
+</script>
 </body>
 </html>

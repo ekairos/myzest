@@ -1,8 +1,33 @@
-h1, h2 {
-  text-align: center; }
+dl, ol, ul {
+  padding-left: 20px; }
 
-p {
-  margin-left: 10%;
-  margin-top: 40px; }
+li {
+  list-style: none; }
+
+html, body {
+  font-size: 14px;
+  height: 100%; }
+
+#myzest-nav {
+  background-color: #2A3038;
+  box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.5); }
+
+.brand-title {
+  font-family: 'Sahitya', serif; }
+
+#main-footer {
+  padding-top: 20px;
+  background-color: #2A3038;
+  color: white;
+  box-shadow: inset 0px 3px 4px rgba(0, 0, 0, 0.5); }
+  #main-footer a {
+    text-decoration: none;
+    color: white; }
+    #main-footer a:hover {
+      color: #ccc; }
+
+.copyright {
+  text-align: center;
+  font-size: .8rem; }
 
 /*# sourceMappingURL=myzest.css.map */
