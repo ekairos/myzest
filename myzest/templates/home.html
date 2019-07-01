@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
-
-<h2>{{ page }}</h2>
-<p>Paragraph</p>
-
+<!-- Latest Recipes Section -->
+<section>
+	<h3>Latest Recipes</h3>
+	<!-- recipe cards -->
+	<ul>
+		{% for recipe in recipes %}
+		<li>{{ recipe.name }}</li>
+		{% endfor %}
+	</ul>
+</section>
 {% endblock %}
