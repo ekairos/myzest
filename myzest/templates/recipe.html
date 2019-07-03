@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block pagetitle %} {{ recipe.name }} {% endblock %}
+{% block content %}
+<header class="rcp-header">
+	<img class="rcp-img mr-auto ml-auto" src="../static/img/recipes/{{ recipe._id }}.jpg" alt="image missing">
+</header>
+
+<main class="container">
+
+	<section class="rcp-section">
+
+		<h1>{{ recipe.name }}</h1>
+		<p>{{ recipe.description }}</p>
+		<div class="valign-wrapper">
+			<span class="material-icons">access_time</span>
+			<span class="ml-2">{{ recipe.time.total }}'</span>
+			<span class="border-l pl-2 ml-2 material-icons">people</span>
+			<span class="ml-2">{{ recipe.serves }}</span>
+			<span class="border-l pl-2 ml-2 material-icons">restaurant_menu</span>
+			<span class="ml-2">{{ recipe.difficulty }}</span>
+		</div>
+	</section>
+
+	<div class="divider"></div>
+
+	<section class="rcp-section valign-wrapper">
+		<img class="rcp-author-tbn" src="../static/img/users/{{ recipe.author_id }}.png" width="50" height="50">
+		<div class="ml-3">
+			<div>George</div>
+			<div>
+				<small>Updated - 05.04.19</small>
+			</div>
+		</div>
+	</section>
+
+	<div class="divider"></div>
+
+	<section class="rcp-section">
+		<h2>Ingredients</h2>
+		<ul>
+			{% for food in recipe.ingredients %}
+			<li>{{ food.quantity }} of {{ food.name }}</li>
+			{% endfor %}
+		</ul>
+	</section>
+
+	<div class="divider"></div>
+
+	<section class="rcp-section">
+		<h2>Instructions</h2>
+		{% for step in recipe.steps %}
+		<p>{{ recipe.steps.index(step) + 1 }}. {{ step.desc }}</p>
+		{# add step image if provided #}
+		{% endfor %}
+	</section>
+</main>
+{% endblock %}

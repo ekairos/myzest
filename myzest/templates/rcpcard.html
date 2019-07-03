@@ -7,7 +7,7 @@
 		<div class="rcpcard-hrate">{{ recipe.rate.score }} on {{ recipe.rate.nbr }} votes</div>
 	</header>
 	<section class="rcpcard-body">
-		<h4 class="pb-2 mb-1 border-b"><a href="#">{{ recipe.name }}</a></h4>
+		<h4 class="pb-2 mb-1 border-b"><a href="{{ url_for('get_recipe', recipe_id=recipe._id) }}">{{ recipe.name }}</a></h4>
 		<ul class="pl-0">
 			<span class="rcpcard-sumup">{{ recipe.region }}</span> |
 			<span class="rcpcard-sumup">{{ recipe.serves }} people</span> |
