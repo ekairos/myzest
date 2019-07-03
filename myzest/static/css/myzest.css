@@ -36,7 +36,7 @@ h6 {
         ___ Materialize CSS OVERRIDE ___
 */
 .row {
-  margin-bottom: 0 !important; }
+  margin-bottom: 0; }
 
 .mt-0 {
   margin-top: 0; }
