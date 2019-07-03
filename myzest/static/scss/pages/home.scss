@@ -1,0 +1,21 @@
+.landing {
+	min-height: 200px;
+}
+#landing-title {
+	font-size: 6rem;
+}
+.rcp-sel {
+	margin-top: 20px;
+	margin-bottom: 40px;
+}
+.rcp-sel-title {
+	font: {
+		family: 'Donegal One', serif;
+		size: 2rem;
+	}
+}
+.rcp-sel-short {
+	overflow-x: scroll;
+	white-space: nowrap;
+	padding: 10px !important;
+}

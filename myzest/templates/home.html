@@ -1,12 +1,18 @@
 {% extends 'base.html' %}
+{% block pagetitle %} - Home {% endblock %}
 {% block content %}
+<header class="landing">
+	<h1 id="landing-title" class="brand-title center-align">MyZest</h1>
+	<!-- add logo here -->
+</header>
+
 <!-- Latest Recipes Section -->
-<section>
-	<h3>Latest Recipes</h3>
+<section class="rcp-sel">
+	<h3 class="rcp-sel-title pb-2 mb-3 pl-3">Latest Recipes</h3>
 	<!-- recipe cards -->
-	<ul>
+	<ul class="rcp-sel-short">
 		{% for recipe in recipes %}
-		<li>{{ recipe.name }}</li>
+		{% include "rcpcard.html" %}
 		{% endfor %}
 	</ul>
 </section>

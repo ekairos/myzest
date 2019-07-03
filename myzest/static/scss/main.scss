@@ -1,4 +1,8 @@
-@import "helpers/variables.scss";
-@import "helpers/mixins.scss";
-@import "helpers/elements.scss";
-@import "pages/base.scss";
+@import "helpers/variables";
+@import "helpers/mixins";
+@import "helpers/elements";
+@import "helpers/spacing";
+@import "helpers/layout";
+@import "pages/base";
+@import "pages/home";
+@import "pages/rcpcard";
