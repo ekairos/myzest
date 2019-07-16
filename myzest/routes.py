@@ -51,9 +51,28 @@ def check_usr():
         if mongo.db.users.find_one({'username': data['username'].title()}):
             return jsonify({'error': 'username', 'message': 'This username is already taken'})
     if 'email' in data:
-        usermail = mongo.db.users.find_one({'email': data['email'].lower()})
-        if data['form'] == "registration" and usermail is not None:
+        email = mongo.db.users.find_one({'email': data['email'].lower()})
+        if data['form'] == "registration" and email is not None:
             return jsonify({'error': 'email', 'message': 'This email is already in use'})
-        if data['form'] == "login" and usermail is None:
+        if data['form'] == "login" and email is None:
             return jsonify({'error': 'email', 'message': 'This email is not registered'})
     return 'success'
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    return render_template('login.html')
+
+
+@app.route('/log_usr', methods=['GET', 'POST'])
+def log_usr():
+    data = request.form.to_dict()
+    query = mongo.db.users.find_one({"email": data["email"]})
+    if data['password'] == query['password']:
+        flash('Welcome back {} !'.format(query['username']), 'success')
+        return redirect('home')
+    elif data['password'] != query['password']:
+        flash('Login unsuccessful. Please check email and password provided', 'warning')
+        return redirect('login')
+    else:
+        return render_template('login.html')

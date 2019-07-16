@@ -1,13 +1,8 @@
 $(document).ready(function(){
-    $("[required]").on("focusout", function() {
-        if ($(this).val() == '') {
-            $(this).next("span").attr("data-error", "This field is required")
-        }
-    });
 	$("#email").on("focusout", function() {
-		if ($("#email").val() != "") {
-			// sets default error message
-			$("#email_help").attr("data-error", "invalid entry");
+	    // sets default error message
+		$("#email_help").attr("data-error", "invalid entry");
+		if ($("#email").val() != "" && $("#email").hasClass("valid")) {
 			$.ajax({
 				contentType: "application/json; charset=utf-8",
 				data : JSON.stringify({
@@ -23,6 +18,10 @@ $(document).ready(function(){
 					$("#email_help").attr("data-error", response.message);
 					$("#email").removeClass("valid");
 					$("#email").addClass("invalid");
+				}
+				if (response == "success") {
+				    $("#email").removeClass("invalid");
+				    $("#email").addClass("valid");
 				}
 			})
 		}
@@ -48,7 +47,7 @@ $(document).ready(function(){
 		}
 	});
 	$("[type=password]").on("blur", function() {
-		if ($("#password").val() != "" && $("#passwConfirm").val() != "") {
+		if ($("#password").val() != "" && $("#passwConfirm").val() != "" && $("#passwConfirm").length != 0) {
 			if ($("#passwConfirm").val() != $("#password").val()) {
 				$("[type=password]").addClass("invalid");
 				$("[type=password]").next("span").attr("data-error", "Passwords do not match");
@@ -57,4 +56,9 @@ $(document).ready(function(){
 			}
 		}
 	});
+	$("[required]").on("focusout", function() {
+        if ($(this).val() == '') {
+            $(this).next("span").attr("data-error", "This field is required")
+        }
+    });
 });

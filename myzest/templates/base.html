@@ -30,12 +30,14 @@
 		<ul class="right hide-on-med-and-down">
 			<li class="active"><a href="{{ url_for('home') }}">Home</a></li>
 			<li class="active"><a href="{{ url_for('register') }}">Register</a></li>
+			<li class="active"><a href="{{ url_for('login') }}">Login</a></li>
 		</ul>
 	</div>
 </nav>
 <ul class="sidenav" id="side-menu">
 	<li class="active"><a href="{{ url_for('home') }}">Home</a></li>
 	<li class="active"><a href="{{ url_for('register') }}">Register</a></li>
+	<li class="active"><a href="{{ url_for('login') }}">Login</a></li>
 </ul>
 
 {% with messages = get_flashed_messages(with_categories=True) %}
