@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify, redirect, flash
+from flask import render_template, request, jsonify, redirect, flash, session
 from myzest import app, mongo, bcrypt
 from bson.objectid import ObjectId
 
@@ -18,6 +18,9 @@ def get_recipe(recipe_id):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if 'username' in session:
+        flash('{}, you are already logged in'.format(session['username']), 'info')
+        return redirect('home')
     return render_template('register.html')
 
 
@@ -32,14 +35,15 @@ def add_user():
         'password': hashed_passw
     }
     print('new user ', new_user)
-    query = mongo.db.users.find_one({"$or":[{"username": new_user["username"]}, {"email": new_user["email"]}]})
-    print('query name ', query)
-    if query:
+    user = mongo.db.users.find_one({"$or":[{"username": new_user["username"]}, {"email": new_user["email"]}]})
+    print('user ', user)
+    if user:
         print('found it')
         flash('This user already exists', 'warning')
-    elif query is None:
+    elif user is None:
         print('nothing found')
         mongo.db.users.insert_one(new_user)
+        session['username'] = new_user['username']
         flash('Welcome {} ! Your account was created with {}'
               .format(new_user['username'], new_user['email']), 'success')
     return redirect('home')
@@ -62,6 +66,9 @@ def check_usr():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'username' in session:
+        flash('{}, you are already logged in'.format(session['username']), 'info')
+        return redirect('home')
     return render_template('login.html')
 
 
@@ -71,6 +78,7 @@ def log_usr():
     user = mongo.db.users.find_one({"email": data["email"]})
     if user and bcrypt.check_password_hash(user['password'], data['password']):
         flash('Welcome back {} !'.format(user['username']), 'success')
+        session['username'] = user['username']
         return redirect('home')
     elif user and not bcrypt.check_password_hash(user['password'], data['password']):
         flash('Login unsuccessful. Please check email and password provided', 'warning')
