@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block pagetitle %} - Register {% endblock %}
+{% block content %}
+<header class="container mb-6">
+	<h1>Join the community</h1>
+</header>
+<form id="registration" class="container" action="{{ url_for('add_user') }}" method="POST">
+	<!-- username -->
+	<div class="input-field">
+		<label for="username">Your Username</label>
+		<input id="username" class="validate" name="username" type="text" min="3" max="30" required>
+		<span id="username_help" class="helper-text" data-error=""></span>
+	</div>
+	<!-- email -->
+	<div class="input-field">
+		<label for="email">Your Email</label>
+		<input id="email" class="validate" name="email" type="email" pattern="[A-Za-z0-9._-]{2,30}[A-Za-z0-9]@[A-Za-z0-9-._]+\.[A-Za-z]{2,11}" required>
+		<span id="email_help" class="helper-text" data-error=""></span>
+	</div>
+	<!-- password -->
+	<div class="input-field">
+		<label for="password">Password</label>
+		<input id="password" class="validate" name="password" type="password" required>
+		<span class="helper-text" data-error=""></span>
+	</div>
+	<!-- confirm password -->
+	<div class="input-field">
+		<label for="passwConfirm">Password</label>
+		<input id="passwConfirm" class="validate" name="passwConfirm" type="password" required>
+		<span class="helper-text" data-error=""></span>
+	</div>
+	<!-- Submit -->
+	<div class="input-field">
+		<button class="btn" type="submit">Register</button>
+	</div>
+</form>
+
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/form_helper.js') }}"></script>
+{% endblock %}

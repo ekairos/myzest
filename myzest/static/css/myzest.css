@@ -230,6 +230,9 @@ h6 {
 .pl-auto {
   padding-left: auto; }
 
+.txt-ctr {
+  text-align: center; }
+
 .border-t {
   border-top: 1px solid #e6e6e6; }
 
@@ -267,6 +270,33 @@ html, body {
 .copyright {
   text-align: center;
   font-size: .8rem; }
+
+/*
+		Alerts - flash messages
+*/
+.flash-warning {
+  border: 1px solid;
+  padding: 0.5em;
+  width: 60%;
+  color: #a0101c;
+  background-color: #fadadf;
+  border-color: #faced0; }
+
+.flash-success {
+  border: 1px solid;
+  padding: 0.5em;
+  width: 60%;
+  color: #14752a;
+  background-color: #d4ede0;
+  border-color: #c2e2c8; }
+
+.flash-info {
+  border: 1px solid;
+  padding: 0.5em;
+  width: 60%;
+  color: #225a70;
+  background-color: #ddf8fd;
+  border-color: #c4ebf1; }
 
 .landing {
   min-height: 200px; }

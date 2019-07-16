@@ -28,3 +28,24 @@ html, body {
 	text-align: center;
 	font-size: .8rem;
 }
+/*
+		Alerts - flash messages
+*/
+.flash-warning {
+    @include flash-message;
+    color: #a0101c;
+    background-color: #fadadf;
+    border-color: #faced0;
+}
+.flash-success {
+    @include flash-message;
+    color: #14752a;
+    background-color: #d4ede0;
+    border-color: #c2e2c8;
+}
+.flash-info {
+    @include flash-message;
+    color: #225a70;
+    background-color: #ddf8fd;
+    border-color: #c4ebf1;
+}

@@ -1,3 +1,6 @@
+.txt-ctr {
+    text-align: center;
+}
 @each $key, $value in $sides {
     .border-#{$key} {
         border-#{$value}: 1px solid $bright-gray;
