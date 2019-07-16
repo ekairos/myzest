@@ -29,15 +29,25 @@
 		<a href="#" data-target="side-menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
 		<ul class="right hide-on-med-and-down">
 			<li class="active"><a href="{{ url_for('home') }}">Home</a></li>
-			<li class="active"><a href="{{ url_for('register') }}">Register</a></li>
-			<li class="active"><a href="{{ url_for('login') }}">Login</a></li>
+			{% if 'username' not in session %}
+				<li class="active"><a href="{{ url_for('register') }}">Register</a></li>
+				<li class="active"><a href="{{ url_for('login') }}">Login</a></li>
+			{% endif %}
+			{% if 'username' in session %}
+				<li class="active"><a href="{{ url_for('logout') }}">Logout</a></li>
+			{% endif %}
 		</ul>
 	</div>
 </nav>
 <ul class="sidenav" id="side-menu">
 	<li class="active"><a href="{{ url_for('home') }}">Home</a></li>
-	<li class="active"><a href="{{ url_for('register') }}">Register</a></li>
-	<li class="active"><a href="{{ url_for('login') }}">Login</a></li>
+	{% if 'username' not in session %}
+		<li class="active"><a href="{{ url_for('register') }}">Register</a></li>
+		<li class="active"><a href="{{ url_for('login') }}">Login</a></li>
+	{% endif %}
+	{% if 'username' in session %}
+		<li class="active"><a href="{{ url_for('logout') }}">Logout</a></li>
+	{% endif %}
 </ul>
 
 {% with messages = get_flashed_messages(with_categories=True) %}

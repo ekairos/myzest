@@ -86,3 +86,14 @@ def log_usr():
     elif not user:
         flash('Login unsuccessful. Please check email', 'warning')
         return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    if 'username' in session:
+        user = session['username']
+        session.pop('username')
+        flash('We hope to see you soon {}'.format(user), 'info')
+    else:
+        flash('You are not logged in', 'warning')
+    return redirect('home')
