@@ -1,5 +1,5 @@
 from flask import render_template, request, jsonify, redirect, flash
-from myzest import app, mongo
+from myzest import app, mongo, bcrypt
 from bson.objectid import ObjectId
 
 
@@ -25,10 +25,11 @@ def register():
 def add_user():
     data = request.form.to_dict()
     print(data)
+    hashed_passw = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     new_user = {
         'username': data['username'].title(),
         'email': data['email'].lower(),
-        'password': data['password']
+        'password': hashed_passw
     }
     print('new user ', new_user)
     query = mongo.db.users.find_one({"$or":[{"username": new_user["username"]}, {"email": new_user["email"]}]})
@@ -39,7 +40,7 @@ def add_user():
     elif query is None:
         print('nothing found')
         mongo.db.users.insert_one(new_user)
-        flash('Welcome {} ! Your account was created successfully using {}'
+        flash('Welcome {} ! Your account was created with {}'
               .format(new_user['username'], new_user['email']), 'success')
     return redirect('home')
 
@@ -67,12 +68,13 @@ def login():
 @app.route('/log_usr', methods=['GET', 'POST'])
 def log_usr():
     data = request.form.to_dict()
-    query = mongo.db.users.find_one({"email": data["email"]})
-    if data['password'] == query['password']:
-        flash('Welcome back {} !'.format(query['username']), 'success')
+    user = mongo.db.users.find_one({"email": data["email"]})
+    if user and bcrypt.check_password_hash(user['password'], data['password']):
+        flash('Welcome back {} !'.format(user['username']), 'success')
         return redirect('home')
-    elif data['password'] != query['password']:
+    elif user and not bcrypt.check_password_hash(user['password'], data['password']):
         flash('Login unsuccessful. Please check email and password provided', 'warning')
         return redirect('login')
-    else:
+    elif not user:
+        flash('Login unsuccessful. Please check email', 'warning')
         return render_template('login.html')
