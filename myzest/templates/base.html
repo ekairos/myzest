@@ -28,25 +28,25 @@
 		<a href="{{ url_for('home') }}" class="brand-logo brand-title left">MyZest</a>
 		<a href="#" data-target="side-menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
 		<ul class="right hide-on-med-and-down">
-			<li class="active"><a href="{{ url_for('home') }}">Home</a></li>
+			<li class=""><a href="{{ url_for('home') }}">Home</a></li>
 			{% if 'username' not in session %}
-				<li class="active"><a href="{{ url_for('register') }}">Register</a></li>
-				<li class="active"><a href="{{ url_for('login') }}">Login</a></li>
+				<li class=""><a href="{{ url_for('register') }}">Register</a></li>
+				<li class=""><a href="{{ url_for('login') }}">Login</a></li>
 			{% endif %}
 			{% if 'username' in session %}
-				<li class="active"><a href="{{ url_for('logout') }}">Logout</a></li>
+				<li class=""><a href="{{ url_for('logout') }}">Logout</a></li>
 			{% endif %}
 		</ul>
 	</div>
 </nav>
 <ul class="sidenav" id="side-menu">
-	<li class="active"><a href="{{ url_for('home') }}">Home</a></li>
+	<li class=""><a href="{{ url_for('home') }}">Home</a></li>
 	{% if 'username' not in session %}
-		<li class="active"><a href="{{ url_for('register') }}">Register</a></li>
-		<li class="active"><a href="{{ url_for('login') }}">Login</a></li>
+		<li class=""><a href="{{ url_for('register') }}">Register</a></li>
+		<li class=""><a href="{{ url_for('login') }}">Login</a></li>
 	{% endif %}
 	{% if 'username' in session %}
-		<li class="active"><a href="{{ url_for('logout') }}">Logout</a></li>
+		<li class=""><a href="{{ url_for('logout') }}">Logout</a></li>
 	{% endif %}
 </ul>
 
@@ -103,8 +103,22 @@
 
 <script>
   $(document).ready(function(){
-    $('.sidenav').sidenav();
+    $(".sidenav").sidenav();
+
+    // active page
+    var currentPath = location.pathname;
+
+    $("#myzest-nav ul [href], .sidenav [href]").each(function() {
+    	if ($(this).attr("href") == currentPath) {
+    		$(this).parent("li").addClass("active");
+    	}
+    	if (currentPath == "/") {
+    		$("[href='/home']").parent("li").addClass("active");
+    	}
+    });
+
   });
+
 </script>
 
 </body>
