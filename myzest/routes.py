@@ -39,21 +39,16 @@ def register():
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():
     data = request.form.to_dict()
-    print(data)
     hashed_passw = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     new_user = {
         'username': data['username'].title(),
         'email': data['email'].lower(),
         'password': hashed_passw
     }
-    print('new user ', new_user)
     user = mongo.db.users.find_one({"$or":[{"username": new_user["username"]}, {"email": new_user["email"]}]})
-    print('user ', user)
     if user:
-        print('found it')
         flash('This user already exists', 'warning')
     elif user is None:
-        print('nothing found')
         mongo.db.users.insert_one(new_user)
         session['username'] = new_user['username']
         flash('Welcome {} ! Your account was created with {}'
@@ -141,6 +136,8 @@ def insert_recipe():
     new_recipe['time'] = {"total": data.pop('time')}
     # initial views
     new_recipe['views'] = 0
+    # add time creation/update
+    new_recipe['updated'] = date.today().isoformat()
 
     # Add Ingredients
     match_ingr = re.compile("ingredient-")
@@ -158,9 +155,6 @@ def insert_recipe():
     steps = [data[entry] for entry in sorted(data.keys()) if match_step.match(entry)]
     # build list of dict to add image input later
     new_recipe['steps'] = [{"description": step} for step in steps]
-
-    # add time stamp
-    new_recipe['updated'] = date.today().isoformat()
 
     # Optional recipe details
     if "foodType" in data and data['foodType'] != "":
