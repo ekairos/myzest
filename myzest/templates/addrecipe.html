@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block pagetitle %} - Add recipe {% endblock %}
+{% block content %}
+<header class="container mt-3 mb-4">
+	<h1>Add your new recipe</h1>
+</header>
+<main class="container">
+	<form id="newRecipeForm" action="{{ url_for('insert_recipe') }}" method="POST" enctype="multipart/form-data">
+
+		<div class="input-field mb-2">
+			<label for="rcpname">Recipe Name</label>
+			<input class="validate" name="rcpname" type="text" maxlength="50" required>
+			<span class="helper-text" data-error="This field is required"></span>
+		</div>
+
+		<div class="input-field mt-2">
+			<label for="description">Description</label>
+			<textarea class="validate materialize-textarea" name="description" required maxlength="180"></textarea>
+			<span class="helper-text" data-error="This field is required"></span>
+		</div>
+
+		<!-- Difficulty -->
+		<div class="input-field mb-3 col s12">
+			<select id="difficulty" name="difficulty" class="validate" required>
+				<option selected disabled>Difficulty...</option>
+				{% for diff in difficulties %}
+				<option value="{{ diff }}">{{ diff|title }}</option>
+				{% endfor %}
+			</select>
+			<label for="difficulty">Difficulty</label>
+			<span id="diff-helper" class="helper-text invalid" data-error="Please select difficulty"></span>
+		</div>
+
+		<!-- serving -->
+		<div class="range-field">
+			<label for="serves">Serves</label>
+			<output id="serving" for="#servings" class="form-value ml-4" oninput="servings.value = serves.value">4</output>
+			<input type="range" id="serves" name="serves" min="1" max="20" value="4" oninput="serving.value = serves.value"/>
+			<span class="helper-text" data-error=""></span>
+		</div>
+
+		<!-- time -->
+		<div class="range-field">
+			<label for="time">Time</label>
+			<output id="timer" for="#time" class="form-value ml-4">30</output>
+			<input type="range" id="time" name="time" min="5" max="240" step="5" value="30" oninput="timer.value = time.value"/>
+			<span class="helper-text" data-error=""></span>
+		</div>
+
+		<div class="border-b mb-5"></div>
+
+		<!-- Ingredients -->
+		<div class="input-field mb-5">
+			<h3>Ingredients</h3>
+			<ul id="ingredient-list">
+				<li class="row valign-wrapper ing-item">
+					<div class="input-field col s8">
+						<label for="ingredient-1">Ingredient</label>
+						<input id="ingredient-1" name="ingredient-1" class="validate" type="text" required>
+						<span class="helper-text" data-error="This field is required"></span>
+					</div>
+					<div class="input-field col s4">
+						<label for="amount-1">Amount</label>
+						<input id="amount-1" name="amount-1" class="validate" type="text" required>
+						<span class="helper-text" data-error="This field is required"></span>
+					</div>
+				</li>
+			</ul>
+			<a id="add-ing-btn" class="btn" onclick="addIngredient()">add ingredient</a>
+		</div>
+
+		<div class="border-b mb-5"></div>
+
+		<!-- Instructions -->
+		<div class="mb-5">
+			<h3>Instructions</h3>
+			<ul id="step-list">
+				<li class="row step-item">
+					<div class="input-field col s12 mb-2 mt-2">
+						<label for="step-1">Step 1</label>
+						<textarea class="validate materialize-textarea" name="step-1" required maxlength="180"></textarea>
+						<span class="helper-text" data-error="This field is required"></span>
+					</div>
+				</li>
+			</ul>
+			<span id="add-step-btn" class="btn" onclick="addStep()">add step</span>
+		</div>
+
+		<div class="border-b mb-5"></div>
+
+		<!-- image -->
+		<div class="mb-5">
+			<h3>Add photo</h3>
+			<div class="file-field input-field">
+				<div class="btn">
+					<span>Photo</span>
+					<input id="img-btn" class="validate" type="file" name="img" accept=".gif, .jpeg, .jpg, .png" required>
+				</div>
+				<div class="file-path-wrapper">
+					<input id="img-path" class="file-path validate" type="text" placeholder="Upload your image">
+					<span class="helper-text" data-error=""></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="border-b mb-5"></div>
+
+		<h3>Extra details</h3>
+		<ul class="collapsible mb-5">
+				<!-- optional food type -->
+			<li>
+				<div class="collapsible-header"><span class="pb-2 pt-2">Food Type</span></div>
+				<div class="collapsible-body">
+					<div class="input-field mb-3">
+						<select class="custom-select mr-sm-2" id="newRcpFType" name="foodType">
+							<option selected value="">select...</option>
+							{% for food in foodtype %}
+								<option value="{{ food }}">{{ food|title }}</option>
+							{% endfor %}
+						</select>
+						<label>Add food type ?</label>
+					</div>
+				</div>
+			</li>
+			{# Privacy #}
+			{# Region #}
+			{# Category #}
+		</ul> <!-- /collapsible -->
+
+		<!-- Submission -->
+		<div id="submit-btn">
+			<button class="btn mb-4" type="submit" onclick="validateForm()">
+				<div class="valign-wrapper">
+					<span class="mr-3">Submit</span><i class="material-icons">send</i>
+				</div>
+			</button>
+		</div>
+	</form>
+</main>
+{% endblock %}
+
+{% block script %}
+<script>
+	$(document).ready(function(){
+	    $("select").formSelect();
+	    $('.collapsible').collapsible({accordion: false});
+	});
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/recipe.js') }}"></script>
+{% endblock %}

@@ -39,7 +39,7 @@
 		<h2>Ingredients</h2>
 		<ul>
 			{% for food in recipe.ingredients %}
-			<li>{{ food.quantity }} of {{ food.name }}</li>
+			<li>{{ food.amount }} of {{ food.name }}</li>
 			{% endfor %}
 		</ul>
 	</section>
@@ -49,7 +49,7 @@
 	<section class="rcp-section">
 		<h2>Instructions</h2>
 		{% for step in recipe.steps %}
-		<p>{{ recipe.steps.index(step) + 1 }}. {{ step.desc }}</p>
+		<p>{{ recipe.steps.index(step) + 1 }}. {{ step.description }}</p>
 		{# add step image if provided #}
 		{% endfor %}
 	</section>

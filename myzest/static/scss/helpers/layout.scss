@@ -6,3 +6,7 @@
         border-#{$value}: 1px solid $bright-gray;
     }
 }
+.field-error {
+	color: #F44336;
+	font-size: 12px;
+}

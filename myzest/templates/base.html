@@ -34,6 +34,7 @@
 				<li class=""><a href="{{ url_for('login') }}">Login</a></li>
 			{% endif %}
 			{% if 'username' in session %}
+				<li class=""><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
 				<li class=""><a href="{{ url_for('logout') }}">Logout</a></li>
 			{% endif %}
 		</ul>
@@ -46,6 +47,7 @@
 		<li class=""><a href="{{ url_for('login') }}">Login</a></li>
 	{% endif %}
 	{% if 'username' in session %}
+		<li class=""><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
 		<li class=""><a href="{{ url_for('logout') }}">Logout</a></li>
 	{% endif %}
 </ul>
