@@ -64,11 +64,11 @@ def add_user():
 @app.route('/check_usr', methods=['POST'])
 def check_usr():
     data = request.get_json()
-    if 'username' in data:
-        if mongo.db.users.find_one({'username': data['username'].title()}):
+    if data['field'] == 'username':
+        if mongo.db.users.find_one({'username': data['userdata'].title()}):
             return jsonify({'error': 'username', 'message': 'This username is already taken'})
-    if 'email' in data:
-        email = mongo.db.users.find_one({'email': data['email'].lower()})
+    if data['field'] == 'email':
+        email = mongo.db.users.find_one({'email': data['userdata'].lower()})
         if data['form'] == "registration" and email is not None:
             return jsonify({'error': 'email', 'message': 'This email is already in use'})
         if data['form'] == "login" and email is None:
