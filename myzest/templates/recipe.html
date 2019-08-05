@@ -2,7 +2,7 @@
 {% block pagetitle %} {{ recipe.name }} {% endblock %}
 {% block content %}
 <header class="rcp-header">
-	<img class="rcp-img mr-auto ml-auto" src="../static/img/recipes/{{ recipe._id }}.jpg" alt="image missing">
+	<img class="rcp-img mr-auto ml-auto" src="../static/img/recipes/{{ recipe.image }}" alt="image missing">
 </header>
 
 <main class="container">
@@ -26,9 +26,9 @@
 	<section class="rcp-section valign-wrapper">
 		<img class="rcp-author-tbn" src="../static/img/users/{{ recipe.author_id }}.png" width="50" height="50">
 		<div class="ml-3">
-			<div>George</div>
+			<div>{{ author.username }}</div>
 			<div>
-				<small>Updated - 05.04.19</small>
+				<small>Updated : {{ recipe.updated }}</small>
 			</div>
 		</div>
 	</section>

@@ -1,22 +1,31 @@
-<li class="rcpcard hoverable">
+<li class="rcpcard hoverable ml-1 mr-1">
 	<header class="rcpcard-header">
-		<img class="rcpcard-img" src="static/img/recipes/{{ recipe._id }}.jpg"
+		<img class="rcpcard-img" src="static/img/recipes/{{ recipe.image }}"
 		     alt="{{ recipe.name }}" width="220px">
 		<div class="rcpcard-grad-overlay"></div>
 		<div class="rcpcard-hview">{{ recipe.views }} views</div>
+		{% if "rate" in recipe %}
 		<div class="rcpcard-hrate">{{ recipe.rate.score }} on {{ recipe.rate.nbr }} votes</div>
+		{% endif %}
 	</header>
 	<section class="rcpcard-body">
 		<h4 class="pb-2 mb-1 border-b"><a href="{{ url_for('get_recipe', recipe_id=recipe._id) }}">{{ recipe.name }}</a></h4>
 		<ul class="pl-0">
-			<span class="rcpcard-sumup">{{ recipe.region }}</span> |
-			<span class="rcpcard-sumup">{{ recipe.serves }} people</span> |
-			<span class="rcpcard-sumup">{{ recipe.foodtype }} dish</span> |
+			{% if "foodType" in recipe %}
+			<span class="rcpcard-sumup">{{ recipe.foodType }}</span>
+			<span class="border-l ml-1 mr-2"></span>
+			{% endif %}
+			<span class="rcpcard-sumup">{{ recipe.serves }} people</span>
+			<span class="border-l ml-1 mr-2"></span>
 			<span class="rcpcard-sumup">{{ recipe.difficulty }}</span>
+			{% if "region" in recipe  %}
+			<span class="border-l ml-1 mr-2"></span>
+			<span class="rcpcard-sumup">{{ recipe.region }}</span>
+			{% endif %}
 		</ul>
 		<!-- <p>Short description paragraph</p> -->
 	</section>
-	<footer class="row mb-2 mr-2 rcpcard-footer">
+	<footer class="row mb-2 mr-2 rcpcard-footer valign-wrapper">
 		<span class="rcpcard-upd mr-2">{{ recipe.updated }}</span>
 		<img class="user-tbn" src="../static/img/users/{{ recipe.author_id }}.png" align="user">
 	</footer>

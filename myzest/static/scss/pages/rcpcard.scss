@@ -1,6 +1,7 @@
 .rcpcard {
 	display: inline-block;
-	max-width: 220px;
+	position: relative;
+	width: 220px;
 	border-radius: 10px;
 	border: none;
 	box-shadow: 0px 2px 5px -2px gray;
@@ -15,7 +16,8 @@
 .rcpcard-img {
 	border-radius: 10px 10px 0px 0px;
 	vertical-align: middle;
-	width: 100%;
+	height: 150px;
+	object-fit: cover;
 }
 .rcpcard-grad-overlay {
 	z-index: 3;
@@ -40,14 +42,16 @@
 }
 .rcpcard-body {
     padding: 1em;
+    // leave space for footer absolute pos
+    margin-bottom: 40px;
 }
 .rcpcard-sumup {
 	font-size: 0.9em;
 }
 .rcpcard-footer {
-    display: flex;
-    align-items: center;
-    justify-content: end;
+    position: absolute;
+    bottom: 0;
+    right: 0;
 }
 .rcpcard-upd {
 	font-size: 0.8rem;
