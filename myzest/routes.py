@@ -25,7 +25,8 @@ def home():
 @app.route('/recipe/<recipe_id>')
 def get_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})
-    return render_template('recipe.html', recipe=recipe)
+    author = mongo.db.users.find_one({'_id': ObjectId(recipe['author_id'])})
+    return render_template('recipe.html', recipe=recipe, author=author)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -178,3 +179,10 @@ def insert_recipe():
     mongo.db.recipes.update({'_id': rcp.inserted_id}, {'$set': {'image': filename}})
 
     return redirect('/recipe/{}'.format(rcp.inserted_id))
+
+
+@app.route('/del_rcp/<recipe_id>')
+def del_rcp(recipe_id):
+    mongo.db.users.update({"_id": ObjectId(session['user']['id'])}, {'$pull': {'recipes': ObjectId(recipe_id)}})
+    mongo.db.recipes.remove({"_id": ObjectId(recipe_id)})
+    return redirect('/home')

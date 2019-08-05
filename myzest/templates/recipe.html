@@ -53,5 +53,9 @@
 		{# add step image if provided #}
 		{% endfor %}
 	</section>
+
+	{% if session['user'] and session['user']['name'] == author.username %}
+	<a class="btn mb-5" href="{{ url_for('del_rcp', recipe_id=recipe._id) }}">Delete</a>
+	{% endif %}
 </main>
 {% endblock %}
