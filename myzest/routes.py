@@ -1,7 +1,7 @@
 from flask import render_template, request, jsonify, redirect, flash, session
 from myzest import app, mongo, bcrypt
 from bson.objectid import ObjectId
-import re
+import re, time
 from datetime import date
 from os import path
 
@@ -186,3 +186,71 @@ def del_rcp(recipe_id):
     mongo.db.users.update({"_id": ObjectId(session['user']['id'])}, {'$pull': {'recipes': ObjectId(recipe_id)}})
     mongo.db.recipes.remove({"_id": ObjectId(recipe_id)})
     return redirect('/home')
+
+
+@app.route('/update_rcp/<recipe_id>', methods=['GET', 'POST'])
+def update_rcp(recipe_id):
+    this_recipe = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})
+    if request.method == 'POST':
+        # Keep checking for active valid connection
+        if 'user' not in session:
+            flash('Sorry the connection was lost, please login', 'warning')
+            return redirect('login')
+
+        # Create recipe Obj with main required details
+        data = request.form.to_dict()
+        upd_recipe = dict()
+
+        upd_recipe['author_id'] = ObjectId(session['user']['id'])
+        upd_recipe['name'] = data.pop('rcpname')
+        upd_recipe['description'] = data.pop('description')
+        upd_recipe['difficulty'] = data.pop('difficulty')
+        upd_recipe['serves'] = data.pop('serves')
+        upd_recipe['time'] = {"total": data.pop('time')}
+        upd_recipe['views'] = this_recipe['views']
+
+        # Add Ingredients
+        match_ingr = re.compile("ingredient-")
+        match_amt = re.compile("amount-")
+        ingredients = [data[entry] for entry in sorted(data.keys()) if match_ingr.match(entry)]
+        amount = [data[entry] for entry in sorted(data.keys()) if match_amt.match(entry)]
+        ing_list = []
+        for i in range(len(ingredients)):
+            ing_list.append({"name": ingredients[i],
+                             "amount": amount[i]})
+        upd_recipe['ingredients'] = ing_list
+
+        # Add Steps
+        match_step = re.compile("step-")
+        steps = [data[entry] for entry in sorted(data.keys()) if match_step.match(entry)]
+        # build list of dict to add image input later
+        upd_recipe['steps'] = [{"description": step} for step in steps]
+
+        # update last modified
+        upd_recipe['updated'] = date.today().isoformat()
+
+        # Optional recipe details
+        if data['foodType'] != "none":
+            upd_recipe['foodType'] = data.pop('foodType')
+
+        # Keep image file from previous version
+        pic = request.files['img'].filename
+        if pic != "":
+            file_ext = pic.rsplit('.', 1)[-1].lower()
+            filename = str(this_recipe['_id']) + '.' + file_ext
+            # double check for valid file extension
+            if not filename.endswith(pic_extensions):
+                flash('wrong file extension', 'warning')
+                return redirect('/update_rcp/{}'.format(recipe_id))
+            else:
+                upd_recipe['image'] = filename
+                request.files['img'].save(path.join(app.config['RECIPE_PIC_DIR'], filename))
+        else:
+            upd_recipe['image'] = this_recipe['image']
+
+        # Update this recipe on DB
+        mongo.db.recipes.replace_one({'_id': this_recipe['_id']}, upd_recipe)
+
+        return redirect('/recipe/{}'.format(recipe_id))
+
+    return render_template('updaterecipe.html', recipe=this_recipe, foodtypes=rcp_foodTypes, difficulties=rcp_diff)

@@ -129,9 +129,11 @@ $(document).ready(function() {
 
         // Check file type inserted
         var imgvalid = document.getElementById("img-btn").checkValidity();
-        if (imgvalid == false) {
+        if (imgvalid == false && $("form").attr("id") == "newRecipeForm") {
             let imgError = '<div class="mb-4 field-error">Please insert valid image file</div>'
             $("#submit-btn").append(imgError);
+        } else {
+            document.getElementById("img-btn").setCustomValidity("");
         }
 
         var formValid = document.getElementById("newRecipeForm").checkValidity();
