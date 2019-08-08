@@ -3,7 +3,7 @@
 		<img class="rcpcard-img" src="static/img/recipes/{{ recipe.image }}"
 		     alt="{{ recipe.name }}" width="220px">
 		<div class="rcpcard-grad-overlay"></div>
-		<div class="rcpcard-hview">{{ recipe.views }} views</div>
+		<div class="rcpcard-hview">{{ recipe.views }} view{% if recipe.views != 1 %}s{% endif %}</div>
 		{% if "rate" in recipe %}
 		<div class="rcpcard-hrate">{{ recipe.rate.score }} on {{ recipe.rate.nbr }} votes</div>
 		{% endif %}
