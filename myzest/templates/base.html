@@ -23,23 +23,25 @@
 </head>
 <body>
 
-<nav id="myzest-nav" class="navbar-fixed">
-	<div class="nav-wrapper container">
-		<a href="{{ url_for('home') }}" class="brand-logo brand-title left">MyZest</a>
-		<a href="#" data-target="side-menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
-		<ul class="right hide-on-med-and-down">
-			<li class=""><a href="{{ url_for('home') }}">Home</a></li>
-			{% if 'user' not in session %}
-				<li class=""><a href="{{ url_for('register') }}">Register</a></li>
-				<li class=""><a href="{{ url_for('login') }}">Login</a></li>
-			{% endif %}
-			{% if 'user' in session %}
-				<li class=""><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
-				<li class=""><a href="{{ url_for('logout') }}">Logout</a></li>
-			{% endif %}
-		</ul>
-	</div>
-</nav>
+<div class="navbar-fixed">
+	<nav id="myzest-nav">
+		<div class="nav-wrapper container">
+			<a href="{{ url_for('home') }}" class="brand-logo brand-title left">MyZest</a>
+			<a href="#" data-target="side-menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
+			<ul class="right hide-on-med-and-down">
+				<li class=""><a href="{{ url_for('home') }}">Home</a></li>
+				{% if 'user' not in session %}
+					<li class=""><a href="{{ url_for('register') }}">Register</a></li>
+					<li class=""><a href="{{ url_for('login') }}">Login</a></li>
+				{% endif %}
+				{% if 'user' in session %}
+					<li class=""><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
+					<li class=""><a href="{{ url_for('logout') }}">Logout</a></li>
+				{% endif %}
+			</ul>
+		</div>
+	</nav>
+</div>
 <ul class="sidenav" id="side-menu">
 	<li class=""><a href="{{ url_for('home') }}">Home</a></li>
 	{% if 'user' not in session %}

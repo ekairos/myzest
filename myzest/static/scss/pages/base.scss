@@ -2,9 +2,9 @@ html, body {
 	font-size: 14px;
 	height: 100%;
 }
-#myzest-nav.navbar-fixed {
-	background-color: $mz-darkblue;
-	@include thinshw(outset);
+#myzest-nav {
+    background-color: $mz-darkblue;
+    @include thinshw(outset);
 }
 .brand-title {
 	font-family: 'Sahitya', serif;
