@@ -136,7 +136,7 @@ $(document).ready(function() {
             document.getElementById("img-btn").setCustomValidity("");
         }
 
-        var formValid = document.getElementById("newRecipeForm").checkValidity();
+        var formValid = document.getElementsByTagName("form")[0].checkValidity();
         if (formValid == false) {
             let formError = '<div class="mb-4 field-error">Some details are missing or not valid</div>'
             $("#submit-btn").append(formError);
