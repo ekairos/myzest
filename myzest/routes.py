@@ -1,7 +1,8 @@
 from flask import render_template, request, jsonify, redirect, flash, session
 from myzest import app, mongo, bcrypt
 from bson.objectid import ObjectId
-import re, time
+import re
+import json
 from datetime import date
 from os import path
 
@@ -13,6 +14,15 @@ rcp_foodCategories = mongo.db.category.distinct("name")
 rcp_foodCategories.sort()
 
 pic_extensions = ("jpg", "jpeg", "png", "gif")
+
+
+# Override to serialize ObjectIds data from DB
+# into str for user's session object
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self, o)
 
 
 @app.route('/')
@@ -33,7 +43,7 @@ def get_recipe(recipe_id):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if 'user' in session:
-        flash('{}, you are already logged in'.format(session['user']['name']), 'info')
+        flash('{}, you are already logged in'.format(session['user']['username']), 'info')
         return redirect('home')
     return render_template('register.html')
 
@@ -52,7 +62,8 @@ def add_user():
         flash('This user already exists', 'warning')
     elif user_in_db is None:
         registered_user = mongo.db.users.insert_one(new_user)
-        session['user'] = {'name': new_user['username'], 'id': str(registered_user.inserted_id)}
+        # start first session with 'username' and '_id' only
+        session['user'] = {'username': new_user['username'], '_id': str(registered_user.inserted_id)}
         flash('Welcome {} ! Your account was created with {}'
               .format(new_user['username'], new_user['email']), 'success')
     return redirect('home')
@@ -76,7 +87,7 @@ def check_usr():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if 'user' in session:
-        flash('{}, you are already logged in'.format(session['user']['name']), 'info')
+        flash('{}, you are already logged in'.format(session['user']['username']), 'info')
         return redirect('home')
     return render_template('login.html')
 
@@ -84,15 +95,17 @@ def login():
 @app.route('/log_usr', methods=['GET', 'POST'])
 def log_usr():
     data = request.form.to_dict()
-    user = mongo.db.users.find_one({'email': data['email']})
-    if user and bcrypt.check_password_hash(user['password'], data['password']):
-        flash('Welcome back {} !'.format(user['username']), 'success')
-        session['user'] = {'name': user['username'], 'id': str(user['_id'])}
+    user_in_db = mongo.db.users.find_one({'email': data['email']})
+    if user_in_db and bcrypt.check_password_hash(user_in_db['password'], data['password']):
+        user = mongo.db.users.find_one({'_id': user_in_db['_id']}, {'username': 1, 'favorites': 1})
+        user = JSONEncoder().encode(user)
+        session['user'] = json.loads(user)
+        flash('Welcome back {} !'.format(user_in_db['username']), 'success')
         return redirect('home')
-    elif user and not bcrypt.check_password_hash(user['password'], data['password']):
+    elif user_in_db and not bcrypt.check_password_hash(user_in_db['password'], data['password']):
         flash('Login unsuccessful. Please check email and password provided', 'warning')
         return redirect('login')
-    elif not user:
+    elif not user_in_db:
         flash('Login unsuccessful. Please check email', 'warning')
         return render_template('login.html')
 
@@ -100,7 +113,7 @@ def log_usr():
 @app.route('/logout')
 def logout():
     if 'user' in session:
-        username = session['user']['name']
+        username = session['user']['username']
         session.pop('user')
         flash('We hope to see you soon {}'.format(username), 'info')
     else:
@@ -128,7 +141,7 @@ def insert_recipe():
     new_recipe = dict()
 
     # Main required recipe details
-    new_recipe['author_id'] = ObjectId(session['user']['id'])
+    new_recipe['author_id'] = ObjectId(session['user']['_id'])
     new_recipe['name'] = data.pop('rcpname')
     new_recipe['description'] = data.pop('description')
     new_recipe['difficulty'] = data.pop('difficulty')
@@ -163,7 +176,7 @@ def insert_recipe():
     rcp = mongo.db.recipes.insert_one(new_recipe)
 
     # Add recipe's id to user's recipe list
-    mongo.db.users.update({'_id': ObjectId(session['user']['id'])}, {'$push': {'recipes': rcp.inserted_id}})
+    mongo.db.users.update({'_id': ObjectId(session['user']['_id'])}, {'$push': {'recipes': rcp.inserted_id}})
 
     # Rename and store image using recipe's id
     pic = request.files['img']
@@ -202,7 +215,7 @@ def update_rcp(recipe_id):
         data = request.form.to_dict()
         upd_recipe = dict()
 
-        upd_recipe['author_id'] = ObjectId(session['user']['id'])
+        upd_recipe['author_id'] = ObjectId(session['user']['_id'])
         upd_recipe['name'] = data.pop('rcpname')
         upd_recipe['description'] = data.pop('description')
         upd_recipe['difficulty'] = data.pop('difficulty')
