@@ -4,8 +4,12 @@ from myzest import app, mongo, bcrypt
 
 class TestRegistration(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        mongo.db.users.delete_many({})
+
     def setUp(self):
-        self.app = app.test_client()
+        self.client = app.test_client()
 
     def tearDown(self):
         mongo.db.users.delete_one({"username": self.test_user['username']})
@@ -25,7 +29,7 @@ class TestRegistration(unittest.TestCase):
         db_user = mongo.db.users.find_one({})
         self.assertEqual(db_user, None)
 
-        response = self.app.post('/add_user', data=self.test_user)
+        response = self.client.post('/add_user', data=self.test_user)
         self.assertEqual(response.status_code, 302)
 
         db_user = mongo.db.users.find_one({})
