@@ -5,33 +5,35 @@ from myzest import app
 class TestURLs(unittest.TestCase):
 
     def setUp(self):
-        self.app = app.test_client()
+        self.client = app.test_client()
 
     def tearDown(self):
         pass
 
     def test_root_route(self):
-        response = self.app.get('/')
+        response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
 
     def test_home_route(self):
-        response = self.app.get('/home')
+        response = self.client.get('/home')
         self.assertEqual(response.status_code, 200)
 
     def test_login_route(self):
-        response = self.app.get('/login')
+        response = self.client.get('/login')
         self.assertEqual(response.status_code, 200)
 
     def test_register_route(self):
-        response = self.app.get('/register')
+        response = self.client.get('/register')
         self.assertEqual(response.status_code, 200)
 
     def test_recipe_route(self):
         """ '/recipe' needs a recipe id as path variable
          '/recipe/<recipe_id> """
-        response = self.app.get('/recipe/')
+        response = self.client.get('/recipe/')
         self.assertEqual(response.status_code, 404)
 
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_failed_add_recipe(self):
+        """ App should redirect to login anonymous user """
+        response = self.client.get('/addrecipe')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers['Location'], 'http://localhost/login')

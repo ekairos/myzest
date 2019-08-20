@@ -1,8 +1,13 @@
 import unittest
 from myzest import app, mongo, bcrypt
+from flask import session
 
 
 class TestRegistration(unittest.TestCase):
+    """
+    Tests user's registration data is inserted in DB from '/add_user'
+    Then tests if user's session object is created successfully
+    """
 
     @classmethod
     def setUpClass(cls):
@@ -21,9 +26,6 @@ class TestRegistration(unittest.TestCase):
         return self.test_user
 
     def test_registration(self):
-        """
-        Test user's registration data is inserted in DB from '/add_user'
-        """
         self.user_test("Test Name", "1234", "mail@gmail.com")
 
         db_user = mongo.db.users.find_one({})
@@ -37,6 +39,7 @@ class TestRegistration(unittest.TestCase):
         self.assertEqual(db_user['email'], self.test_user['email'])
         self.assertTrue(bcrypt.check_password_hash(db_user['password'], self.test_user['password']))
 
-
-if __name__ == '__main__':
-    unittest.main()
+        with self.client:
+            self.client.get('/')
+            self.assertEqual(session['user'], {"username": db_user['username'],
+                                               "_id": str(db_user['_id'])})

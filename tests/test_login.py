@@ -1,12 +1,13 @@
 import unittest
 from myzest import app, mongo, bcrypt
+from flask import session
 
 
 class TestLogin(unittest.TestCase):
     """
     Test submitted Login data and DB data match.
     Last 3 tests are sequenced after user DB insert
-    'test_wrong_email', 'test_wrong_password', 'test_login'
+    'test_login', 'test_wrong_email', 'test_wrong_password'
     """
 
     test_user = {'username': "Test Name",
@@ -35,6 +36,11 @@ class TestLogin(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('Welcome back Test Name !', str(response.data))
 
+        with self.client:
+            self.client.get('/')
+            self.assertEqual(session['user'], {"username": self.test_user['username'],
+                                               "_id": str(self.test_user['_id'])})
+
     def test_wrong_email(self):
         response = self.client.post('/log_usr', data={'password': "1234",
                                                       'email': "wrong_mail@mail.net"},
@@ -49,7 +55,3 @@ class TestLogin(unittest.TestCase):
 
         self.assertIn('Login unsuccessful. Please check email and password provided',
                       str(response.data))
-
-
-if __name__ == "__main__":
-    unittest.main()
