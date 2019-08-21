@@ -54,9 +54,9 @@
 		{% endfor %}
 	</section>
 
-	{% if session['user'] and session['user']['name'] == author.username %}
-	<a class="btn mb-5" href="{{ url_for('del_rcp', recipe_id=recipe._id) }}">Delete</a>
-	<a class="btn mb-5" href="{{ url_for('update_rcp', recipe_id=recipe._id) }}">Update</a>
+	{% if session['user'] and session['user']['username'] == author.username %}
+		<a class="btn mb-5" href="{{ url_for('del_rcp', recipe_id=recipe._id) }}">Delete</a>
+		<a class="btn mb-5" href="{{ url_for('update_rcp', recipe_id=recipe._id) }}">Update</a>
 	{% endif %}
 </main>
 {% endblock %}

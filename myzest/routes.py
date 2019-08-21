@@ -37,7 +37,7 @@ def get_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})
     author = mongo.db.users.find_one({'_id': ObjectId(recipe['author_id'])})
     mongo.db.recipes.update({'_id': ObjectId(recipe_id)}, {'$inc': {'views': 1}})
-    return render_template('recipe.html', recipe=recipe, author=author)
+    return render_template('recipe.html', recipe=recipe, author=author, session=session)
 
 
 @app.route('/register')
