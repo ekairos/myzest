@@ -40,7 +40,7 @@ def get_recipe(recipe_id):
     return render_template('recipe.html', recipe=recipe, author=author)
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register')
 def register():
     if 'user' in session:
         flash('{}, you are already logged in'.format(session['user']['username']), 'info')
@@ -48,7 +48,7 @@ def register():
     return render_template('register.html')
 
 
-@app.route('/add_user', methods=['GET', 'POST'])
+@app.route('/add_user', methods=['POST'])
 def add_user():
     data = request.form.to_dict()
     hashed_passw = bcrypt.generate_password_hash(data['password']).decode('utf-8')
@@ -84,7 +84,7 @@ def check_usr():
     return 'success'
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login')
 def login():
     if 'user' in session:
         flash('{}, you are already logged in'.format(session['user']['username']), 'info')
@@ -92,7 +92,7 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/log_usr', methods=['GET', 'POST'])
+@app.route('/log_usr', methods=['POST'])
 def log_usr():
     data = request.form.to_dict()
     user_in_db = mongo.db.users.find_one({'email': data['email']})
