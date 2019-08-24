@@ -55,7 +55,8 @@ def add_user():
     new_user = {
         'username': data['username'].title(),
         'email': data['email'].lower(),
-        'password': hashed_passw
+        'password': hashed_passw,
+        'favorites': []
     }
     user_in_db = mongo.db.users.find_one({"$or": [{"username": new_user["username"]}, {"email": new_user["email"]}]})
     if user_in_db:
@@ -197,8 +198,12 @@ def insert_recipe():
 
 @app.route('/del_rcp/<recipe_id>')
 def del_rcp(recipe_id):
-    mongo.db.users.update({"_id": ObjectId(session['user']['id'])}, {'$pull': {'recipes': ObjectId(recipe_id)}})
+    recipe_id = recipe_id
+    mongo.db.users.update({"_id": ObjectId(session['user']['_id'])}, {'$pull': {'recipes': ObjectId(recipe_id)}})
     mongo.db.recipes.remove({"_id": ObjectId(recipe_id)})
+    mongo.db.users.update_many(
+        {'favorites': {'$elemMatch': {'$eq': ObjectId(recipe_id)}}},
+        {'$pull': {'favorites': ObjectId(recipe_id)}})
     return redirect('/home')
 
 
@@ -268,3 +273,34 @@ def update_rcp(recipe_id):
         return redirect('/recipe/{}'.format(recipe_id))
 
     return render_template('updaterecipe.html', recipe=this_recipe, foodtypes=rcp_foodTypes, difficulties=rcp_diff)
+
+
+@app.route('/favme', methods=['POST'])
+def favme():
+    data = request.get_json()
+
+    faved = session['user']['favorites']
+
+    if data['recipe_id'] in faved:
+        mongo.db.users.update({'_id': ObjectId(data['user_id'])},
+                              {'$pull': {'favorites': ObjectId(data['recipe_id'])}})
+        mongo.db.recipes.update({'_id': ObjectId(data['recipe_id'])},
+                                {'$inc': {'favorite': -1}})
+
+        faved.remove(data['recipe_id'])
+        session['user']['favorites'] = faved
+        session.modified = True
+        return jsonify({"message": "removed"})
+
+    elif data['recipe_id'] not in faved:
+        mongo.db.users.update({'_id': ObjectId(data['user_id'])},
+                              {'$push': {'favorites': ObjectId(data['recipe_id'])}})
+        mongo.db.recipes.update({'_id': ObjectId(data['recipe_id'])},
+                                {'$inc': {'favorite': 1}})
+
+        faved.append(data['recipe_id'])
+        session['user']['favorites'] = faved
+        session.modified = True
+        return jsonify({"message": "added"})
+    else:
+        return jsonify({"message": "Operation error"})
