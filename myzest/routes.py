@@ -28,6 +28,9 @@ class JSONEncoder(json.JSONEncoder):
 @app.route('/')
 @app.route('/home')
 def home():
+    if 'views' not in session:
+        session['views'] = []
+
     top_faved = mongo.db.recipes.aggregate([
         {'$sort': {'favorite': -1}},
         {'$limit': 5}
@@ -43,7 +46,11 @@ def home():
 def get_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})
     author = mongo.db.users.find_one({'_id': ObjectId(recipe['author_id'])})
-    mongo.db.recipes.update({'_id': ObjectId(recipe_id)}, {'$inc': {'views': 1}})
+    if recipe_id not in session['views']:
+        session['views'].append(recipe_id)
+        session.modified = True
+        if 'user' not in session or session['user']['_id'] != str(author['_id']):
+            mongo.db.recipes.update({'_id': ObjectId(recipe_id)}, {'$inc': {'views': 1}})
     return render_template('recipe.html', recipe=recipe, author=author, session=session)
 
 
@@ -108,6 +115,12 @@ def log_usr():
         user = mongo.db.users.find_one({'_id': user_in_db['_id']}, {'username': 1, 'favorites': 1})
         user = JSONEncoder().encode(user)
         session['user'] = json.loads(user)
+        views = session['views']
+        for viewed in views:
+            if 'recipes' in user_in_db:
+                for r in user_in_db['recipes']:
+                    if str(r) == viewed:
+                        mongo.db.recipes.update({'_id': ObjectId(viewed)}, {'$inc': {'views': -1}})
         flash('Welcome back {} !'.format(user_in_db['username']), 'success')
         return redirect('home')
     elif user_in_db and not bcrypt.check_password_hash(user_in_db['password'], data['password']):
@@ -123,6 +136,7 @@ def logout():
     if 'user' in session:
         username = session['user']['username']
         session.pop('user')
+        session['views'] = []
         flash('We hope to see you soon {}'.format(username), 'info')
     else:
         flash('You are not logged in', 'warning')
