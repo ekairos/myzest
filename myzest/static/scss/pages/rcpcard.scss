@@ -31,14 +31,17 @@
 .rcpcard-hrate {
 	position: absolute;
 	z-index: 3;
-	bottom: 0;
+	bottom: 2px;
 	font-size: 0.9em;
+	.material-icons {
+		font-size: 1.5em;
+	}
 }
 .rcpcard-hview {
-	left: 5px;
+	left: 10px;
 }
 .rcpcard-hrate {
-	right: 5px;
+	right: 10px;
 }
 .rcpcard-body {
     padding: 1em;

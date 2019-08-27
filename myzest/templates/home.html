@@ -11,9 +11,21 @@
 	<h3 class="rcp-sel-title pb-2 mb-3 pl-3">Latest Recipes</h3>
 	<!-- recipe cards -->
 	<ul class="rcp-sel-short">
-		{% for recipe in recipes %}
+		{% for recipe in latests %}
 		{% include "rcpcard.html" %}
 		{% endfor %}
 	</ul>
 </section>
+
+<!-- Top Recipes Section -->
+<section class="rcp-sel">
+	<h3 class="rcp-sel-title pb-2 mb-3 pl-3">Top Recipes</h3>
+	<!-- recipe cards -->
+	<ul class="rcp-sel-short">
+		{% for recipe in top_faved %}
+		{% include "rcpcard.html" %}
+		{% endfor %}
+	</ul>
+</section>
+
 {% endblock %}

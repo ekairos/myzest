@@ -28,8 +28,15 @@ class JSONEncoder(json.JSONEncoder):
 @app.route('/')
 @app.route('/home')
 def home():
-    recipes = mongo.db.recipes.find()
-    return render_template('home.html', recipes=recipes)
+    top_faved = mongo.db.recipes.aggregate([
+        {'$sort': {'favorite': -1}},
+        {'$limit': 5}
+    ])
+    latests = mongo.db.recipes.aggregate([
+        {'$sort': {'updated': -1}},
+        {'$limit': 5}
+    ])
+    return render_template('home.html', latests=latests, top_faved=top_faved)
 
 
 @app.route('/recipe/<recipe_id>')
