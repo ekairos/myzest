@@ -20,6 +20,7 @@ Recipes author has the possibility to change the privacy of any of their recipes
 
 - User Registration and Login.
 - CRUD operations on recipes.
+- User favorite recipes.
 
 ### Features to add
 
@@ -27,7 +28,6 @@ Recipes author has the possibility to change the privacy of any of their recipes
 - Pagination.
 - Recipe's privacy.
 - Recipe rating.
-- User favorite recipes.
 - User profile page.
 
 
