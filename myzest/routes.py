@@ -110,7 +110,7 @@ def login():
 @app.route('/log_usr', methods=['POST'])
 def log_usr():
     data = request.form.to_dict()
-    user_in_db = mongo.db.users.find_one({'email': data['email']})
+    user_in_db = mongo.db.users.find_one({'email': data['email'].lower()})
     if user_in_db and bcrypt.check_password_hash(user_in_db['password'], data['password']):
         user = mongo.db.users.find_one({'_id': user_in_db['_id']}, {'username': 1, 'favorites': 1})
         user = JSONEncoder().encode(user)
