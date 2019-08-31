@@ -164,11 +164,11 @@ def insert_recipe():
 
     # Main required recipe details
     new_recipe['author_id'] = ObjectId(session['user']['_id'])
-    new_recipe['name'] = data.pop('rcpname')
+    new_recipe['name'] = data.pop('name')
     new_recipe['description'] = data.pop('description')
     new_recipe['difficulty'] = data.pop('difficulty')
-    new_recipe['serves'] = data.pop('serves')
-    new_recipe['time'] = {"total": data.pop('time')}
+    new_recipe['serves'] = int(data.pop('serves'))
+    new_recipe['time'] = {"total": int(data.pop('time'))}
     # initial views
     new_recipe['views'] = 0
     # add time creation/update
@@ -242,11 +242,11 @@ def update_rcp(recipe_id):
         upd_recipe = dict()
 
         upd_recipe['author_id'] = ObjectId(session['user']['_id'])
-        upd_recipe['name'] = data.pop('rcpname')
+        upd_recipe['name'] = data.pop('name')
         upd_recipe['description'] = data.pop('description')
         upd_recipe['difficulty'] = data.pop('difficulty')
-        upd_recipe['serves'] = data.pop('serves')
-        upd_recipe['time'] = {"total": data.pop('time')}
+        upd_recipe['serves'] = int(data.pop('serves'))
+        upd_recipe['time'] = {"total": int(data.pop('time'))}
         upd_recipe['views'] = this_recipe['views']
 
         # Add Ingredients
