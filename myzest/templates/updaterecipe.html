@@ -99,13 +99,13 @@
 				{% if loop.index == 1 %}
 					<div class="input-field col s12 mb-2 mt-2">
 						<label for="step-{{ loop.index }}">Step {{ loop.index }}</label>
-						<textarea class="validate materialize-textarea" name="step-{{ loop.index }}" required maxlength="180">{{ step.description }}</textarea>
+						<textarea class="validate materialize-textarea" name="step-{{ loop.index }}" required maxlength="300">{{ step.description }}</textarea>
 						<span class="helper-text" data-error="This field is required"></span>
 					</div>
 					{% else %}
 					<div class="input-field col s11 mb-2 mt-2">
 						<label for="step-{{ loop.index }}">Step {{ loop.index }}</label>
-						<textarea class="validate materialize-textarea" name="step-{{ loop.index }}" required maxlength="180">{{ step.description }}</textarea>
+						<textarea class="validate materialize-textarea" name="step-{{ loop.index }}" required maxlength="300">{{ step.description }}</textarea>
 						<span class="helper-text" data-error="This field is required"></span>
 					</div>
 					<i class="material-icons col s1" onclick="removeStep(this)">cancel</i>
