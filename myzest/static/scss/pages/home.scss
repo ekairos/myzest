@@ -7,16 +7,25 @@
 .rcp-sel {
 	margin-top: 20px;
 	margin-bottom: 40px;
+	margin-left: 10px;
 }
 .rcp-sel-title {
 	font: {
 		family: 'Donegal One', serif;
 		size: 2rem;
 	}
+	margin-left: 1em;
 }
 .rcp-sel-short {
 	overflow-x: scroll;
 	white-space: nowrap;
-	padding: 10px !important;
 	display: flex;
+
+	// override rcpcard rules on home short selections
+	.rcpcard {
+		width: 220px;
+		.rcpcard-header {
+			width: 220px;
+		}
+	}
 }

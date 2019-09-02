@@ -1,0 +1,148 @@
+<div id="searching-side" class="sidenav-trigger valign-wrapper pt-5 pl-2 pr-2 border-b" data-target="slide-search">
+	<span>Search in the community ... </span>
+	<i class="material-icons">search</i>
+</div>
+<ul id="slide-search" class="sidenav">
+	<form class="mt-6 container" action="{{ url_for('search_recipes') }}" method="POST" enctype="multipart/form-data">
+		<!-- Food type -->
+		<div class="input-field mb-3">
+			<select class="custom-select mr-sm-2" name="foodType">
+				<option selected value="any">Food Type ...</option>
+				{% for food in foodtype %}
+				<option value="{{ food }}">{{ food|title }}</option>
+				{% endfor %}
+			</select>
+		</div>
+
+		<!-- difficulty -->
+		<div class="input-field mb-3">
+			<select class="custom-select mr-sm-2" name="difficulty">
+				<option selected value="any">Difficulty ...</option>
+				{% for diff in difficulties %}
+				<option value="{{ diff }}">{{ diff|title }}</option>
+				{% endfor %}
+			</select>
+		</div>
+
+		<!-- Time -->
+		<div class="mb-4">
+			<div class="row">
+				<div class="input-field col s6">
+					<label for="timer.start">Total duration :</label>
+					<input id="timer-start" type="number" name="timer.start" placeholder="From..." step="5" min="5" max="240">
+				</div>
+				<div class="input-field col s6">
+					<input id="timer-stop" type="number" name="timer.stop" placeholder="To..." step="5" min="5" max="240">
+				</div>
+			</div>
+			<div id="search-timer"></div>
+		</div>
+
+		<!-- Serves -->
+		<div class="mb-4">
+			<div class="row">
+				<div class="input-field col s6">
+					<label for="serve.start">Serves :</label>
+					<input id="serve-start" type="number" name="serve.start" placeholder="From..." min="1" max="20">
+				</div>
+				<div class="input-field col s6">
+					<input id="serve-stop" type="number" name="serve.stop" placeholder="To..." min="1" max="20">
+				</div>
+			</div>
+			<div id="serving"></div>
+		</div>
+
+		<!-- Submit -->
+		<div id="submit-btn">
+			<button class="btn mt-4 mb-4" type="submit">
+				<div class="valign-wrapper">
+					<span class="mr-3">Search</span><i class="material-icons">search</i>
+				</div>
+			</button>
+		</div>
+	</form>
+</ul>
+
+{% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='vendors/nouislider/distribute/nouislider.min.js') }}"></script>
+
+<script type="text/javascript">
+	var searchTimer = document.getElementById('search-timer');
+	noUiSlider.create(searchTimer, {
+		start: [5, 240],
+		connect: true,
+		step: 5,
+		orientation: 'horizontal',
+		range: {
+			'min': 5,
+			'max': 240
+		},
+		format: {
+			from: function (value) {
+        return Number(value.replace(',', ''));
+      },
+      to: function (value) {
+        return Math.round(value);
+      }
+    }
+	});
+
+	var servings = document.getElementById('serving');
+	noUiSlider.create(servings, {
+		start: [1, 20],
+		connect: true,
+		step: 1,
+		orientation: 'horizontal',
+		range: {
+			'min': 1,
+			'max': 20
+		},
+		format: {
+			from: function (value) {
+        return Number(value.replace(',', ''));
+      },
+      to: function (value) {
+        return Math.round(value);
+      }
+    }
+	});
+
+</script>
+
+<script>
+	$(document).ready(function(){
+		$("select").formSelect();
+
+		searchTimer.noUiSlider.on('update', function(values, handle) {
+			if (handle) {
+				$("#timer-stop").val(values[handle]);
+			} else {
+				$("#timer-start").val(values[handle]);
+			}
+		})
+		$("#timer-start").on("change", function() {
+			searchTimer.noUiSlider.set([$(this).val(), null])
+		})
+		$("#timer-stop").on("change", function() {
+			searchTimer.noUiSlider.set([null, $(this).val()])
+		})
+
+		servings.noUiSlider.on('update', function(values, handle) {
+			if (handle) {
+				$("#serve-stop").val(values[handle]);
+			} else {
+				$("#serve-start").val(values[handle]);
+			}
+		})
+		$("#serve-start").on("change", function() {
+			servings.noUiSlider.set([$(this).val(), null])
+		})
+		$("#serve-stop").on("change", function() {
+			servings.noUiSlider.set([null, $(this).val()])
+		})
+
+	});
+
+</script>
+
+{% endblock %}

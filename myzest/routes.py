@@ -39,7 +39,11 @@ def home():
         {'$sort': {'updated': -1}},
         {'$limit': 5}
     ])
-    return render_template('home.html', latests=latests, top_faved=top_faved)
+    return render_template('home.html',
+                           latests=latests,
+                           top_faved=top_faved,
+                           foodtype=rcp_foodTypes,
+                           difficulties=rcp_diff)
 
 
 @app.route('/recipe/<recipe_id>')
@@ -325,3 +329,27 @@ def favme():
         return jsonify({"message": "added"})
     else:
         return jsonify({"message": "Operation error"})
+
+
+@app.route('/searchrecipes', methods=['GET', 'POST'])
+def search_recipes():
+    data = request.form.to_dict()
+    print("search form data", data)
+    time = {
+        '$gte': int(data.pop('timer.start')),
+        '$lte': int(data.pop('timer.stop'))
+    }
+    serves = {
+        '$gte': int(data.pop('serve.start')),
+        '$lte': int(data.pop('serve.stop'))
+    }
+    query = {k: v for (k, v) in data.items() if data[k] != "any"}
+    query['serves'] = serves
+    query['time.total'] = time
+    print("query \n", query)
+    recipes = mongo.db.recipes.find(query)
+    result = list()
+    for r in recipes:
+        result.append(r)
+        print(r['name'])
+    return render_template('recipes.html', recipes=result)

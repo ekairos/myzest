@@ -1,12 +1,12 @@
 .rcpcard {
 	display: inline-block;
 	position: relative;
-	width: 220px;
 	border-radius: 10px;
 	border: none;
 	box-shadow: 0px 2px 5px -2px gray;
 	white-space: normal;
 	font-size: 1rem;
+	margin: 0.25em;
 }
 .rcpcard-header {
 	position: relative;

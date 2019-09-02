@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block pagetitle %} - search results {% endblock %}
+{% block content %}
+<!-- Recipes Found -->
+<section class="rcp-sel">
+	<h3 class="rcp-sel-title mt-4">Recipes found</h3>
+	<!-- recipe cards -->
+	<ul class="rcp-results">
+		{% for recipe in recipes %}
+		{% include "rcpcard.html" %}
+		{% endfor %}
+	</ul>
+</section>
+{% endblock %}

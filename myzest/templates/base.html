@@ -13,7 +13,8 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<!--Import materialize.css-->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
+	<!-- NoUiSlider -->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendors/nouislider/distribute/nouislider.min.css')}}">
 	<!-- Custom Fonts -->
 	<link href="https://fonts.googleapis.com/css?family=Donegal+One|Sahitya:700&display=swap" rel="stylesheet">
 
@@ -101,10 +102,6 @@
 <!-- Materialize JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-
-{% block script %}
-{% endblock %}
-
 <script>
   $(document).ready(function(){
 
@@ -127,6 +124,9 @@
 
   });
 </script>
+
+{% block script %}
+{% endblock %}
 
 </body>
 </html>
