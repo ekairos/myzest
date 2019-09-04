@@ -5,9 +5,14 @@
 	<h1 id="landing-title" class="brand-title pt-1 pb-3">MyZest</h1>
 	<!-- add logo here -->
 
-	{% include "slide-search.html" %}
+	<div id="searching-side" class="sidenav-trigger valign-wrapper pt-5 pl-2 pr-2 border-b" data-target="slide-search">
+		<span>Search in the community ... </span>
+		<i class="material-icons">search</i>
+	</div>
 
 </header>
+
+{% include "slide-search.html" %}
 
 <!-- Latest Recipes Section -->
 <section class="rcp-sel">

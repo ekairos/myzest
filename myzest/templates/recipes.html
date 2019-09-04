@@ -3,7 +3,14 @@
 {% block content %}
 <!-- Recipes Found -->
 <section class="rcp-sel">
-	<h3 class="rcp-sel-title mt-4">Recipes found</h3>
+	<div id="searching-side" class="sidenav-trigger valign-wrapper pt-5 pl-2 pr-2 border-b" data-target="slide-search">
+		<span>Fine tune your search</span>
+		<i class="material-icons">search</i>
+	</div>
+	{% include "slide-search.html" %}
+
+	<h3 class="rcp-sel-title mt-4">Your search results</h3>
+
 	<!-- recipe cards -->
 	<ul class="rcp-results">
 		{% for recipe in recipes %}

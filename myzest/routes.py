@@ -8,6 +8,12 @@ from os import path
 
 
 rcp_diff = ("easy", "average", "hard")
+rcp_sorting = (("name", "Name"),
+               ("updated", "Date"),
+               ("favorite", "Popularity"),
+               ("views", "Viewed"),
+               ("time.total", "Time"),
+               ("serves", "Servings"))
 rcp_foodTypes = mongo.db.foodtype.distinct("name")
 rcp_foodTypes.sort()
 rcp_foodCategories = mongo.db.category.distinct("name")
@@ -43,6 +49,7 @@ def home():
                            latests=latests,
                            top_faved=top_faved,
                            foodtype=rcp_foodTypes,
+                           sorting=rcp_sorting,
                            difficulties=rcp_diff)
 
 
@@ -334,7 +341,7 @@ def favme():
 @app.route('/searchrecipes', methods=['GET', 'POST'])
 def search_recipes():
     data = request.form.to_dict()
-    print("search form data", data)
+    sorting = [(data.pop("sorting"), -1) if data['sorting'] in ['favorite', 'views', 'updated'] else (data.pop("sorting"), 1)]
     time = {
         '$gte': int(data.pop('timer.start')),
         '$lte': int(data.pop('timer.stop'))
@@ -346,10 +353,13 @@ def search_recipes():
     query = {k: v for (k, v) in data.items() if data[k] != "any"}
     query['serves'] = serves
     query['time.total'] = time
-    print("query \n", query)
-    recipes = mongo.db.recipes.find(query)
+    recipes = mongo.db.recipes.find(query).sort(sorting)
     result = list()
     for r in recipes:
         result.append(r)
-        print(r['name'])
-    return render_template('recipes.html', recipes=result)
+    return render_template('recipes.html', recipes=result,
+                           difficulties=rcp_diff,
+                           foodtype=rcp_foodTypes,
+                           filter=query,
+                           sorting=rcp_sorting,
+                           order=sorting[0][0])

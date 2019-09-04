@@ -1,15 +1,17 @@
-<div id="searching-side" class="sidenav-trigger valign-wrapper pt-5 pl-2 pr-2 border-b" data-target="slide-search">
-	<span>Search in the community ... </span>
-	<i class="material-icons">search</i>
-</div>
-<ul id="slide-search" class="sidenav">
+<ul id="slide-search" class="sidenav center-align">
 	<form class="mt-6 container" action="{{ url_for('search_recipes') }}" method="POST" enctype="multipart/form-data">
+
+		<p>Looking for</p>
 		<!-- Food type -->
 		<div class="input-field mb-3">
 			<select class="custom-select mr-sm-2" name="foodType">
-				<option selected value="any">Food Type ...</option>
+				<option selected value="any">All Food Types ...</option>
 				{% for food in foodtype %}
-				<option value="{{ food }}">{{ food|title }}</option>
+					{% if filter and filter.foodType == food %}
+					<option selected value="{{ food }}">{{ food|title }}</option>
+					{% else %}
+					<option value="{{ food }}">{{ food|title }}</option>
+					{% endif %}
 				{% endfor %}
 			</select>
 		</div>
@@ -19,13 +21,17 @@
 			<select class="custom-select mr-sm-2" name="difficulty">
 				<option selected value="any">Difficulty ...</option>
 				{% for diff in difficulties %}
-				<option value="{{ diff }}">{{ diff|title }}</option>
+					{% if filter and filter.difficulty == diff %}
+					<option selected value="{{ diff }}">{{ diff|title }}</option>
+					{% else %}
+					<option value="{{ diff }}">{{ diff|title }}</option>
+					{% endif %}
 				{% endfor %}
 			</select>
 		</div>
 
 		<!-- Time -->
-		<div class="mb-4">
+		<div class="mb-4 pr-4">
 			<div class="row">
 				<div class="input-field col s6">
 					<label for="timer.start">Total duration :</label>
@@ -39,7 +45,7 @@
 		</div>
 
 		<!-- Serves -->
-		<div class="mb-4">
+		<div id="serving-section" class="mb-6 pb-4 pr-4">
 			<div class="row">
 				<div class="input-field col s6">
 					<label for="serve.start">Serves :</label>
@@ -50,6 +56,27 @@
 				</div>
 			</div>
 			<div id="serving"></div>
+		</div>
+
+		<div class="divider"></div>
+
+		<p>Sorting by</p>
+
+		<!-- Sorts -->
+		<div class="mb-4">
+			<div class="row">
+				<div class="input-field col s12">
+					<select class="custom-select mr-sm-2" name="sorting">
+						{% for sort in sorting %}
+							{% if order and order == sort[0] %}
+							<option selected value="{{ sort[0] }}">{{ sort[1]|title }}</option>
+							{% else %}
+							<option value="{{ sort[0] }}">{{ sort[1]|title }}</option>
+							{% endif %}
+						{% endfor %}
+					</select>
+				</div>
+			</div>
 		</div>
 
 		<!-- Submit -->
@@ -67,9 +94,18 @@
 <script type="text/javascript" src="{{ url_for('static', filename='vendors/nouislider/distribute/nouislider.min.js') }}"></script>
 
 <script type="text/javascript">
+
+	// Linking time search sliders
 	var searchTimer = document.getElementById('search-timer');
+
+	{% if filter %}
+		var timeRange = [ {{ filter['time.total']['$gte'] }}, {{ filter['time.total']['$lte'] }} ]
+	{% else %}
+		var timeRange = [5, 240]
+	{% endif %}
+
 	noUiSlider.create(searchTimer, {
-		start: [5, 240],
+		start: timeRange,
 		connect: true,
 		step: 5,
 		orientation: 'horizontal',
@@ -87,9 +123,17 @@
     }
 	});
 
+	// Linking serves search sliders
 	var servings = document.getElementById('serving');
+
+	{% if filter %}
+		var serveRange = [ {{ filter.serves['$gte'] }}, {{ filter.serves['$lte'] }} ]
+	{% else %}
+		var serveRange = [1, 20]
+	{% endif %}
+
 	noUiSlider.create(servings, {
-		start: [1, 20],
+		start: serveRange,
 		connect: true,
 		step: 1,
 		orientation: 'horizontal',
@@ -111,8 +155,13 @@
 
 <script>
 	$(document).ready(function(){
-		$("select").formSelect();
 
+		// Init search sidenav and prevent swipe sliders interactions
+		$(document).ready(function(){
+	    $('#slide-search').sidenav({"draggable": false});
+	  });
+
+		// Link input fields and sliders values
 		searchTimer.noUiSlider.on('update', function(values, handle) {
 			if (handle) {
 				$("#timer-stop").val(values[handle]);
