@@ -21,13 +21,14 @@ Recipes author has the possibility to change the privacy of any of their recipes
 - User Registration and Login.
 - CRUD operations on recipes.
 - User favorite recipes.
+- User search, filter and order recipes.
 
 ### Features to add
 
-- User search, filter and order recipes.
 - Pagination.
 - Recipe's privacy.
-- Recipe rating.
+- Recipe rating.  
+( According to recent UX studies, 5star scoring system might replaced ).
 - User profile page.
 
 
