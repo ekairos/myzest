@@ -3,6 +3,7 @@ from myzest import app, mongo, bcrypt
 from bson.objectid import ObjectId
 import re
 import json
+import math
 from datetime import date
 from os import path
 
@@ -48,8 +49,8 @@ def home():
     return render_template('home.html',
                            latests=latests,
                            top_faved=top_faved,
-                           foodtype=rcp_foodTypes,
-                           sorting=rcp_sorting,
+                           foodtypes=rcp_foodTypes,
+                           sorts=rcp_sorting,
                            difficulties=rcp_diff)
 
 
@@ -340,26 +341,52 @@ def favme():
 
 @app.route('/searchrecipes', methods=['GET', 'POST'])
 def search_recipes():
-    data = request.form.to_dict()
-    sorting = [(data.pop("sorting"), -1) if data['sorting'] in ['favorite', 'views', 'updated'] else (data.pop("sorting"), 1)]
-    time = {
-        '$gte': int(data.pop('timer.start')),
-        '$lte': int(data.pop('timer.stop'))
-    }
-    serves = {
-        '$gte': int(data.pop('serve.start')),
-        '$lte': int(data.pop('serve.stop'))
-    }
-    query = {k: v for (k, v) in data.items() if data[k] != "any"}
-    query['serves'] = serves
-    query['time.total'] = time
-    recipes = mongo.db.recipes.find(query).sort(sorting)
-    result = list()
-    for r in recipes:
-        result.append(r)
-    return render_template('recipes.html', recipes=result,
-                           difficulties=rcp_diff,
-                           foodtype=rcp_foodTypes,
-                           filter=query,
-                           sorting=rcp_sorting,
-                           order=sorting[0][0])
+
+    per_page = 4
+    target_page = 1
+
+    if 'search' not in session:
+        query = {}
+        order = {}
+
+    if request.method == "POST":
+
+        data = request.form.to_dict()
+
+        order = [(data.pop("order"), -1) if data['order'] in ['favorite', 'views', 'updated']
+                 else (data.pop("order"), 1)]
+        time = {
+            "$gte": int(data.pop("timer.start")),
+            "$lte": int(data.pop("timer.stop"))
+        }
+        serves = {
+            '$gte': int(data.pop('serve.start')),
+            '$lte': int(data.pop('serve.stop'))
+        }
+        query = {k: v for (k, v) in data.items() if data[k] != "any"}
+        query['serves'] = serves
+        query['time.total'] = time
+
+        session['search'] = {'query': query,
+                             'order': order}
+
+    if request.method == 'GET':
+        query = session['search']['query']
+        order = session['search']['order']
+        target_page = int(request.args['target_page'])
+
+    recipes = mongo.db.recipes.find(query).sort(order)
+
+    pages = math.ceil(recipes.count() / per_page)
+    to_skip = per_page * (target_page - 1)
+
+    results = recipes.skip(to_skip).limit(per_page)
+
+    return render_template('recipes.html', difficulties=rcp_diff,
+                           foodtypes=rcp_foodTypes,
+                           sorts=rcp_sorting,
+                           query=query,
+                           order=order[0][0],
+                           recipes=results,
+                           pages=pages,
+                           current_page=target_page)

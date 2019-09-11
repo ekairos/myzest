@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
 {% block pagetitle %} - search results {% endblock %}
 {% block content %}
-<!-- Recipes Found -->
-<section class="rcp-sel">
+<header>
 	<div id="searching-side" class="sidenav-trigger valign-wrapper pt-5 pl-2 pr-2 border-b" data-target="slide-search">
 		<span>Fine tune your search</span>
 		<i class="material-icons">search</i>
@@ -10,12 +9,35 @@
 	{% include "slide-search.html" %}
 
 	<h3 class="rcp-sel-title mt-4">Your search results</h3>
+</header>
 
+
+<!-- Recipes Found -->
+<section class="mt-5 mb-5">
 	<!-- recipe cards -->
 	<ul class="rcp-results">
 		{% for recipe in recipes %}
 		{% include "rcpcard.html" %}
 		{% endfor %}
+	</ul>
+	<ul class="pagination center">
+		<li class="disabled">
+			<a {% if current_page != 1 %} href="{{ url_for('search_recipes', target_page=current_page-1) }}" {% endif %}>
+				<i class="material-icons">chevron_left</i>
+			</a>
+		</li>
+		{% for page in range(1, pages + 1) %}
+			{% if page == current_page %}
+			<li class="active"><a>{{ loop.index }}</a></li>
+			{% else %}
+			<li><a href="{{ url_for('search_recipes', target_page=loop.index) }}">{{ loop.index }}</a></li>
+			{% endif %}
+		{% endfor %}
+		<li class="disabled">
+			<a {% if current_page != pages %} href="{{ url_for('search_recipes', target_page=current_page+1) }}" {% endif %}>
+				<i class="material-icons">chevron_right</i>
+			</a>
+		</li>
 	</ul>
 </section>
 {% endblock %}

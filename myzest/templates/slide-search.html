@@ -6,8 +6,8 @@
 		<div class="input-field mb-3">
 			<select class="custom-select mr-sm-2" name="foodType">
 				<option selected value="any">All Food Types ...</option>
-				{% for food in foodtype %}
-					{% if filter and filter.foodType == food %}
+				{% for food in foodtypes %}
+					{% if query and query.foodType == food %}
 					<option selected value="{{ food }}">{{ food|title }}</option>
 					{% else %}
 					<option value="{{ food }}">{{ food|title }}</option>
@@ -21,7 +21,7 @@
 			<select class="custom-select mr-sm-2" name="difficulty">
 				<option selected value="any">Difficulty ...</option>
 				{% for diff in difficulties %}
-					{% if filter and filter.difficulty == diff %}
+					{% if query and query.difficulty == diff %}
 					<option selected value="{{ diff }}">{{ diff|title }}</option>
 					{% else %}
 					<option value="{{ diff }}">{{ diff|title }}</option>
@@ -66,8 +66,8 @@
 		<div class="mb-4">
 			<div class="row">
 				<div class="input-field col s12">
-					<select class="custom-select mr-sm-2" name="sorting">
-						{% for sort in sorting %}
+					<select class="custom-select mr-sm-2" name="order">
+						{% for sort in sorts %}
 							{% if order and order == sort[0] %}
 							<option selected value="{{ sort[0] }}">{{ sort[1]|title }}</option>
 							{% else %}
@@ -98,8 +98,8 @@
 	// Linking time search sliders
 	var searchTimer = document.getElementById('search-timer');
 
-	{% if filter %}
-		var timeRange = [ {{ filter['time.total']['$gte'] }}, {{ filter['time.total']['$lte'] }} ]
+	{% if query %}
+		var timeRange = [ {{ query['time.total']['$gte'] }}, {{ query['time.total']['$lte'] }} ]
 	{% else %}
 		var timeRange = [5, 240]
 	{% endif %}
@@ -126,8 +126,8 @@
 	// Linking serves search sliders
 	var servings = document.getElementById('serving');
 
-	{% if filter %}
-		var serveRange = [ {{ filter.serves['$gte'] }}, {{ filter.serves['$lte'] }} ]
+	{% if query %}
+		var serveRange = [ {{ query.serves['$gte'] }}, {{ query.serves['$lte'] }} ]
 	{% else %}
 		var serveRange = [1, 20]
 	{% endif %}
