@@ -1,5 +1,7 @@
 # MyZest
 
+**_Live preview_** [on Heroku](https://myzest.herokuapp.com/)       
+
 Table Of Content
 
 - [Overview](#overview)
@@ -22,12 +24,12 @@ Recipes author has the possibility to change the privacy of any of their recipes
 - CRUD operations on recipes.
 - User favorite recipes.
 - User search, filter and order recipes.
+- Pagination.
 
 ### Features to add
 
-- Pagination.
 - Recipe's privacy.
-- Recipe rating.  
+- Recipe rating.
 ( According to recent UX studies, 5star scoring system might replaced ).
 - User profile page.
 
@@ -55,5 +57,3 @@ Recipes author has the possibility to change the privacy of any of their recipes
 
 This project is licensed under the MIT License.
 See the [LICENSE.md](./LICENSE.md) file for license rights and limitations (MIT).
-
-
