@@ -3,11 +3,18 @@ from myzest import app, mongo, bcrypt
 from bson.objectid import ObjectId
 import re
 import json
+import math
 from datetime import date
 from os import path
 
 
 rcp_diff = ("easy", "average", "hard")
+rcp_sorting = (("name", "Name"),
+               ("updated", "Date"),
+               ("favorite", "Popularity"),
+               ("views", "Viewed"),
+               ("time.total", "Time"),
+               ("serves", "Servings"))
 rcp_foodTypes = mongo.db.foodtype.distinct("name")
 rcp_foodTypes.sort()
 rcp_foodCategories = mongo.db.category.distinct("name")
@@ -28,19 +35,38 @@ class JSONEncoder(json.JSONEncoder):
 @app.route('/')
 @app.route('/home')
 def home():
-    recipes = mongo.db.recipes.find()
-    return render_template('home.html', recipes=recipes)
+    if 'views' not in session:
+        session['views'] = []
+
+    top_faved = mongo.db.recipes.aggregate([
+        {'$sort': {'favorite': -1}},
+        {'$limit': 5}
+    ])
+    latests = mongo.db.recipes.aggregate([
+        {'$sort': {'updated': -1}},
+        {'$limit': 5}
+    ])
+    return render_template('home.html',
+                           latests=latests,
+                           top_faved=top_faved,
+                           foodtypes=rcp_foodTypes,
+                           sorts=rcp_sorting,
+                           difficulties=rcp_diff)
 
 
 @app.route('/recipe/<recipe_id>')
 def get_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})
     author = mongo.db.users.find_one({'_id': ObjectId(recipe['author_id'])})
-    mongo.db.recipes.update({'_id': ObjectId(recipe_id)}, {'$inc': {'views': 1}})
-    return render_template('recipe.html', recipe=recipe, author=author)
+    if recipe_id not in session['views']:
+        session['views'].append(recipe_id)
+        session.modified = True
+        if 'user' not in session or session['user']['_id'] != str(author['_id']):
+            mongo.db.recipes.update({'_id': ObjectId(recipe_id)}, {'$inc': {'views': 1}})
+    return render_template('recipe.html', recipe=recipe, author=author, session=session)
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register')
 def register():
     if 'user' in session:
         flash('{}, you are already logged in'.format(session['user']['username']), 'info')
@@ -48,14 +74,15 @@ def register():
     return render_template('register.html')
 
 
-@app.route('/add_user', methods=['GET', 'POST'])
+@app.route('/add_user', methods=['POST'])
 def add_user():
     data = request.form.to_dict()
     hashed_passw = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     new_user = {
         'username': data['username'].title(),
         'email': data['email'].lower(),
-        'password': hashed_passw
+        'password': hashed_passw,
+        'favorites': []
     }
     user_in_db = mongo.db.users.find_one({"$or": [{"username": new_user["username"]}, {"email": new_user["email"]}]})
     if user_in_db:
@@ -84,7 +111,7 @@ def check_usr():
     return 'success'
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login')
 def login():
     if 'user' in session:
         flash('{}, you are already logged in'.format(session['user']['username']), 'info')
@@ -92,14 +119,20 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/log_usr', methods=['GET', 'POST'])
+@app.route('/log_usr', methods=['POST'])
 def log_usr():
     data = request.form.to_dict()
-    user_in_db = mongo.db.users.find_one({'email': data['email']})
+    user_in_db = mongo.db.users.find_one({'email': data['email'].lower()})
     if user_in_db and bcrypt.check_password_hash(user_in_db['password'], data['password']):
         user = mongo.db.users.find_one({'_id': user_in_db['_id']}, {'username': 1, 'favorites': 1})
         user = JSONEncoder().encode(user)
         session['user'] = json.loads(user)
+        views = session['views']
+        for viewed in views:
+            if 'recipes' in user_in_db:
+                for r in user_in_db['recipes']:
+                    if str(r) == viewed:
+                        mongo.db.recipes.update({'_id': ObjectId(viewed)}, {'$inc': {'views': -1}})
         flash('Welcome back {} !'.format(user_in_db['username']), 'success')
         return redirect('home')
     elif user_in_db and not bcrypt.check_password_hash(user_in_db['password'], data['password']):
@@ -115,6 +148,7 @@ def logout():
     if 'user' in session:
         username = session['user']['username']
         session.pop('user')
+        session['views'] = []
         flash('We hope to see you soon {}'.format(username), 'info')
     else:
         flash('You are not logged in', 'warning')
@@ -142,11 +176,11 @@ def insert_recipe():
 
     # Main required recipe details
     new_recipe['author_id'] = ObjectId(session['user']['_id'])
-    new_recipe['name'] = data.pop('rcpname')
+    new_recipe['name'] = data.pop('name')
     new_recipe['description'] = data.pop('description')
     new_recipe['difficulty'] = data.pop('difficulty')
-    new_recipe['serves'] = data.pop('serves')
-    new_recipe['time'] = {"total": data.pop('time')}
+    new_recipe['serves'] = int(data.pop('serves'))
+    new_recipe['time'] = {"total": int(data.pop('time'))}
     # initial views
     new_recipe['views'] = 0
     # add time creation/update
@@ -197,8 +231,12 @@ def insert_recipe():
 
 @app.route('/del_rcp/<recipe_id>')
 def del_rcp(recipe_id):
-    mongo.db.users.update({"_id": ObjectId(session['user']['id'])}, {'$pull': {'recipes': ObjectId(recipe_id)}})
+    recipe_id = recipe_id
+    mongo.db.users.update({"_id": ObjectId(session['user']['_id'])}, {'$pull': {'recipes': ObjectId(recipe_id)}})
     mongo.db.recipes.remove({"_id": ObjectId(recipe_id)})
+    mongo.db.users.update_many(
+        {'favorites': {'$elemMatch': {'$eq': ObjectId(recipe_id)}}},
+        {'$pull': {'favorites': ObjectId(recipe_id)}})
     return redirect('/home')
 
 
@@ -216,11 +254,11 @@ def update_rcp(recipe_id):
         upd_recipe = dict()
 
         upd_recipe['author_id'] = ObjectId(session['user']['_id'])
-        upd_recipe['name'] = data.pop('rcpname')
+        upd_recipe['name'] = data.pop('name')
         upd_recipe['description'] = data.pop('description')
         upd_recipe['difficulty'] = data.pop('difficulty')
-        upd_recipe['serves'] = data.pop('serves')
-        upd_recipe['time'] = {"total": data.pop('time')}
+        upd_recipe['serves'] = int(data.pop('serves'))
+        upd_recipe['time'] = {"total": int(data.pop('time'))}
         upd_recipe['views'] = this_recipe['views']
 
         # Add Ingredients
@@ -268,3 +306,87 @@ def update_rcp(recipe_id):
         return redirect('/recipe/{}'.format(recipe_id))
 
     return render_template('updaterecipe.html', recipe=this_recipe, foodtypes=rcp_foodTypes, difficulties=rcp_diff)
+
+
+@app.route('/favme', methods=['POST'])
+def favme():
+    data = request.get_json()
+
+    faved = session['user']['favorites']
+
+    if data['recipe_id'] in faved:
+        mongo.db.users.update({'_id': ObjectId(data['user_id'])},
+                              {'$pull': {'favorites': ObjectId(data['recipe_id'])}})
+        mongo.db.recipes.update({'_id': ObjectId(data['recipe_id'])},
+                                {'$inc': {'favorite': -1}})
+
+        faved.remove(data['recipe_id'])
+        session['user']['favorites'] = faved
+        session.modified = True
+        return jsonify({"message": "removed"})
+
+    elif data['recipe_id'] not in faved:
+        mongo.db.users.update({'_id': ObjectId(data['user_id'])},
+                              {'$push': {'favorites': ObjectId(data['recipe_id'])}})
+        mongo.db.recipes.update({'_id': ObjectId(data['recipe_id'])},
+                                {'$inc': {'favorite': 1}})
+
+        faved.append(data['recipe_id'])
+        session['user']['favorites'] = faved
+        session.modified = True
+        return jsonify({"message": "added"})
+    else:
+        return jsonify({"message": "Operation error"})
+
+
+@app.route('/searchrecipes', methods=['GET', 'POST'])
+def search_recipes():
+
+    per_page = 4
+    target_page = 1
+
+    if 'search' not in session:
+        query = {}
+        order = {}
+
+    if request.method == "POST":
+
+        data = request.form.to_dict()
+
+        order = [(data.pop("order"), -1) if data['order'] in ['favorite', 'views', 'updated']
+                 else (data.pop("order"), 1)]
+        time = {
+            "$gte": int(data.pop("timer.start")),
+            "$lte": int(data.pop("timer.stop"))
+        }
+        serves = {
+            '$gte': int(data.pop('serve.start')),
+            '$lte': int(data.pop('serve.stop'))
+        }
+        query = {k: v for (k, v) in data.items() if data[k] != "any"}
+        query['serves'] = serves
+        query['time.total'] = time
+
+        session['search'] = {'query': query,
+                             'order': order}
+
+    if request.method == 'GET':
+        query = session['search']['query']
+        order = session['search']['order']
+        target_page = int(request.args['target_page'])
+
+    recipes = mongo.db.recipes.find(query).sort(order)
+
+    pages = math.ceil(recipes.count() / per_page)
+    to_skip = per_page * (target_page - 1)
+
+    results = recipes.skip(to_skip).limit(per_page)
+
+    return render_template('recipes.html', difficulties=rcp_diff,
+                           foodtypes=rcp_foodTypes,
+                           sorts=rcp_sorting,
+                           query=query,
+                           order=order[0][0],
+                           recipes=results,
+                           pages=pages,
+                           current_page=target_page)

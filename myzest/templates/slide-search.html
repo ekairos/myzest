@@ -1,0 +1,197 @@
+<ul id="slide-search" class="sidenav center-align">
+	<form class="mt-6 container" action="{{ url_for('search_recipes') }}" method="POST" enctype="multipart/form-data">
+
+		<p>Looking for</p>
+		<!-- Food type -->
+		<div class="input-field mb-3">
+			<select class="custom-select mr-sm-2" name="foodType">
+				<option selected value="any">All Food Types ...</option>
+				{% for food in foodtypes %}
+					{% if query and query.foodType == food %}
+					<option selected value="{{ food }}">{{ food|title }}</option>
+					{% else %}
+					<option value="{{ food }}">{{ food|title }}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+		</div>
+
+		<!-- difficulty -->
+		<div class="input-field mb-3">
+			<select class="custom-select mr-sm-2" name="difficulty">
+				<option selected value="any">Difficulty ...</option>
+				{% for diff in difficulties %}
+					{% if query and query.difficulty == diff %}
+					<option selected value="{{ diff }}">{{ diff|title }}</option>
+					{% else %}
+					<option value="{{ diff }}">{{ diff|title }}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+		</div>
+
+		<!-- Time -->
+		<div class="mb-4 pr-4">
+			<div class="row">
+				<div class="input-field col s6">
+					<label for="timer.start">Total duration :</label>
+					<input id="timer-start" type="number" name="timer.start" placeholder="From..." step="5" min="5" max="240">
+				</div>
+				<div class="input-field col s6">
+					<input id="timer-stop" type="number" name="timer.stop" placeholder="To..." step="5" min="5" max="240">
+				</div>
+			</div>
+			<div id="search-timer"></div>
+		</div>
+
+		<!-- Serves -->
+		<div id="serving-section" class="mb-6 pb-4 pr-4">
+			<div class="row">
+				<div class="input-field col s6">
+					<label for="serve.start">Serves :</label>
+					<input id="serve-start" type="number" name="serve.start" placeholder="From..." min="1" max="20">
+				</div>
+				<div class="input-field col s6">
+					<input id="serve-stop" type="number" name="serve.stop" placeholder="To..." min="1" max="20">
+				</div>
+			</div>
+			<div id="serving"></div>
+		</div>
+
+		<div class="divider"></div>
+
+		<p>Sorting by</p>
+
+		<!-- Sorts -->
+		<div class="mb-4">
+			<div class="row">
+				<div class="input-field col s12">
+					<select class="custom-select mr-sm-2" name="order">
+						{% for sort in sorts %}
+							{% if order and order == sort[0] %}
+							<option selected value="{{ sort[0] }}">{{ sort[1]|title }}</option>
+							{% else %}
+							<option value="{{ sort[0] }}">{{ sort[1]|title }}</option>
+							{% endif %}
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<!-- Submit -->
+		<div id="submit-btn">
+			<button class="btn mt-4 mb-4" type="submit">
+				<div class="valign-wrapper">
+					<span class="mr-3">Search</span><i class="material-icons">search</i>
+				</div>
+			</button>
+		</div>
+	</form>
+</ul>
+
+{% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='vendors/nouislider/distribute/nouislider.min.js') }}"></script>
+
+<script type="text/javascript">
+
+	// Linking time search sliders
+	var searchTimer = document.getElementById('search-timer');
+
+	{% if query %}
+		var timeRange = [ {{ query['time.total']['$gte'] }}, {{ query['time.total']['$lte'] }} ]
+	{% else %}
+		var timeRange = [5, 240]
+	{% endif %}
+
+	noUiSlider.create(searchTimer, {
+		start: timeRange,
+		connect: true,
+		step: 5,
+		orientation: 'horizontal',
+		range: {
+			'min': 5,
+			'max': 240
+		},
+		format: {
+			from: function (value) {
+        return Number(value.replace(',', ''));
+      },
+      to: function (value) {
+        return Math.round(value);
+      }
+    }
+	});
+
+	// Linking serves search sliders
+	var servings = document.getElementById('serving');
+
+	{% if query %}
+		var serveRange = [ {{ query.serves['$gte'] }}, {{ query.serves['$lte'] }} ]
+	{% else %}
+		var serveRange = [1, 20]
+	{% endif %}
+
+	noUiSlider.create(servings, {
+		start: serveRange,
+		connect: true,
+		step: 1,
+		orientation: 'horizontal',
+		range: {
+			'min': 1,
+			'max': 20
+		},
+		format: {
+			from: function (value) {
+        return Number(value.replace(',', ''));
+      },
+      to: function (value) {
+        return Math.round(value);
+      }
+    }
+	});
+
+</script>
+
+<script>
+	$(document).ready(function(){
+
+		// Init search sidenav and prevent swipe sliders interactions
+		$(document).ready(function(){
+	    $('#slide-search').sidenav({"draggable": false});
+	  });
+
+		// Link input fields and sliders values
+		searchTimer.noUiSlider.on('update', function(values, handle) {
+			if (handle) {
+				$("#timer-stop").val(values[handle]);
+			} else {
+				$("#timer-start").val(values[handle]);
+			}
+		})
+		$("#timer-start").on("change", function() {
+			searchTimer.noUiSlider.set([$(this).val(), null])
+		})
+		$("#timer-stop").on("change", function() {
+			searchTimer.noUiSlider.set([null, $(this).val()])
+		})
+
+		servings.noUiSlider.on('update', function(values, handle) {
+			if (handle) {
+				$("#serve-stop").val(values[handle]);
+			} else {
+				$("#serve-start").val(values[handle]);
+			}
+		})
+		$("#serve-start").on("change", function() {
+			servings.noUiSlider.set([$(this).val(), null])
+		})
+		$("#serve-stop").on("change", function() {
+			servings.noUiSlider.set([null, $(this).val()])
+		})
+
+	});
+
+</script>
+
+{% endblock %}

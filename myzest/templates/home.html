@@ -1,19 +1,39 @@
 {% extends 'base.html' %}
 {% block pagetitle %} - Home {% endblock %}
 {% block content %}
-<header class="landing">
-	<h1 id="landing-title" class="brand-title center-align">MyZest</h1>
+<header class="landing center-align mb-6">
+	<h1 id="landing-title" class="brand-title pt-1 pb-3">MyZest</h1>
 	<!-- add logo here -->
+
+	<div id="searching-side" class="sidenav-trigger valign-wrapper pt-5 pl-2 pr-2 border-b" data-target="slide-search">
+		<span>Search in the community ... </span>
+		<i class="material-icons">search</i>
+	</div>
+
 </header>
+
+{% include "slide-search.html" %}
 
 <!-- Latest Recipes Section -->
 <section class="rcp-sel">
-	<h3 class="rcp-sel-title pb-2 mb-3 pl-3">Latest Recipes</h3>
+	<h3 class="rcp-sel-title">Latest Recipes</h3>
 	<!-- recipe cards -->
 	<ul class="rcp-sel-short">
-		{% for recipe in recipes %}
+		{% for recipe in latests %}
 		{% include "rcpcard.html" %}
 		{% endfor %}
 	</ul>
 </section>
+
+<!-- Top Recipes Section -->
+<section class="rcp-sel">
+	<h3 class="rcp-sel-title">Top Recipes</h3>
+	<!-- recipe cards -->
+	<ul class="rcp-sel-short">
+		{% for recipe in top_faved %}
+		{% include "rcpcard.html" %}
+		{% endfor %}
+	</ul>
+</section>
+
 {% endblock %}

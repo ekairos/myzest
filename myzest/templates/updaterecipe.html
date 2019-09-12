@@ -2,14 +2,14 @@
 {% block pagetitle %} - Update recipe {% endblock %}
 {% block content %}
 <header class="container mt-3 mb-4">
-	<h1>Add your new recipe</h1>
+	<h1>Update your recipe</h1>
 </header>
 <main class="container">
 	<form id="updRecipeForm" action="" method="POST" enctype="multipart/form-data">
 
 		<div class="input-field mb-2">
 			<label for="rcpname">Recipe Name</label>
-			<input class="validate" name="rcpname" type="text" maxlength="50" required value="{{ recipe.name }}">
+			<input class="validate" name="name" type="text" maxlength="50" required value="{{ recipe.name }}">
 			<span class="helper-text" data-error="This field is required"></span>
 		</div>
 
@@ -37,7 +37,7 @@
 		<!-- serving -->
 		<div class="range-field">
 			<label for="serves">Serves</label>
-			<output id="serving" for="#serves" class="form-value ml-4">{{ recipe.serves }}</output>
+			<output id="serving" for="serves" class="form-value ml-4">{{ recipe.serves }}</output>
 			<input type="range" id="serves" name="serves" min="1" max="20" value="{{ recipe.serves }}" oninput="serving.value = serves.value"/>
 			<span class="helper-text" data-error=""></span>
 		</div>
@@ -45,7 +45,7 @@
 		<!-- time -->
 		<div class="range-field">
 			<label for="time">Time</label>
-			<output id="timer" for="#time" class="form-value ml-4">{{ recipe.time.total }}</output>
+			<output id="timer" for="time" class="form-value ml-4">{{ recipe.time.total }}</output>
 			<input type="range" id="time" name="time" min="5" max="240" step="5" value="{{ recipe.time.total }}" oninput="timer.value = time.value"/>
 			<span class="helper-text" data-error=""></span>
 		</div>
@@ -99,13 +99,13 @@
 				{% if loop.index == 1 %}
 					<div class="input-field col s12 mb-2 mt-2">
 						<label for="step-{{ loop.index }}">Step {{ loop.index }}</label>
-						<textarea class="validate materialize-textarea" name="step-{{ loop.index }}" required maxlength="180">{{ step.description }}</textarea>
+						<textarea class="validate materialize-textarea" name="step-{{ loop.index }}" required maxlength="300">{{ step.description }}</textarea>
 						<span class="helper-text" data-error="This field is required"></span>
 					</div>
 					{% else %}
 					<div class="input-field col s11 mb-2 mt-2">
 						<label for="step-{{ loop.index }}">Step {{ loop.index }}</label>
-						<textarea class="validate materialize-textarea" name="step-{{ loop.index }}" required maxlength="180">{{ step.description }}</textarea>
+						<textarea class="validate materialize-textarea" name="step-{{ loop.index }}" required maxlength="300">{{ step.description }}</textarea>
 						<span class="helper-text" data-error="This field is required"></span>
 					</div>
 					<i class="material-icons col s1" onclick="removeStep(this)">cancel</i>

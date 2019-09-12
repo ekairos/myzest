@@ -1,12 +1,18 @@
-<li class="rcpcard hoverable ml-1 mr-1">
+<li class="rcpcard hoverable">
 	<header class="rcpcard-header">
 		<img class="rcpcard-img" src="static/img/recipes/{{ recipe.image }}"
-		     alt="{{ recipe.name }}" width="220px">
+		     alt="{{ recipe.name }}" width="100%">
 		<div class="rcpcard-grad-overlay"></div>
-		<div class="rcpcard-hview">{{ recipe.views }} view{% if recipe.views != 1 %}s{% endif %}</div>
-		{% if "rate" in recipe %}
-		<div class="rcpcard-hrate">{{ recipe.rate.score }} on {{ recipe.rate.nbr }} votes</div>
-		{% endif %}
+			<div class="rcpcard-hview valign-wrapper">
+				<span>{{ recipe.views }}</span>
+				<i class="material-icons ml-1">visibility</i>
+			</div>
+			{% if "favorite" in recipe %}
+			<div class="rcpcard-hrate valign-wrapper">
+				<span>{{ recipe.favorite }}</span>
+				<i class="material-icons ml-1">favorite</i>
+			</div>
+			{% endif %}
 	</header>
 	<section class="rcpcard-body">
 		<h4 class="pb-2 mb-1 border-b"><a href="{{ url_for('get_recipe', recipe_id=recipe._id) }}">{{ recipe.name }}</a></h4>

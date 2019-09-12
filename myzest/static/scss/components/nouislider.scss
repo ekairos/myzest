@@ -1,0 +1,26 @@
+.noUi-horizontal {
+
+	height: 2px;
+	background-origin: none;
+	border: none;
+
+	.noUi-handle {
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		top: -8px;
+
+		&::before,
+		&::after {
+			content: none;
+			display: none;
+		}
+	}
+}
+.noUi-touch-area {
+	position: relative;
+	top: -10px;
+	left: -10px;
+	height: 200%;
+	width: 200%;
+}

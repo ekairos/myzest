@@ -61,7 +61,7 @@ $(document).ready(function() {
         let step = '<li class="row valign-wrapper">\
                     <div class="input-field col s11 mb-2 mt-2">\
                     <label for="step-' + stepCount + '">Step ' + stepCount + '</label>\
-                    <textarea class="validate materialize-textarea" name="step-' + stepCount + '" required maxlength="180"></textarea>\
+                    <textarea class="validate materialize-textarea" name="step-' + stepCount + '" required maxlength="300"></textarea>\
                     <span class="helper-text" data-error="This field is required"></span>\
                     </div class="col s1">\
                     <i class="material-icons col s1" onclick="removeStep(this)">cancel</i>\

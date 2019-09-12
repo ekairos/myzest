@@ -9,7 +9,7 @@
 
 		<div class="input-field mb-2">
 			<label for="rcpname">Recipe Name</label>
-			<input class="validate" name="rcpname" type="text" maxlength="50" required>
+			<input class="validate" name="name" type="text" maxlength="50" required>
 			<span class="helper-text" data-error="This field is required"></span>
 		</div>
 
@@ -34,7 +34,7 @@
 		<!-- serving -->
 		<div class="range-field">
 			<label for="serves">Serves</label>
-			<output id="serving" for="#serves" class="form-value ml-4">4</output>
+			<output id="serving" for="serves" class="form-value ml-4">4</output>
 			<input type="range" id="serves" name="serves" min="1" max="20" value="4" oninput="serving.value = serves.value"/>
 			<span class="helper-text" data-error=""></span>
 		</div>
@@ -42,7 +42,7 @@
 		<!-- time -->
 		<div class="range-field">
 			<label for="time">Time</label>
-			<output id="timer" for="#time" class="form-value ml-4">30</output>
+			<output id="timer" for="time" class="form-value ml-4">30</output>
 			<input type="range" id="time" name="time" min="5" max="240" step="5" value="30" oninput="timer.value = time.value"/>
 			<span class="helper-text" data-error=""></span>
 		</div>
@@ -78,7 +78,7 @@
 				<li class="row step-item">
 					<div class="input-field col s12 mb-2 mt-2">
 						<label for="step-1">Step 1</label>
-						<textarea class="validate materialize-textarea" name="step-1" required maxlength="180"></textarea>
+						<textarea class="validate materialize-textarea" name="step-1" required maxlength="300"></textarea>
 						<span class="helper-text" data-error="This field is required"></span>
 					</div>
 				</li>
@@ -142,7 +142,6 @@
 {% block script %}
 <script>
 	$(document).ready(function(){
-	    $("select").formSelect();
 	    $('.collapsible').collapsible({accordion: false});
 	});
 </script>

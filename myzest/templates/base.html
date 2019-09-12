@@ -13,7 +13,8 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<!--Import materialize.css-->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
+	<!-- NoUiSlider -->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendors/nouislider/distribute/nouislider.min.css')}}">
 	<!-- Custom Fonts -->
 	<link href="https://fonts.googleapis.com/css?family=Donegal+One|Sahitya:700&display=swap" rel="stylesheet">
 
@@ -30,6 +31,7 @@
 			<a href="#" data-target="side-menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
 			<ul class="right hide-on-med-and-down">
 				<li class=""><a href="{{ url_for('home') }}">Home</a></li>
+				<li class="sidenav-trigger" data-target="slide-search"><a href="#">Search</a></li>
 				{% if 'user' not in session %}
 					<li class=""><a href="{{ url_for('register') }}">Register</a></li>
 					<li class=""><a href="{{ url_for('login') }}">Login</a></li>
@@ -44,6 +46,7 @@
 </div>
 <ul class="sidenav" id="side-menu">
 	<li class=""><a href="{{ url_for('home') }}">Home</a></li>
+	<li class="sidenav-trigger sidenav-close" data-target="slide-search"><a href="#">Search</a></li>
 	{% if 'user' not in session %}
 		<li class=""><a href="{{ url_for('register') }}">Register</a></li>
 		<li class=""><a href="{{ url_for('login') }}">Login</a></li>
@@ -101,17 +104,17 @@
 <!-- Materialize JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-
-{% block script %}
-{% endblock %}
-
 <script>
   $(document).ready(function(){
-    $(".sidenav").sidenav();
 
-    // active page
+     // Init materialize sidenav for main navbar
+    $("#side-menu").sidenav();
+
+    // Init materializecss form select
+		$("select").formSelect();
+
+    // navbar active page
     var currentPath = location.pathname;
-
     $("#myzest-nav ul [href], .sidenav [href]").each(function() {
     	if ($(this).attr("href") == currentPath) {
     		$(this).parent("li").addClass("active");
@@ -121,9 +124,14 @@
     	}
     });
 
-  });
+    // Init materialize tooltips
+    $('.tooltipped').tooltip();
 
+  });
 </script>
+
+{% block script %}
+{% endblock %}
 
 </body>
 </html>
