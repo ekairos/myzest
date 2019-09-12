@@ -1,5 +1,6 @@
 import unittest
-from myzest import app
+from myzest import app, mongo
+import json
 
 
 class TestURLs(unittest.TestCase):
@@ -7,8 +8,10 @@ class TestURLs(unittest.TestCase):
     def setUp(self):
         self.client = app.test_client()
 
-    def tearDown(self):
-        pass
+    @classmethod
+    def tearDownClass(cls):
+        mongo.db.recipes.delete_many({})
+        mongo.db.users.delete_many({})
 
     def test_root_route(self):
         response = self.client.get('/')
@@ -31,6 +34,21 @@ class TestURLs(unittest.TestCase):
          '/recipe/<recipe_id> """
         response = self.client.get('/recipe/')
         self.assertEqual(response.status_code, 404)
+
+        author_file = open('tests/fake_user.json', 'r')
+        author = json.load(author_file)
+        ins_author = mongo.db.users.insert_one(author)
+        author_file.close()
+
+        rcp_file = open('tests/fake_recipe.json', 'r')
+        recipe = json.load(rcp_file)
+        recipe['author_id'] = ins_author.inserted_id
+        ins_rcp = mongo.db.recipes.insert_one(recipe)
+        rcp_file.close()
+
+        self.client.get('/')
+        response = self.client.get('/recipe/{}'.format(ins_rcp.inserted_id))
+        self.assertEqual(response.status_code, 200)
 
     def test_failed_add_recipe(self):
         """ App should redirect to login anonymous user """
