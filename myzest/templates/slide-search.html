@@ -1,11 +1,11 @@
-<ul id="slide-search" class="sidenav center-align">
+<ul id="slide-search" class="sidenav txt-ctr">
 	<form class="mt-6 container" action="{{ url_for('search_recipes') }}" method="POST" enctype="multipart/form-data">
 
 		<p>Looking for</p>
 		<!-- Food type -->
-		<div class="input-field mb-3">
+		<div id="food-field" class="input-field pb-2">
 			<select class="custom-select mr-sm-2" name="foodType">
-				<option selected value="any">All Food Types ...</option>
+				<option selected value="any">Any</option>
 				{% for food in foodtypes %}
 					{% if query and query.foodType == food %}
 					<option selected value="{{ food }}">{{ food|title }}</option>
@@ -14,12 +14,13 @@
 					{% endif %}
 				{% endfor %}
 			</select>
+			<label>Food Type</label>
 		</div>
 
 		<!-- difficulty -->
-		<div class="input-field mb-3">
+		<div id="diff-field" class="input-field">
 			<select class="custom-select mr-sm-2" name="difficulty">
-				<option selected value="any">Difficulty ...</option>
+				<option selected value="any">Any</option>
 				{% for diff in difficulties %}
 					{% if query and query.difficulty == diff %}
 					<option selected value="{{ diff }}">{{ diff|title }}</option>
@@ -28,13 +29,14 @@
 					{% endif %}
 				{% endfor %}
 			</select>
+			<label>Difficulty</label>
 		</div>
 
 		<!-- Time -->
 		<div class="mb-4 pr-4">
 			<div class="row">
 				<div class="input-field col s6">
-					<label for="timer.start">Total duration :</label>
+					<label>Total duration :</label>
 					<input id="timer-start" type="number" name="timer.start" placeholder="From..." step="5" min="5" max="240">
 				</div>
 				<div class="input-field col s6">
@@ -48,7 +50,7 @@
 		<div id="serving-section" class="mb-6 pb-4 pr-4">
 			<div class="row">
 				<div class="input-field col s6">
-					<label for="serve.start">Serves :</label>
+					<label>Serves :</label>
 					<input id="serve-start" type="number" name="serve.start" placeholder="From..." min="1" max="20">
 				</div>
 				<div class="input-field col s6">
@@ -80,10 +82,11 @@
 		</div>
 
 		<!-- Submit -->
+		<small id="recipe-count">-- recipes matching</small>
 		<div id="submit-btn">
 			<button class="btn mt-4 mb-4" type="submit">
 				<div class="valign-wrapper">
-					<span class="mr-3">Search</span><i class="material-icons">search</i>
+					<span class="mr-3">Get recipes</span><i class="material-icons">search</i>
 				</div>
 			</button>
 		</div>
@@ -157,9 +160,7 @@
 	$(document).ready(function(){
 
 		// Init search sidenav and prevent swipe sliders interactions
-		$(document).ready(function(){
 	    $('#slide-search').sidenav({"draggable": false});
-	  });
 
 		// Link input fields and sliders values
 		searchTimer.noUiSlider.on('update', function(values, handle) {
@@ -168,13 +169,13 @@
 			} else {
 				$("#timer-start").val(values[handle]);
 			}
-		})
+		});
 		$("#timer-start").on("change", function() {
 			searchTimer.noUiSlider.set([$(this).val(), null])
-		})
+		});
 		$("#timer-stop").on("change", function() {
 			searchTimer.noUiSlider.set([null, $(this).val()])
-		})
+		});
 
 		servings.noUiSlider.on('update', function(values, handle) {
 			if (handle) {
@@ -182,13 +183,44 @@
 			} else {
 				$("#serve-start").val(values[handle]);
 			}
-		})
+		});
 		$("#serve-start").on("change", function() {
 			servings.noUiSlider.set([$(this).val(), null])
-		})
+		});
 		$("#serve-stop").on("change", function() {
 			servings.noUiSlider.set([null, $(this).val()])
-		})
+		});
+
+		// Count recipes to return
+		function countRecipes() {
+			var formdata = {
+				"foodType": $("#food-field .selected").text().toLowerCase(),
+				"difficulty": $("#diff-field .selected").text().toLowerCase(),
+				"timer.start": parseInt($("#timer-start").val()),
+				"timer.stop": parseInt($("#timer-stop").val()),
+				"serve.start": parseInt($("#serve-start").val()),
+				"serve.stop": parseInt($("#serve-stop").val())
+			};
+
+			$.ajax({
+				contentType: "application/json; charset=utf-8",
+				method: 'post',
+				url: '/searchcount',
+				data: JSON.stringify(formdata)
+			})
+			.done(function(response){
+				$("#recipe-count").text(response.nbr_recipes + " recipes matching")
+			});
+		}
+
+		$("#input, #food-field, #diff-field").on("change", function(){
+			console.info("input changed");
+			countRecipes();
+		});
+		$(".noUi-touch-area").on("click", function () {
+			console.log("slider clicked");
+			countRecipes();
+		});
 
 	});
 

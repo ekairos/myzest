@@ -32,6 +32,21 @@ class JSONEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
+def formdata_to_query(data):
+    time = {
+        "$gte": int(data.pop("timer.start")),
+        "$lte": int(data.pop("timer.stop"))
+    }
+    serves = {
+        '$gte': int(data.pop('serve.start')),
+        '$lte': int(data.pop('serve.stop'))
+    }
+    query = {k: v for (k, v) in data.items() if data[k] != "any"}
+    query['serves'] = serves
+    query['time.total'] = time
+    return query
+
+
 @app.route('/')
 @app.route('/home')
 def home():
@@ -355,17 +370,7 @@ def search_recipes():
 
         order = [(data.pop("order"), -1) if data['order'] in ['favorite', 'views', 'updated']
                  else (data.pop("order"), 1)]
-        time = {
-            "$gte": int(data.pop("timer.start")),
-            "$lte": int(data.pop("timer.stop"))
-        }
-        serves = {
-            '$gte': int(data.pop('serve.start')),
-            '$lte': int(data.pop('serve.stop'))
-        }
-        query = {k: v for (k, v) in data.items() if data[k] != "any"}
-        query['serves'] = serves
-        query['time.total'] = time
+        query = formdata_to_query(data)
 
         session['search'] = {'query': query,
                              'order': order}
@@ -390,3 +395,11 @@ def search_recipes():
                            recipes=results,
                            pages=pages,
                            current_page=target_page)
+
+
+@app.route('/searchcount', methods=['POST'])
+def searchcount():
+    data = request.get_json()
+    query = formdata_to_query(data)
+    nbr_recipes = mongo.db.recipes.find(query).count()
+    return jsonify({"nbr_recipes": nbr_recipes})

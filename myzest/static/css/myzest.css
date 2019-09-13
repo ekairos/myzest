@@ -452,7 +452,7 @@ html, body {
   cursor: pointer; }
 
 .noUi-horizontal {
-  height: 2px;
+  height: 3px;
   background-origin: none;
   border: none; }
   .noUi-horizontal .noUi-handle {
