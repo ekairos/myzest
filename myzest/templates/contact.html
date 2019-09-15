@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block pagetitle %} - Contact{% endblock %}
+{% block content %}
+<header class="container mt-5">
+    <h1 class="mb-3">Contact Us</h1>
+</header>
+<main class="container mb-5 row">
+    <form id="contact-form" class="col s12">
+        <div class="row">
+            <div class="input-field col s12 l6">
+                <input id="first-name" type="text" class="validate">
+                <label for="first-name">First Name</label>
+                <span class="helper-text" data-error=""></span>
+            </div>
+            <div class="input-field col s12 l6">
+                <input id="last-name" type="text" class="validate">
+                <label for="last-name">Last Name</label>
+                <span class="helper-text" data-error=""></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12 l6">
+                <label for="username">Username if registered</label>
+                <input id="username" type="text" class="validate" {% if user %}value="{{ user.username }}"{% endif %}>
+                <span id="username_help" class="helper-text" data-error=""></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <label for="email">Email</label>
+                <input id="email" class="validate" {% if user %}value="{{ email }}"{% endif %} name="email" type="email"
+                       pattern="[A-Za-z0-9._-]{2,30}[A-Za-z0-9]@[A-Za-z0-9-._]+\.[A-Za-z]{2,11}" required>
+                <span id="email_help" class="helper-text" data-error="" data-success=""><em>Required</em></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <label for="message">Message</label>
+                <textarea id="message" class="materialize-textarea validate" data-length="800" required></textarea>
+                <span class="helper-text" data-error="" data-success=""><em>Required</em></span>
+            </div>
+        </div>
+
+        <button class="btn mb-4">
+            <div class="valign-wrapper">
+                <span class="mr-3">Send</span><i class="material-icons">send</i>
+            </div>
+        </button>
+
+    </form>
+</main>
+
+<!-- Modal Structure -->
+<div id="confirmation" class="modal">
+    <div class="modal-content">
+        <h4>Message Sent</h4>
+        <p>Thank you for contacting us.<br>
+            We'll be in touch shortly.</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close btn-small">Close</a>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/form_helper.js') }}"></script>
+
+<script>
+    $(document).ready(function () {
+
+        $("form").submit(function(e){
+            e.preventDefault();
+        });
+
+        $("textarea#message").characterCounter();
+
+        // Init materializecss modal
+        $(".modal").modal();
+        var modal = M.Modal.getInstance($("#confirmation"));
+
+        window.fakesend = function() {
+
+            // reset error messages
+            if ($(".field-error").length) {
+                $(".field-error").remove();
+            }
+
+            var emailValid = document.getElementById("email").checkValidity();
+            var messageValid = document.getElementById("message").checkValidity();
+            var nameValid = $("#username").hasClass("invalid");
+            if (emailValid == false || messageValid == false || nameValid == true) {
+                let formError = '<div class="mb-4 field-error">Some details are missing or not valid</div>'
+                $("#submit-btn").after(formError);
+            } else {
+                modal.open();
+            }
+        };
+
+        $("button").on("click", function () {
+            // awaits ajax '/check_usr'
+            setTimeout(fakesend, 250);
+        })
+
+    });
+</script>
+
+{% endblock %}

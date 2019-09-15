@@ -1,11 +1,25 @@
+/*
+        ___ Text Formatting ___
+*/
+strong {
+    font-weight: bold;
+}
 .txt-ctr {
     text-align: center;
 }
+
+/*
+        ___ Boxing ___
+*/
 @each $key, $value in $sides {
     .border-#{$key} {
         border-#{$value}: 1px solid $bright-gray;
     }
 }
+
+/*
+        ___ Forms ___
+*/
 .field-error {
 	color: #F44336;
 	font-size: 12px;

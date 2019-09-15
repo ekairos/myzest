@@ -246,9 +246,18 @@ input::-webkit-inner-spin-button {
 .pl-auto {
   padding-left: auto; }
 
+/*
+        ___ Text Formatting ___
+*/
+strong {
+  font-weight: bold; }
+
 .txt-ctr {
   text-align: center; }
 
+/*
+        ___ Boxing ___
+*/
 .border-t {
   border-top: 1px solid #e6e6e6; }
 
@@ -261,6 +270,9 @@ input::-webkit-inner-spin-button {
 .border-l {
   border-left: 1px solid #e6e6e6; }
 
+/*
+        ___ Forms ___
+*/
 .field-error {
   color: #F44336;
   font-size: 12px; }

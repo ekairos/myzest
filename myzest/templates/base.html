@@ -77,7 +77,7 @@
 				<!-- support -->
 				<ul class="footer-links">
 					<li><a href="#">Site Map</a></li>
-					<li><a href="#">Contact Us</a></li>
+					<li><a href="{{ url_for('contact') }}">Contact Us</a></li>
 				</ul>
 			</section>
 			<!-- follow Us -->
@@ -94,8 +94,8 @@
 			<!-- Legal Info -->
 			<ul class="col s12 copyright">
 				<li>Copyright &copy 2019 MyZest. All Rights Reserved</li>
-				<li><a href="#">Privacy Policy</a></li>
-				<li><a href="#">Data Policy</a></li>
+				<li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li>
+				<li><a href="{{ url_for('terms') }}">Terms Of Use</a></li>
 			</ul>
 		</div>
 	</div>

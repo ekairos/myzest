@@ -6,7 +6,7 @@ $(document).ready(function(){
 				contentType: "application/json; charset=utf-8",
 				data : JSON.stringify({
 					"field": field.attr("id"),
-					"userdata": field.val(),
+					"value": field.val(),
 					"form": form
 				}),
 				method : "POST",
@@ -14,7 +14,7 @@ $(document).ready(function(){
 			})
 			.done(function(response){
 				if (response.error) {
-					field.next(".helper-text").attr("data-error", response.message);
+					field.next(".helper-text").attr("data-error", response.error);
 					field.removeClass("valid").addClass("invalid");
 				}
 				if (response == "success") {
@@ -33,10 +33,10 @@ $(document).ready(function(){
 	$("#email").on("blur", function() {
 		if ($(this).val() != "" && $(this).hasClass("invalid")) {
 			$(this).next('.helper-text').attr("data-error", "Invalid email format");
-		} else if ($(this).val() != "") {
+		} else if ($(this).val() != "" && $("form").attr("id") != "contact-form") {
             checkInput($(this), $("form").attr("id"));
 		}
-	})
+	});
 
 	$("#username").on("blur", function() {
 		checkInput($(this), $("form").attr("id"));
