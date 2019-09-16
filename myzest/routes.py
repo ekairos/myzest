@@ -421,3 +421,9 @@ def contact():
         user_email = mongo.db.users.distinct('email', {'_id': ObjectId(session['user']['_id'])})[0]
         return render_template('contact.html', user=session['user'], email=user_email)
     return render_template('contact.html')
+
+
+@app.errorhandler(500)
+@app.errorhandler(404)
+def page_error(error):
+    return render_template('error.html')

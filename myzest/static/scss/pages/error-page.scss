@@ -1,0 +1,26 @@
+.error-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  // full page height - navbar and footer
+  height: calc(100% - 219px);
+
+  header {
+    z-index: 2;
+    text-align: center;
+    padding: 30px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 10px;
+    @include thinshw(outset);
+  }
+}
+#cracked-bg {
+  z-index: -2;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-size: cover;
+  background-image: url("../img/crack.jpg");
+  filter: blur(1px) saturate(60%);
+}
