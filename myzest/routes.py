@@ -32,6 +32,13 @@ class JSONEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
+@app.template_filter()
+def min_to_hour(time):
+    h = time // 60
+    m = time % 60
+    return str(h) + "h" + str(m) if h > 0 else str(m)
+
+
 def formdata_to_query(data):
     time = {
         "$gte": int(data.pop("timer.start")),

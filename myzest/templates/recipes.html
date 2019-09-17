@@ -21,7 +21,7 @@
 		{% endfor %}
 	</ul>
 	<ul class="pagination center">
-		<li class="disabled">
+		<li {% if current_page == 1 %} class="disabled" {% endif %}>
 			<a {% if current_page != 1 %} href="{{ url_for('search_recipes', target_page=current_page-1) }}" {% endif %}>
 				<i class="material-icons">chevron_left</i>
 			</a>
@@ -33,7 +33,7 @@
 			<li><a href="{{ url_for('search_recipes', target_page=loop.index) }}">{{ loop.index }}</a></li>
 			{% endif %}
 		{% endfor %}
-		<li class="disabled">
+		<li {% if current_page == pages %} class="disabled" {% endif %}>
 			<a {% if current_page != pages %} href="{{ url_for('search_recipes', target_page=current_page+1) }}" {% endif %}>
 				<i class="material-icons">chevron_right</i>
 			</a>

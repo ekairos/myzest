@@ -48,8 +48,19 @@
     // leave space for footer absolute pos
     margin-bottom: 40px;
 }
-.rcpcard-sumup {
-	font-size: 0.9em;
+#rcpcard-details {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	flex-wrap: wrap;
+
+	.rcpcard-sumup {
+		font-size: 0.9em;
+	}
+
+	.material-icons {
+		font-size: 1.5em;
+	}
 }
 .rcpcard-footer {
     position: absolute;

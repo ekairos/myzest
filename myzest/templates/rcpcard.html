@@ -16,18 +16,24 @@
 	</header>
 	<section class="rcpcard-body">
 		<h4 class="pb-2 mb-1 border-b"><a href="{{ url_for('get_recipe', recipe_id=recipe._id) }}">{{ recipe.name }}</a></h4>
-		<ul class="pl-0">
+		<ul id="rcpcard-details" class="pl-0">
+
 			{% if "foodType" in recipe %}
-			<span class="rcpcard-sumup">{{ recipe.foodType }}</span>
-			<span class="border-l ml-1 mr-2"></span>
+			<span class="border-r pr-2 mr-2 rcpcard-sumup">{{ recipe.foodType }}</span>
 			{% endif %}
-			<span class="rcpcard-sumup">{{ recipe.serves }} people</span>
-			<span class="border-l ml-1 mr-2"></span>
-			<span class="rcpcard-sumup">{{ recipe.difficulty }}</span>
+
 			{% if "region" in recipe  %}
-			<span class="border-l ml-1 mr-2"></span>
-			<span class="rcpcard-sumup">{{ recipe.region }}</span>
+			<span class="border-r pr-2 mr-2 rcpcard-sumup">{{ recipe.region }}</span>
 			{% endif %}
+
+			<span class="material-icons">people</span>
+			<span class="pl-1 border-r pr-2 mr-2 rcpcard-sumup">{{ recipe.serves }}</span>
+
+			<span class="material-icons">access_time</span>
+			<span class="pl-1 border-r pr-2 mr-2 rcpcard-sumup">{{ recipe.time.total|min_to_hour }}'</span>
+
+			<span class="rcpcard-sumup">{{ recipe.difficulty }}</span>
+
 		</ul>
 		<!-- <p>Short description paragraph</p> -->
 	</section>
