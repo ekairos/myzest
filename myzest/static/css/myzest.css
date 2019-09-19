@@ -355,6 +355,12 @@ html, body {
     .rcp-sel-short .rcpcard .rcpcard-header {
       width: 220px; }
 
+#quick-search {
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px;
+  font-style: italic; }
+
 .rcpcard {
   display: inline-block;
   position: relative;
@@ -462,13 +468,6 @@ html, body {
     margin-left: 10px; }
     .rcp-results .rcpcard {
       width: 220px; } }
-#searching-side {
-  margin-left: auto;
-  margin-right: auto;
-  width: 250px;
-  justify-content: space-between;
-  cursor: pointer; }
-
 .error-page {
   display: flex;
   flex-direction: column;

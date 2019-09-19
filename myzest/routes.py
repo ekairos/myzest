@@ -401,7 +401,8 @@ def search_recipes():
                            order=order[0][0],
                            recipes=results,
                            pages=pages,
-                           current_page=target_page)
+                           current_page=target_page,
+                           search="search_recipes")
 
 
 @app.route('/searchcount', methods=['POST'])
@@ -428,6 +429,42 @@ def contact():
         user_email = mongo.db.users.distinct('email', {'_id': ObjectId(session['user']['_id'])})[0]
         return render_template('contact.html', user=session['user'], email=user_email)
     return render_template('contact.html')
+
+
+@app.route('/searchtext', methods=['GET', 'POST'])
+def search_text():
+
+    per_page = 4
+    target_page = 1
+
+    if request.method == 'POST':
+
+        data = request.form.to_dict()
+        print("text search data\n", data)
+        text_to_search = data['text-search']
+        print("text to search\n", text_to_search)
+        query = {'$text': {'$search': text_to_search}}
+
+        session['search'] = {'query': query}
+
+    if request.method == 'GET':
+        query = session['search']['query']
+        target_page = int(request.args['target_page'])
+
+    recipes = mongo.db.recipes.find(query).sort('name', 1)
+
+    pages = math.ceil(recipes.count() / per_page)
+    to_skip = per_page * (target_page - 1)
+
+    results = recipes.skip(to_skip).limit(per_page)
+
+    return render_template('recipes.html', difficulties=rcp_diff,
+                           foodtypes=rcp_foodTypes,
+                           sorts=rcp_sorting,
+                           recipes=results,
+                           pages=pages,
+                           current_page=target_page,
+                           search="search_text")
 
 
 @app.errorhandler(500)

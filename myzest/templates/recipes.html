@@ -2,15 +2,8 @@
 {% block pagetitle %} - search results {% endblock %}
 {% block content %}
 <header>
-	<div id="searching-side" class="sidenav-trigger valign-wrapper pt-5 pl-2 pr-2 border-b" data-target="slide-search">
-		<span>Fine tune your search</span>
-		<i class="material-icons">search</i>
-	</div>
-	{% include "slide-search.html" %}
-
 	<h3 class="rcp-sel-title mt-4">Your search results</h3>
 </header>
-
 
 <!-- Recipes Found -->
 <section class="mt-5 mb-5">
@@ -22,7 +15,7 @@
 	</ul>
 	<ul class="pagination center">
 		<li {% if current_page == 1 %} class="disabled" {% endif %}>
-			<a {% if current_page != 1 %} href="{{ url_for('search_recipes', target_page=current_page-1) }}" {% endif %}>
+			<a {% if current_page != 1 %} href="{{ url_for(search, target_page=current_page-1) }}" {% endif %}>
 				<i class="material-icons">chevron_left</i>
 			</a>
 		</li>
@@ -30,11 +23,11 @@
 			{% if page == current_page %}
 			<li class="active"><a>{{ loop.index }}</a></li>
 			{% else %}
-			<li><a href="{{ url_for('search_recipes', target_page=loop.index) }}">{{ loop.index }}</a></li>
+			<li><a href="{{ url_for(search, target_page=loop.index) }}">{{ loop.index }}</a></li>
 			{% endif %}
 		{% endfor %}
 		<li {% if current_page == pages %} class="disabled" {% endif %}>
-			<a {% if current_page != pages %} href="{{ url_for('search_recipes', target_page=current_page+1) }}" {% endif %}>
+			<a {% if current_page != pages %} href="{{ url_for(search, target_page=current_page+1) }}" {% endif %}>
 				<i class="material-icons">chevron_right</i>
 			</a>
 		</li>
