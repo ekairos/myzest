@@ -35,6 +35,7 @@ $(document).ready(function(){
     // Count recipes to return
     function countRecipes() {
         var formdata = {
+            "textSearch": $("#text-field").val().toLowerCase(),
             "foodType": $("#food-field .selected").text().toLowerCase(),
             "difficulty": $("#diff-field .selected").text().toLowerCase(),
             "timer.start": parseInt($("#timer-start").val()),
@@ -54,7 +55,7 @@ $(document).ready(function(){
         });
     }
 
-    $("#input, #food-field, #diff-field").on("change", function(){
+    $("#input, #food-field, #diff-field, #text-field").on("keyup blur change", function(){
         console.info("input changed");
         countRecipes();
     });

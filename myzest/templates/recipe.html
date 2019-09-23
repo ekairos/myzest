@@ -13,7 +13,7 @@
 		<p>{{ recipe.description }}</p>
 		<div class="valign-wrapper">
 			<span class="material-icons">access_time</span>
-			<span class="ml-2">{{ recipe.time.total }}'</span>
+			<span class="ml-2">{{ recipe.time.total|min_to_hour }}'</span>
 			<span class="border-l pl-2 ml-2 material-icons">people</span>
 			<span class="ml-2">{{ recipe.serves }}</span>
 			<span class="border-l pl-2 ml-2 material-icons">restaurant_menu</span>

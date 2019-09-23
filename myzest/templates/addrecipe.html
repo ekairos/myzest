@@ -18,12 +18,12 @@
 			<textarea class="validate materialize-textarea" name="description" required maxlength="180"></textarea>
 			<span class="helper-text" data-error="This field is required"></span>
 		</div>
-
+		
 		<!-- Difficulty -->
 		<div class="input-field mb-3 col s12">
 			<select id="difficulty" name="difficulty" class="validate" required>
 				<option selected disabled>Difficulty...</option>
-				{% for diff in difficulties %}
+				{% for diff in session.rcp.difficulties %}
 				<option value="{{ diff }}">{{ diff|title }}</option>
 				{% endfor %}
 			</select>
@@ -114,7 +114,7 @@
 					<div class="input-field mb-3">
 						<select class="custom-select mr-sm-2" id="newRcpFType" name="foodType">
 							<option selected value="">select...</option>
-							{% for food in foodtype %}
+							{% for food in session.rcp.foodTypes %}
 								<option value="{{ food }}">{{ food|title }}</option>
 							{% endfor %}
 						</select>

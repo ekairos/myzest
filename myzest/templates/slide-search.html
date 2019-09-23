@@ -2,11 +2,26 @@
 	<form class="mt-6 container" action="{{ url_for('search_recipes') }}" method="POST" enctype="multipart/form-data">
 
 		<p>Looking for</p>
+
+		<!-- name -->
+		<div class="mt-4 mb-4 pr-4">
+			<div class="row">
+				<div class="input-field">
+					{% if query and '$text' in query %}
+					<input id="text-field" name="textSearch" type="text" class="validate" value="{{ query['$text']['$search'] }}">
+					{% else %}
+					<input id="text-field" name="textSearch" type="text" class="validate">
+					{% endif %}
+					<label for="text-field">Ingredient, recipe name</label>
+				</div>
+			</div>
+		</div>
+
 		<!-- Food type -->
 		<div id="food-field" class="input-field pb-2">
 			<select class="custom-select mr-sm-2" name="foodType">
 				<option selected value="any">Any</option>
-				{% for food in foodtypes %}
+				{% for food in session.rcp.foodTypes %}
 					{% if query and query.foodType == food %}
 					<option selected value="{{ food }}">{{ food|title }}</option>
 					{% else %}
@@ -21,7 +36,7 @@
 		<div id="diff-field" class="input-field">
 			<select class="custom-select mr-sm-2" name="difficulty">
 				<option selected value="any">Any</option>
-				{% for diff in difficulties %}
+				{% for diff in session.rcp.difficulties %}
 					{% if query and query.difficulty == diff %}
 					<option selected value="{{ diff }}">{{ diff|title }}</option>
 					{% else %}
@@ -68,12 +83,12 @@
 		<div class="mb-4">
 			<div class="row">
 				<div class="input-field col s12">
-					<select class="custom-select mr-sm-2" name="order">
-						{% for sort in sorts %}
-							{% if order and order == sort[0] %}
-							<option selected value="{{ sort[0] }}">{{ sort[1]|title }}</option>
+					<select class="custom-select mr-sm-2" name="sort">
+						{% for sorting in session.rcp.sortings %}
+							{% if sort and sort == sorting[0] %}
+							<option selected value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
 							{% else %}
-							<option value="{{ sort[0] }}">{{ sort[1]|title }}</option>
+							<option value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
 							{% endif %}
 						{% endfor %}
 					</select>
@@ -104,9 +119,9 @@
 	var searchTimer = document.getElementById('search-timer');
 
 	{% if query %}
-		var timeRange = [ {{ query['time.total']['$gte'] }}, {{ query['time.total']['$lte'] }} ]
+		var timeRange = [ {{ query['time.total']['$gte'] }}, {{ query['time.total']['$lte'] }} ];
 	{% else %}
-		var timeRange = [5, 240]
+		var timeRange = [5, 240];
 	{% endif %}
 
 	noUiSlider.create(searchTimer, {
@@ -132,9 +147,9 @@
 	var servings = document.getElementById('serving');
 
 	{% if query %}
-		var serveRange = [ {{ query.serves['$gte'] }}, {{ query.serves['$lte'] }} ]
+		var serveRange = [ {{ query.serves['$gte'] }}, {{ query.serves['$lte'] }} ];
 	{% else %}
-		var serveRange = [1, 20]
+		var serveRange = [1, 20];
 	{% endif %}
 
 	noUiSlider.create(servings, {
