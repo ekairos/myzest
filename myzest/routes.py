@@ -37,6 +37,7 @@ def min_to_hour(time):
 
 
 def formdata_to_query(data):
+    """ Processes data from the search form to build query with relevant fields only"""
     # time and serves
     try:
         time = {
@@ -77,6 +78,8 @@ def formdata_to_query(data):
 
 
 def make_query(requested_data):
+    """ Builds mongoDB query from form data posted to search_recipes
+    and stores into session 'search' dict """
 
     data = requested_data.to_dict()
 
@@ -89,6 +92,21 @@ def make_query(requested_data):
                          'sort': sort}
 
     return query, sort
+
+
+class Paginate:
+    """ Queries MongoDB for recipes and builds pagination """
+
+    per_page = 4
+
+    def __init__(self, query, sort, target_page=1):
+        self.recipes = mongo.db.recipes.find(query).sort(sort)
+        self.total = math.ceil(self.recipes.count() / self.per_page)
+        self.current = target_page
+
+    def get_page(self):
+        to_skip = self.per_page * (self.current - 1)
+        return self.recipes.skip(to_skip).limit(self.per_page)
 
 
 @app.route('/')
@@ -403,34 +421,27 @@ def favme():
 
 @app.route('/searchrecipes', methods=['GET', 'POST'])
 def search_recipes():
-
-    per_page = 4
-    target_page = 1
-
-    query = session['search']['query'] if 'search' in session else {}
-    sort = session['search']['sort'] if 'search' in session else {}
+    """ Queries DB and paginate results;
+     End point is first accessed with POST request which stores query and sort in session object """
 
     if request.method == "POST":
 
         query, sort = make_query(request.form)
+        paginate = Paginate(query, sort)
 
-    if request.method == 'GET':
-        target_page = int(request.args['target_page'])
+    elif request.method == 'GET':
+        query = session['search']['query']
+        sort = session['search']['sort']
 
-    recipes = mongo.db.recipes.find(query).sort(sort)
+        paginate = Paginate(query, sort, int(request.args['target_page']))
 
-    pages = math.ceil(recipes.count() / per_page)
-    to_skip = per_page * (target_page - 1)
+    results = paginate.get_page()
 
-    results = recipes.skip(to_skip).limit(per_page)
-
-    return render_template('recipes.html',
+    return render_template('results.html',
                            query=query,
                            sort=sort[0][0],
-                           recipes=results,
-                           pages=pages,
-                           current_page=target_page,
-                           search="search_recipes")
+                           results=results,
+                           page=paginate)
 
 
 @app.route('/searchcount', methods=['POST'])
