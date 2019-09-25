@@ -11,7 +11,7 @@ $(document).ready(function(){
             $("#timer-start").val(values[handle]);
         }
     });
-    searchTimer.noUiSlider.on('slide', function() {
+    searchTimer.noUiSlider.on('end', function() {
         countRecipes();
     });
     $("#timer-start").on("change", function() {
@@ -28,7 +28,7 @@ $(document).ready(function(){
             $("#serve-start").val(values[handle]);
         }
     });
-    servings.noUiSlider.on('slide', function() {
+    servings.noUiSlider.on('end', function() {
         countRecipes();
     });
     $("#serve-start").on("update", function() {
@@ -60,7 +60,7 @@ $(document).ready(function(){
         });
     }
 
-    $("input, #food-field, #diff-field").on("keyup blur", function(){
+    $("input, #food-field, #diff-field").on("keyup blur change", function(){
         console.info("input changed");
         countRecipes();
     });
