@@ -11,11 +11,14 @@ $(document).ready(function(){
             $("#timer-start").val(values[handle]);
         }
     });
+    searchTimer.noUiSlider.on('slide', function() {
+        countRecipes();
+    });
     $("#timer-start").on("change", function() {
-        searchTimer.noUiSlider.set([$(this).val(), null])
+        searchTimer.noUiSlider.set([$(this).val(), null]);
     });
     $("#timer-stop").on("change", function() {
-        searchTimer.noUiSlider.set([null, $(this).val()])
+        searchTimer.noUiSlider.set([null, $(this).val()]);
     });
 
     servings.noUiSlider.on('update', function(values, handle) {
@@ -25,11 +28,14 @@ $(document).ready(function(){
             $("#serve-start").val(values[handle]);
         }
     });
-    $("#serve-start").on("change", function() {
-        servings.noUiSlider.set([$(this).val(), null])
+    servings.noUiSlider.on('slide', function() {
+        countRecipes();
+    });
+    $("#serve-start").on("update", function() {
+        servings.noUiSlider.set([$(this).val(), null]);
     });
     $("#serve-stop").on("change", function() {
-        servings.noUiSlider.set([null, $(this).val()])
+        servings.noUiSlider.set([null, $(this).val()]);
     });
 
     // Count recipes to return
@@ -43,7 +49,6 @@ $(document).ready(function(){
             "serve.start": parseInt($("#serve-start").val()),
             "serve.stop": parseInt($("#serve-stop").val())
         };
-
         $.ajax({
             contentType: "application/json; charset=utf-8",
             method: 'post',
@@ -51,16 +56,12 @@ $(document).ready(function(){
             data: JSON.stringify(formdata)
         })
         .done(function(response){
-            $("#recipe-count").text(response.nbr_recipes + " recipes matching")
+            $("#recipe-count").text(response.nbr_recipes + " recipes matching");
         });
     }
 
-    $("#input, #food-field, #diff-field, #text-field").on("keyup blur change", function(){
+    $("input, #food-field, #diff-field").on("keyup blur", function(){
         console.info("input changed");
-        countRecipes();
-    });
-    $(".noUi-touch-area").on("click", function () {
-        console.log("slider clicked");
         countRecipes();
     });
 

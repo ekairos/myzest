@@ -67,7 +67,7 @@ def formdata_to_query(data):
             words = {'$search': data.pop('textSearch')}
     except(KeyError):
         text_search = False
-    query = {k: v for (k, v) in data.items() if data[k] != "any"}
+    query = {k: v for (k, v) in data.items() if data[k] not in ["any", ""]}
     query['serves'] = serves
     query['time.total'] = time
 
