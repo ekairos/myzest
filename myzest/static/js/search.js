@@ -61,7 +61,6 @@ $(document).ready(function(){
     }
 
     $("input, #food-field, #diff-field").on("keyup blur change", function(){
-        console.info("input changed");
         countRecipes();
     });
 

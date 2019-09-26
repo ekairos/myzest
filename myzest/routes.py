@@ -176,8 +176,8 @@ def add_user():
     return redirect('home')
 
 
-@app.route('/check_usr', methods=['POST'])
-def check_usr():
+@app.route('/check_user', methods=['POST'])
+def check_user():
     data = request.get_json()
     if data['field'] == 'username':
         value = data['value'].title()

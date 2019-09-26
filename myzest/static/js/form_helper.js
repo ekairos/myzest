@@ -10,7 +10,7 @@ $(document).ready(function(){
 					"form": form
 				}),
 				method : "POST",
-				url : "/check_usr"
+				url : "/check_user"
 			})
 			.done(function(response){
 				if (response.error) {
@@ -33,13 +33,13 @@ $(document).ready(function(){
 	$("#email").on("blur", function() {
 		if ($(this).val() != "" && $(this).hasClass("invalid")) {
 			$(this).next('.helper-text').attr("data-error", "Invalid email format");
-		} else if ($(this).val() != "" && $("form").attr("id") != "contact-form") {
-            checkInput($(this), $("form").attr("id"));
+		} else if ($(this).val() != "" && $(this).parents("form").attr("id") != "contact-form") {
+            checkInput($(this), $(this).parents("form").attr("id"));
 		}
 	});
 
 	$("#username").on("blur", function() {
-		checkInput($(this), $("form").attr("id"));
+		checkInput($(this), $(this).parents("form").attr("id"));
 	});
 
 	$("[type=password]").on("blur", function() {
