@@ -402,6 +402,7 @@ def favme():
 
         faved.remove(data['recipe_id'])
         session['user']['favorites'] = faved
+        # apply modification to session object
         session.modified = True
         return jsonify({"message": "removed"})
 
@@ -413,6 +414,7 @@ def favme():
 
         faved.append(data['recipe_id'])
         session['user']['favorites'] = faved
+        # apply modification to session object
         session.modified = True
         return jsonify({"message": "added"})
     else:
