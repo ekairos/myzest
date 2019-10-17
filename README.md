@@ -5,6 +5,8 @@
 Table Of Content
 
 - [Overview](#overview)
+- [Features](#features)
+- [Tech used](#main-tech-used)
 - [License](#license)
 
 
@@ -23,14 +25,13 @@ Recipes author has the possibility to change the privacy of any of their recipes
 - User Registration and Login.
 - CRUD operations on recipes.
 - User favorite recipes.
-- User search, filter and order recipes.
+- User search, filter and sort recipes.
 - Pagination.
+- Recipe rating ( faved count )
 
 ### Features to add
 
 - Recipe's privacy.
-- Recipe rating.
-( According to recent UX studies, 5star scoring system might replaced ).
 - User profile page.
 
 
