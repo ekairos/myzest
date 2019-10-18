@@ -61,24 +61,24 @@
 					{% if loop.index == 1 %}
 					<div class="input-field col s8">
 						<label for="ingredient-{{ loop.index }}">Ingredient {{ loop.index }}</label>
-						<input id="ingredient-{{ loop.index }}" name="ingredient-{{ loop.index }}" class="validate" type="text" value="{{ ing.name }}" required>
-						<span class="helper-text" data-error="This field is required"></span>
+						<input id="ingredient-{{ loop.index }}" name="ingredient-{{ loop.index }}" class="validate" type="text" maxlength="30" value="{{ ing.name }}" pattern="[0-9A-Za-z\s]{3,30}" required>
+						<span class="helper-text" data-error="This first ingredient is required"></span>
 					</div>
 					<div class="input-field col s4">
 						<label for="amount-{{ loop.index }}">Amount {{ loop.index }}</label>
-						<input id="amount-{{ loop.index }}" name="amount-{{ loop.index }}" class="validate" type="text" value="{{ ing.amount }}" required>
-						<span class="helper-text" data-error="This field is required"></span>
+						<input id="amount-{{ loop.index }}" name="amount-{{ loop.index }}" class="validate" type="text" maxlength="8" value="{{ ing.amount }}" pattern="[0-9]+\s?[A-Za-z]{1,8}" required>
+						<span class="helper-text" data-error="Specify valid amount"></span>
 					</div>
 					{% else %}
 					<div class="input-field col s7">
 						<label for="ingredient-{{ loop.index }}">Ingredient {{ loop.index }}</label>
-						<input id="ingredient-{{ loop.index }}" name="ingredient-{{ loop.index }}" class="validate" type="text" value="{{ ing.name }}" required>
-						<span class="helper-text" data-error="This field is required"></span>
+						<input id="ingredient-{{ loop.index }}" name="ingredient-{{ loop.index }}" class="validate" type="text" maxlength="30" value="{{ ing.name }}" pattern="[0-9A-Za-z\s]{3,30}" required>
+						<span class="helper-text" data-error="Specify ingredient's name or delete"></span>
 					</div>
 					<div class="input-field col s4">
 						<label for="amount-{{ loop.index }}">Amount {{ loop.index }}</label>
-						<input id="amount-{{ loop.index }}" name="amount-{{ loop.index }}" class="validate" type="text" value="{{ ing.amount }}" required>
-						<span class="helper-text" data-error="This field is required"></span>
+						<input id="amount-{{ loop.index }}" name="amount-{{ loop.index }}" class="validate" type="text" maxlength="8" value="{{ ing.amount }}" pattern="[0-9]+\s?[A-Za-z]{1,8}"  required>
+						<span class="helper-text" data-error="Specify valid amount or delete"></span>
 					</div>
 					<i class="material-icons col s1" onclick="removeIngredient(this)">cancel</i>
 					{% endif %}

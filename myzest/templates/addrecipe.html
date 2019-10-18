@@ -56,13 +56,13 @@
 				<li class="row valign-wrapper ing-item">
 					<div class="input-field col s8">
 						<label for="ingredient-1">Ingredient</label>
-						<input id="ingredient-1" name="ingredient-1" class="validate" type="text" required>
-						<span class="helper-text" data-error="This field is required"></span>
+						<input id="ingredient-1" name="ingredient-1" class="validate" type="text" maxlength="30" pattern="[0-9A-Za-z\s]{3,30}" required>
+						<span class="helper-text" data-error="This first ingredient is required"></span>
 					</div>
 					<div class="input-field col s4">
 						<label for="amount-1">Amount</label>
-						<input id="amount-1" name="amount-1" class="validate" type="text" required>
-						<span class="helper-text" data-error="This field is required"></span>
+						<input id="amount-1" name="amount-1" class="validate" type="text" maxlength="8" pattern="[0-9]+\s?[A-Za-z]{1,8}" required>
+						<span class="helper-text" data-error="Specify valid amount"></span>
 					</div>
 				</li>
 			</ul>
@@ -78,7 +78,7 @@
 				<li class="row step-item">
 					<div class="input-field col s12 mb-2 mt-2">
 						<label for="step-1">Step 1</label>
-						<textarea class="validate materialize-textarea" name="step-1" required maxlength="300"></textarea>
+						<textarea class="validate materialize-textarea" name="step-1" required maxlength="350"></textarea>
 						<span class="helper-text" data-error="This field is required"></span>
 					</div>
 				</li>

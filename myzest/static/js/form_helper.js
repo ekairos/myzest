@@ -17,7 +17,7 @@ $(document).ready(function(){
 					field.next(".helper-text").attr("data-error", response.error);
 					field.removeClass("valid").addClass("invalid");
 				}
-				if (response == "success") {
+				if (response === "success") {
 				    field.removeClass("invalid").addClass("valid");
 				}
 			});
@@ -25,15 +25,15 @@ $(document).ready(function(){
 	}
 
 	$("[required]").on("focusout", function() {
-        if ($(this).val() == '') {
+        if ($(this).val() === '') {
             $(this).next("span").attr("data-error", "This field is required")
         }
     });
 
 	$("#email").on("blur", function() {
-		if ($(this).val() != "" && $(this).hasClass("invalid")) {
+		if ($(this).val() !== "" && $(this).hasClass("invalid")) {
 			$(this).next('.helper-text').attr("data-error", "Invalid email format");
-		} else if ($(this).val() != "" && $(this).parents("form").attr("id") != "contact-form") {
+		} else if ($(this).val() !== "" && $(this).parents("form").attr("id") !== "contact-form") {
             checkInput($(this), $(this).parents("form").attr("id"));
 		}
 	});
@@ -43,8 +43,8 @@ $(document).ready(function(){
 	});
 
 	$("[type=password]").on("blur", function() {
-		if ($("#password").val() != "" && $("#passwConfirm").val() != "" && $("#passwConfirm").length != 0) {
-			if ($("#passwConfirm").val() != $("#password").val()) {
+		if ($("#password").val() !== "" && $("#passwConfirm").val() !== "" && $("#passwConfirm").length !== 0) {
+			if ($("#passwConfirm").val() !== $("#password").val()) {
 				$("[type=password]").addClass("invalid");
 				$("[type=password]").next("span").attr("data-error", "Passwords do not match");
 			} else {
