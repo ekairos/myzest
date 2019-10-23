@@ -1,6 +1,6 @@
 <li class="rcpcard hoverable">
 	<header class="rcpcard-header">
-		<img class="rcpcard-img" src="static/img/recipes/{{ recipe.image }}"
+		<img class="rcpcard-img" src="{{ url_for('static', filename='img/recipes/' + recipe.image) }}"
 		     alt="{{ recipe.name }}" width="100%">
 		<div class="rcpcard-grad-overlay"></div>
 			<div class="rcpcard-hview valign-wrapper">
@@ -39,6 +39,8 @@
 	</section>
 	<footer class="row mb-2 mr-2 rcpcard-footer valign-wrapper">
 		<span class="rcpcard-upd mr-2">{{ recipe.updated }}</span>
-		<img class="user-tbn" src="../static/img/users/{{ recipe.author_id }}.png" align="user">
+		<a href="{{ url_for('profile', profile_id=recipe.author_id) }}">
+            <img class="user-tbn" src="../static/img/users/{{ recipe.author_id }}.png" align="user">
+        </a>
 	</footer>
 </li>

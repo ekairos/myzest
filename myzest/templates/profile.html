@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block pagetitle %} - {{ profile.username }}{% endblock %}
+{% block content %}
+<main>
+    <header class="container mt-3 border-b mb-3">
+         <div class="rcp-section valign-wrapper">
+            <img class="profile-tbn" src="../static/img/users/{{ profile._id }}.png" width="120" height="120">
+            <div class="ml-5">
+                <h1 class="mb-2 profile-title">{{ profile.username }}</h1>
+                <div class="valign-wrapper">
+                    <span>{{ profile.recipes|count }}</span>
+                    <span class="pl-1 material-icons">local_dining</span>
+                    <span class="border-l pl-2 ml-2 ">{{ profile.faved }}</span>
+                    <span class="pl-1 material-icons">favorite</span>
+                </div>
+                <small>since {{ profile._id.generation_time|date }}</small>
+            </div>
+        </div>
+        {% if profile.bio %}
+        <div class="divider"></div>
+        <p>{{ profile.bio }}</p>
+        {% endif %}
+    </header>
+
+    <!-- recipes section -->
+    {% if session['user'] and profile.username == session['user']['username'] %}
+        <h3 class="ml-3 rcp-sel-title">Your recipes</h3>
+    {% else %}
+        <h3 class="ml-3 rcp-sel-title">{{ profile.username }}'s recipes</h3>
+    {% endif %}
+    <section class="rcp-sel">
+        <!-- recipe cards -->
+        <ul class="rcp-sel-short">
+            {% for recipe in recipes %}
+                {% include "rcpcard.html" %}
+            {% endfor %}
+        </ul>
+    </section>
+
+    <!-- fav section -->
+    {% if session['user'] and profile.username == session['user']['username'] %}
+        <h3 class="rcp-sel-title">Your favorites</h3>
+    {% else %}
+        <h3 class="rcp-sel-title">{{ profile.username }}'s favorites</h3>
+    {% endif %}
+    <section class="rcp-sel">
+        <!-- recipe cards -->
+        <ul class="rcp-sel-short">
+            {% for recipe in faved %}
+                {% include "rcpcard.html" %}
+            {% endfor %}
+        </ul>
+    </section>
+</main>
+{% endblock %}

@@ -36,6 +36,11 @@ def min_to_hour(time):
     return str(h) + "h" + str(m) if h > 0 else str(m)
 
 
+@app.template_filter()
+def date(time):
+    return time.date()
+
+
 def formdata_to_query(data):
     """ Processes data from the search form to build query with relevant fields only"""
     # time and serves
@@ -470,6 +475,30 @@ def contact():
         user_email = mongo.db.users.distinct('email', {'_id': ObjectId(session['user']['_id'])})[0]
         return render_template('contact.html', user=session['user'], email=user_email)
     return render_template('contact.html')
+
+
+@app.route('/profile/<profile_id>')
+def profile(profile_id):
+    recipes = mongo.db.recipes.find({'author_id': ObjectId(profile_id)})
+    full_profile = mongo.db.users.aggregate([
+        {'$match': {'_id': ObjectId(profile_id)}},
+        {'$lookup': {'from': 'recipes',
+                     'pipeline': [
+                         {'$match': {'author_id': ObjectId(profile_id)}},
+                         {'$group': {'_id': '$author_id',
+                                     'faved': {'$sum': '$favorite'}
+                                     }
+                          }
+                     ],
+                     'as': 'recipefaved'
+                     }
+         },
+        {'$replaceRoot': {'newRoot': {'$mergeObjects': [{'$arrayElemAt': ['$recipefaved', 0]}, '$$ROOT']}}},
+        {'$project': {'recipefaved': 0}}
+    ])
+    profile = list(full_profile)[0]
+    faved = [mongo.db.recipes.find_one({'_id': recipe}) for recipe in profile['favorites']]
+    return render_template('profile.html', session=session, profile=profile, recipes=recipes, faved=faved)
 
 
 @app.errorhandler(500)

@@ -30,8 +30,10 @@
 	<div class="divider"></div>
 
 	<section class="rcp-section valign-wrapper">
-		<img class="rcp-author-tbn" src="../static/img/users/{{ recipe.author_id }}.png" width="50" height="50">
-		<div class="ml-3">
+		<a href="{{ url_for('profile', profile_id=recipe.author_id) }}">
+            <img class="rcp-author-tbn" src="../static/img/users/{{ recipe.author_id }}.png" width="50" height="50">
+        </a>
+        <div class="ml-3">
 			<div>{{ author.username }}</div>
 			<div>
 				<small>Updated : {{ recipe.updated }}</small>
