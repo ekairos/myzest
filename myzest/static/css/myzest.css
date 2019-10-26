@@ -600,10 +600,21 @@ html, body {
 }
 .profile-title {
   font-family: "Donegal One", serif;
+  font-size: 2em;
+  word-break: break-word;
 }
 
 .profile-tbn {
   border-radius: 50%;
+}
+
+#profile {
+  position: relative;
+}
+#profile #profile-edit-btn {
+  position: absolute;
+  bottom: -2em;
+  right: 1em;
 }
 
 .error-page {

@@ -13,34 +13,34 @@
 		{% include "rcpcard.html" %}
 		{% endfor %}
 	</ul>
-	{% if page.total > 1 %}
+	{% if paginate.total_pages > 1 %}
 	<ul class="pagination center">
 
-		{% if page.current == 1 %}
+		{% if paginate.current == 1 %}
 		<li class="disabled">
 			<a><i class="material-icons">chevron_left</i></a>
 		</li>
 		{% else %}
 		<li>
-			<a href="{{ url_for('search_recipes', target_page=page.current-1) }}"><i class="material-icons">chevron_left</i></a>
+			<a href="{{ url_for('search_recipes', target_page=paginate.current-1) }}"><i class="material-icons">chevron_left</i></a>
 		</li>
 		{% endif %}
 
-		{% for current_page in range(1, page.total + 1) %}
-			{% if current_page == page.current %}
+		{% for current_page in range(1, paginate.total_pages + 1) %}
+			{% if current_page == paginate.current %}
 			<li class="active"><a>{{ loop.index }}</a></li>
 			{% else %}
 			<li><a href="{{ url_for('search_recipes', target_page=loop.index) }}">{{ loop.index }}</a></li>
 			{% endif %}
 		{% endfor %}
 
-		{% if page.current == page.total %}
+		{% if paginate.current == paginate.total_pages %}
 		<li class="disabled">
 			<a><i class="material-icons">chevron_right</i></a>
 		</li>
 		{% else %}
 		<li>
-			<a href="{{ url_for('search_recipes', target_page=page.current+1) }}"><i class="material-icons">chevron_right</i></a>
+			<a href="{{ url_for('search_recipes', target_page=paginate.current+1) }}"><i class="material-icons">chevron_right</i></a>
 		</li>
 		{% endif %}
 

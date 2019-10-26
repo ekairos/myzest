@@ -2,7 +2,7 @@
 {% block pagetitle %} {{ recipe.name }} {% endblock %}
 {% block content %}
 <header class="rcp-header">
-	<img class="rcp-img mr-auto ml-auto" src="../static/img/recipes/{{ recipe.image }}" alt="image missing">
+	<img class="rcp-img mr-auto ml-auto" src="{{ url_for('static', filename='img/recipes/' + recipe.image) }}" alt="image missing">
 </header>
 
 <main class="container">
@@ -31,7 +31,7 @@
 
 	<section class="rcp-section valign-wrapper">
 		<a href="{{ url_for('profile', profile_id=recipe.author_id) }}">
-            <img class="rcp-author-tbn" src="../static/img/users/{{ recipe.author_id }}.png" width="50" height="50">
+            <img class="rcp-author-tbn" src="{{ url_for('static', filename='img/users/' + author.avatar) }}" width="50" height="50">
         </a>
         <div class="ml-3">
 			<div>{{ author.username }}</div>

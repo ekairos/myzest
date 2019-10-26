@@ -24,6 +24,10 @@ $(document).ready(function(){
 		}
 	}
 
+	window.clearField = function(e) {
+        $(e).parent().find("textarea", "input").val('');
+    };
+
 	$("[required]").on("focusout", function() {
         if ($(this).val() === '') {
             $(this).next("span").attr("data-error", "This field is required")

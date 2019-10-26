@@ -46,6 +46,7 @@
                 {% endif %}
                 {% if 'user' in session %}
                 <li><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
+                <li><a href="{{ url_for('profile', profile_id=session['user']['_id']) }}">Profile</a></li>
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 {% endif %}
             </ul>
@@ -61,6 +62,7 @@
     {% endif %}
     {% if 'user' in session %}
     <li><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
+    <li><a href="{{ url_for('profile', profile_id=session['user']['_id']) }}">Profile</a></li>
     <li><a href="{{ url_for('logout') }}">Logout</a></li>
     {% endif %}
 </ul>

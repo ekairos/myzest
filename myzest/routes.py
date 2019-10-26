@@ -37,7 +37,7 @@ def min_to_hour(time):
 
 
 @app.template_filter()
-def date(time):
+def oid_date(time):
     return time.date()
 
 
@@ -88,8 +88,7 @@ def make_query(requested_data):
 
     data = requested_data.to_dict()
 
-    sort = [(data.pop("sort"), -1) if data['sort'] in ['favorite', 'views', 'updated']
-            else (data.pop("sort"), 1)]
+    sort = {data.pop("sort"): -1} if data['sort'] in ['favorite', 'views', 'updated'] else {data.pop("sort"): 1}
 
     query = formdata_to_query(data)
 
@@ -105,13 +104,31 @@ class Paginate:
     per_page = 4
 
     def __init__(self, query, sort, target_page=1):
-        self.recipes = mongo.db.recipes.find(query).sort(sort)
-        self.total = math.ceil(self.recipes.count() / self.per_page)
+        self.total_pages = math.ceil(mongo.db.recipes.find(query).count() / self.per_page)
         self.current = target_page
+        self.to_skip = self.per_page * (self.current - 1)
+        self.recipes = mongo.db.recipes.aggregate([
+            {'$match': query},
+            {'$sort': sort},
+            {'$skip': self.to_skip},
+            {'$limit': self.per_page},
+            {'$lookup': {
+                'from': 'users',
+                'localField': 'author_id',
+                'foreignField': '_id',
+                'as': 'author'
+            }},
+            {'$unwind': {'path': '$author'}},
+            {'$addFields': {'avatar': '$author.avatar'}},
+            {'$project': {'author': 0}}
+        ])
 
     def get_page(self):
-        to_skip = self.per_page * (self.current - 1)
-        return self.recipes.skip(to_skip).limit(self.per_page)
+        return self.recipes
+
+
+def hash_password(password):
+    return bcrypt.generate_password_hash(password).decode('utf-8')
 
 
 @app.route('/')
@@ -124,10 +141,28 @@ def home():
         session['views'] = []
 
     top_faved = mongo.db.recipes.aggregate([
+        {'$lookup': {
+            'from': 'users',
+            'localField': 'author_id',
+            'foreignField': '_id',
+            'as': 'author'
+        }},
+        {'$unwind': {'path': '$author'}},
+        {'$addFields': {'avatar': '$author.avatar'}},
+        {'$project': {'author': 0}},
         {'$sort': {'favorite': -1}},
         {'$limit': 5}
     ])
     latests = mongo.db.recipes.aggregate([
+        {'$lookup': {
+            'from': 'users',
+            'localField': 'author_id',
+            'foreignField': '_id',
+            'as': 'author'
+        }},
+        {'$unwind': {'path': '$author'}},
+        {'$addFields': {'avatar': '$author.avatar'}},
+        {'$project': {'author': 0}},
         {'$sort': {'updated': -1}},
         {'$limit': 5}
     ])
@@ -136,7 +171,7 @@ def home():
     sort = session['search']['sort'] if 'search' in session else session['rcp']['sortings']
 
     return render_template('home.html', latests=latests, top_faved=top_faved,
-                           query=query, sort=sort[0][0])
+                           query=query, sort=sort)
 
 
 @app.route('/recipe/<recipe_id>')
@@ -162,20 +197,24 @@ def register():
 @app.route('/add_user', methods=['POST'])
 def add_user():
     data = request.form.to_dict()
-    hashed_passw = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     new_user = {
         'username': data['username'].title(),
         'email': data['email'].lower(),
-        'password': hashed_passw,
-        'favorites': []
+        'password': hash_password(data['password']),
+        'favorites': [],
+        'avatar': "default.png"
     }
     user_in_db = mongo.db.users.find_one({"$or": [{"username": new_user["username"]}, {"email": new_user["email"]}]})
     if user_in_db:
         flash('This user already exists', 'warning')
     elif user_in_db is None:
         registered_user = mongo.db.users.insert_one(new_user)
-        # start first session with 'username' and '_id' only
-        session['user'] = {'username': new_user['username'], '_id': str(registered_user.inserted_id)}
+        # user session object keeps only _id, name and favorites for interaction
+        session['user'] = {
+            'username': new_user['username'],
+            '_id': str(registered_user.inserted_id),
+            'favorites': new_user['favorites']
+        }
         flash('Welcome {} ! Your account was created with {}'
               .format(new_user['username'], new_user['email']), 'success')
     return redirect('home')
@@ -192,6 +231,9 @@ def check_user():
 
     if data['form'] == "registration":
         return jsonify({'error': "This {} is already taken".format(data['field'])}) if document else "success"
+    elif data['form'] == 'editprofile':
+        session_user = mongo.db.users.find_one({'username': session['user']['username']})
+        return jsonify({'error': "This {} is already used by someone else".format(data['field'])}) if document and session_user[data['field']] != value else "success"
     else:
         return "success" if document else jsonify({'error': "This {} is not registered".format(data['field'])})
 
@@ -446,9 +488,9 @@ def search_recipes():
 
     return render_template('results.html',
                            query=query,
-                           sort=sort[0][0],
+                           sort=sort,
                            results=results,
-                           page=paginate)
+                           paginate=paginate)
 
 
 @app.route('/searchcount', methods=['POST'])
@@ -479,7 +521,19 @@ def contact():
 
 @app.route('/profile/<profile_id>')
 def profile(profile_id):
-    recipes = mongo.db.recipes.find({'author_id': ObjectId(profile_id)})
+    recipes = mongo.db.recipes.aggregate([
+        {'$match': {'author_id': ObjectId(profile_id)}},
+        {'$lookup': {
+            'from': 'users',
+            'localField': 'author_id',
+            'foreignField': '_id',
+            'as': 'author'
+        }},
+        {'$unwind': {'path': '$author'}},
+        {'$addFields': {'avatar': '$author.avatar'}},
+        {'$project': {'author': 0}}
+    ])
+
     full_profile = mongo.db.users.aggregate([
         {'$match': {'_id': ObjectId(profile_id)}},
         {'$lookup': {'from': 'recipes',
@@ -497,8 +551,80 @@ def profile(profile_id):
         {'$project': {'recipefaved': 0}}
     ])
     profile = list(full_profile)[0]
-    faved = [mongo.db.recipes.find_one({'_id': recipe}) for recipe in profile['favorites']]
+
+    from_favorite = [
+        mongo.db.recipes.aggregate([
+            {'$match': {'_id': recipe}},
+            {'$lookup': {
+                'from': 'users',
+                'localField': 'author_id',
+                'foreignField': '_id',
+                'as': 'author'
+            }},
+            {'$unwind': {'path': '$author'}},
+            {'$addFields': {'avatar': '$author.avatar'}},
+            {'$project': {'author': 0}}
+        ]) for recipe in profile['favorites']
+    ]
+    faved = [recipe for cursor in from_favorite for recipe in cursor]
     return render_template('profile.html', session=session, profile=profile, recipes=recipes, faved=faved)
+
+
+@app.route('/edit-profile/<profile_id>', methods=['GET', 'POST'])
+def edit_profile(profile_id):
+    if request.method == 'GET':
+        profile = mongo.db.users.find_one({'_id': ObjectId(profile_id)})
+        return render_template('editprofile.html', session=session, profile=profile)
+    elif request.method == 'POST':
+        data = request.form.to_dict()
+
+        data['username'] = data['username'].title()
+        data['email'] = data['email'].lower()
+
+        update = {k: v for (k, v) in data.items() if data[k] != ""}
+
+        # consider bio removed if not in update (empty)
+        if 'bio' in update:
+            update['bio'] = update['bio'].strip()
+        if 'bio' not in update:
+            mongo.db.users.update_one(
+                {'_id': ObjectId(session['user']['_id'])},
+                {'$unset': {'bio': ""}}
+            )
+
+        if 'password' in update:
+            if 'passwConfirm' not in update or update['passwConfirm'] != update['password']:
+                flash('Password confirmation does not match', 'warning')
+                return redirect('/edit-profile/{}'.format(profile_id))
+            else:
+                update['password'] = hash_password(update['password'])
+                del update['passwConfirm']
+
+        # Rename and store image using user's id
+        pic = request.files['img']
+        if pic:
+            file_ext = pic.filename.rsplit('.', 1)[-1].lower()
+            filename = str(session['user']['_id']) + '.' + file_ext
+            # double check file extension
+            if not filename.endswith(pic_extensions):
+                flash('wrong file extension', 'warning')
+                return redirect('/edit-profile/{}'.format(profile_id))
+            else:
+                pic.save(path.join(app.config['USER_PIC_DIR'], filename))
+
+            update['avatar'] = filename
+
+        mongo.db.users.update_one(
+            {'_id': ObjectId(session['user']['_id'])},
+            {'$set': update}
+        )
+
+        # update session user object
+        user = mongo.db.users.find_one({'_id': ObjectId(session['user']['_id'])}, {'username': 1, 'favorites': 1})
+        user = JSONEncoder().encode(user)
+        session['user'] = json.loads(user)
+        session.modified = True
+        return redirect('/profile/{}'.format(profile_id))
 
 
 @app.errorhandler(500)

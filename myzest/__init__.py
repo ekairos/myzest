@@ -8,7 +8,8 @@ from myzest import config
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = config.secret_key
-app.config['RECIPE_PIC_DIR'] = path.join(path.dirname(path.realpath(__file__)), 'static/img/recipes')
+app.config['RECIPE_PIC_DIR'] = path.join(path.dirname(path.realpath(__file__)), 'static/img/recipes/')
+app.config['USER_PIC_DIR'] = path.join(path.dirname(path.realpath(__file__)), 'static/img/users/')
 
 bcrypt = Bcrypt(app)
 
