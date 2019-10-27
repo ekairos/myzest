@@ -627,6 +627,38 @@ def edit_profile(profile_id):
         return redirect('/profile/{}'.format(profile_id))
 
 
+@app.route('/deluser/<user_id>')
+def delete_user(user_id):
+    """ Deleting the user's accounts:
+    decrement fav_count for recipe in his favorite list,
+    removes his recipes from other users favorite list then remove them,
+    finally remove hist account and logout from session.
+    """
+
+    user = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+
+    if 'recipes' in user and not len(user['recipes']) > 0:
+        print("recipes found")
+        # removes each user's recipe from other users favorites
+        # removes recipe in DB
+        for recipe in user['recipes']:
+            mongo.db.users.update_many({}, {'$pull': {'favorites': recipe}})
+            mongo.db.recipes.remove({"_id": ObjectId(recipe)})
+
+    if 'favorites' in user and len(user['favorites']) > 0:
+        print("favorites found")
+        # for each faved recipe decrement favorite count on recipe
+        for recipe in user['favorites']:
+            mongo.db.recipes.update_many({'_id': ObjectId(recipe)}, {'$inc': {'favorite': -1}})
+
+    # then delete users
+    mongo.db.users.remove({"_id": ObjectId(user_id)})
+
+    flash("We are sorry to see you leave {}. Feel free to come back anytime !".format(session['user']['username']), "info")
+    session.pop('user')
+    return redirect('/home')
+
+
 @app.errorhandler(500)
 @app.errorhandler(404)
 def page_error(error):

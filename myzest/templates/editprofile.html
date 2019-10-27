@@ -91,6 +91,28 @@
         </footer>
     </form>
 </main>
+<footer class="container mt-5 mb-5">
+    {% if session['user'] and profile.username == session['user']['username'] %}
+    <small><a class="modal-trigger" href="#del-account">Delete</a> your account.</small>
+    {%  endif %}
+</footer>
+
+<!-- Modal Delete confirmation -->
+<div id="del-account" class="modal">
+    <div class="modal-content">
+      <h4 class="border-b pb-3">Delete your account ?</h4>
+        <p>If you proceed with your account deletion :</p>
+        <ul>
+            <li>- All your recipes will be permanently erased. You won't be able to retrieve them.</li>
+            <li>- Your favorite recipes list will be lost. You will have to search for them.</li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+      <a href="{{ url_for('delete_user', user_id=profile._id ) }}" class="btn red modal-close">Delete</a>
+      <a class="btn modal-close">Cancel</a>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block script %}
