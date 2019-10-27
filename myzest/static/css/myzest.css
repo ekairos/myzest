@@ -546,10 +546,12 @@ html, body {
   font-size: 0.8rem;
 }
 
-.user-tbn {
+.author-tbn {
   display: block;
   border-radius: 50%;
   width: 30px;
+  height: 30px;
+  object-fit: cover;
 }
 
 .rcp-header {
@@ -573,6 +575,7 @@ html, body {
   border-radius: 50%;
   width: 50px;
   height: 50px;
+  object-fit: cover;
 }
 
 .rcp-results {
@@ -604,12 +607,12 @@ html, body {
   word-break: break-word;
 }
 
-.profile-tbn {
-  border-radius: 50%;
-}
-
 #profile {
   position: relative;
+}
+#profile .profile-tbn {
+  border-radius: 50%;
+  object-fit: cover;
 }
 #profile #profile-edit-btn {
   position: absolute;

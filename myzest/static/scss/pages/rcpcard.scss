@@ -70,8 +70,10 @@
 .rcpcard-upd {
 	font-size: 0.8rem;
 }
-.user-tbn {
+.author-tbn {
 	display: block;
 	border-radius: 50%;
 	width: 30px;
+	height: 30px;
+	object-fit: cover;
 }

@@ -3,11 +3,13 @@
   font-size: 2em;
   word-break: break-word;
 }
-.profile-tbn {
-  border-radius: 50%;
-}
 #profile {
   position: relative;
+
+  .profile-tbn {
+    border-radius: 50%;
+    object-fit: cover;
+  }
 
   #profile-edit-btn {
     position: absolute;
