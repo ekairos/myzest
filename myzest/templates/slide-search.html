@@ -8,11 +8,11 @@
 			<div class="row">
 				<div class="input-field">
 					{% if query and '$text' in query %}
-					<input id="text-field" name="textSearch" type="text" class="validate" value="{{ query['$text']['$search'] }}">
+					<input id="text-search" name="textSearch" type="text" class="validate" value="{{ query['$text']['$search'] }}">
 					{% else %}
-					<input id="text-field" name="textSearch" type="text" class="validate">
+					<input id="text-search" name="textSearch" type="text" class="validate">
 					{% endif %}
-					<label for="text-field">Ingredient, recipe name</label>
+					<label for="text-search">Ingredient, recipe name</label>
 				</div>
 			</div>
 		</div>

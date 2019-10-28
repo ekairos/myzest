@@ -41,7 +41,7 @@ $(document).ready(function(){
     // Count recipes to return
     function countRecipes() {
         var formdata = {
-            "textSearch": $("#text-field").val().toLowerCase(),
+            "textSearch": $("#text-search").val().toLowerCase(),
             "foodType": $("#food-field .selected").text().toLowerCase(),
             "difficulty": $("#diff-field .selected").text().toLowerCase(),
             "timer.start": parseInt($("#timer-start").val()),
@@ -60,7 +60,7 @@ $(document).ready(function(){
         });
     }
 
-    $("input, #food-field, #diff-field").on("keyup blur change", function(){
+    $("#text-search, #timer-start, #timer-stop, #serve-start, #serve-stop, #food-field, #diff-field").on("keyup blur change", function(){
         countRecipes();
     });
 
