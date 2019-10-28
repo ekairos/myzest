@@ -275,7 +275,6 @@ def logout():
     if 'user' in session:
         username = session['user']['username']
         session.pop('user')
-        session['views'] = []
         flash('We hope to see you soon {}'.format(username), 'info')
     else:
         flash('You are not logged in', 'warning')
