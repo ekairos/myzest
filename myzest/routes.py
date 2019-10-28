@@ -5,7 +5,7 @@ import re
 import json
 import math
 from datetime import date
-from os import path
+from os import path, remove as os_remove
 
 rcp = {
         'difficulties': ("easy", "average", "hard"),
@@ -360,6 +360,7 @@ def insert_recipe():
 def del_rcp(recipe_id):
     recipe_id = recipe_id
     mongo.db.users.update({"_id": ObjectId(session['user']['_id'])}, {'$pull': {'recipes': ObjectId(recipe_id)}})
+    os_remove(path.join(app.config['RECIPE_PIC_DIR'], mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})['image']))
     mongo.db.recipes.remove({"_id": ObjectId(recipe_id)})
     mongo.db.users.update_many(
         {'favorites': {'$elemMatch': {'$eq': ObjectId(recipe_id)}}},
@@ -632,29 +633,32 @@ def delete_user(user_id):
     """ Deleting the user's accounts:
     decrement fav_count for recipe in his favorite list,
     removes his recipes from other users favorite list then remove them,
-    finally remove hist account and logout from session.
+    finally remove his account and logout from session.
     """
 
     user = mongo.db.users.find_one({'_id': ObjectId(user_id)})
 
-    if 'recipes' in user and not len(user['recipes']) > 0:
-        print("recipes found")
+    if 'recipes' in user and len(user['recipes']) > 0:
         # removes each user's recipe from other users favorites
-        # removes recipe in DB
+        # removes recipe in DB and image file on server
         for recipe in user['recipes']:
             mongo.db.users.update_many({}, {'$pull': {'favorites': recipe}})
-            mongo.db.recipes.remove({"_id": ObjectId(recipe)})
+            os_remove(path.join(app.config['RECIPE_PIC_DIR'],
+                                mongo.db.recipes.find_one({'_id': ObjectId(recipe)})['image']))
+            mongo.db.recipes.remove({"_id": recipe})
 
     if 'favorites' in user and len(user['favorites']) > 0:
-        print("favorites found")
         # for each faved recipe decrement favorite count on recipe
         for recipe in user['favorites']:
             mongo.db.recipes.update_many({'_id': ObjectId(recipe)}, {'$inc': {'favorite': -1}})
 
-    # then delete users
+    # then delete user and avatar file
+    if user['avatar'] != "default.png":
+        os_remove(path.join(app.config['USER_PIC_DIR'], user['avatar']))
     mongo.db.users.remove({"_id": ObjectId(user_id)})
 
-    flash("We are sorry to see you leave {}. Feel free to come back anytime !".format(session['user']['username']), "info")
+    flash("We are sorry to see you leave {}. Feel free to come back anytime !".
+          format(session['user']['username']), "info")
     session.pop('user')
     return redirect('/home')
 
