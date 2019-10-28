@@ -16,7 +16,7 @@ $(document).ready(function() {
                         </div>\
                         <div class="input-field col s4">\
                             <label for="amount-' +ingredientCount +'">Amount</label>\
-                            <input id="amount-' + ingredientCount + '" class="validate" type="text" maxlength="8" name="amount-' + ingredientCount + '" pattern="[0-9]+\\s?[A-Za-z]{1,8}" required>\
+                            <input id="amount-' + ingredientCount + '" class="validate" type="text" maxlength="10" name="amount-' + ingredientCount + '" pattern="[0-9A-Za-z\\s]{1,10}" required>\
                             <span class="helper-text" data-error="Specify valid amount or delete"></span>\
                         </div>\
                         <i class="material-icons col s1" onclick="removeIngredient(this)">cancel</i>\

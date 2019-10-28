@@ -36,7 +36,7 @@
         <div class="ml-3">
 			<div>{{ author.username }}</div>
 			<div>
-				<small>Updated : {{ recipe.updated }}</small>
+				<small>Edited : {{ recipe.updated }}</small>
 			</div>
 		</div>
 	</section>
@@ -63,10 +63,21 @@
 	</section>
 
 	{% if 'user' in session and session['user']['username'] == author.username %}
-		<a class="btn mb-5" href="{{ url_for('del_rcp', recipe_id=recipe._id) }}">Delete</a>
-		<a class="btn mb-5" href="{{ url_for('update_rcp', recipe_id=recipe._id) }}">Update</a>
+		<a class="btn mb-5 modal-trigger" href="#del-recipe">Delete</a>
+		<a class="btn mb-5" href="{{ url_for('edit_recipe', recipe_id=recipe._id) }}">Edit</a>
 	{% endif %}
 </main>
+    <!-- Delete confirmation modal -->
+    <div id="del-recipe" class="modal">
+        <div class="modal-content">
+          <h4 class="border-b pb-3">Delete your recipe ?</h4>
+            <p>Please confirm to permanently delete your recipe.</p>
+        </div>
+        <div class="modal-footer">
+          <a href="{{ url_for('delete_recipe', recipe_id=recipe._id ) }}" class="btn red modal-close">Delete</a>
+          <a class="btn modal-close">Cancel</a>
+        </div>
+    </div>
 {% endblock %}
 
 {% block script %}

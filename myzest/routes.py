@@ -355,8 +355,8 @@ def insert_recipe():
     return redirect('/recipe/{}'.format(rcp.inserted_id))
 
 
-@app.route('/del_rcp/<recipe_id>')
-def del_rcp(recipe_id):
+@app.route('/deleterecipe/<recipe_id>')
+def delete_recipe(recipe_id):
     recipe_id = recipe_id
     mongo.db.users.update({"_id": ObjectId(session['user']['_id'])}, {'$pull': {'recipes': ObjectId(recipe_id)}})
     os_remove(path.join(app.config['RECIPE_PIC_DIR'], mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})['image']))
@@ -367,8 +367,8 @@ def del_rcp(recipe_id):
     return redirect('/home')
 
 
-@app.route('/update_rcp/<recipe_id>', methods=['GET', 'POST'])
-def update_rcp(recipe_id):
+@app.route('/editrecipe/<recipe_id>', methods=['GET', 'POST'])
+def edit_recipe(recipe_id):
     this_recipe = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})
     if request.method == 'POST':
         # Keep checking for active valid connection
@@ -420,7 +420,7 @@ def update_rcp(recipe_id):
             # double check for valid file extension
             if not filename.endswith(pic_extensions):
                 flash('wrong file extension', 'warning')
-                return redirect('/update_rcp/{}'.format(recipe_id))
+                return redirect('/editrecipe/{}'.format(recipe_id))
             else:
                 upd_recipe['image'] = filename
                 request.files['img'].save(path.join(app.config['RECIPE_PIC_DIR'], filename))
@@ -432,7 +432,7 @@ def update_rcp(recipe_id):
 
         return redirect('/recipe/{}'.format(recipe_id))
 
-    return render_template('updaterecipe.html', recipe=this_recipe)
+    return render_template('editrecipe.html', recipe=this_recipe)
 
 
 @app.route('/favme', methods=['POST'])
