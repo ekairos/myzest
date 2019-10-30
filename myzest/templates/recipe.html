@@ -2,95 +2,127 @@
 {% block pagetitle %} {{ recipe.name }} {% endblock %}
 {% block content %}
 <header class="rcp-header">
-	<img class="rcp-img mr-auto ml-auto" src="{{ url_for('static', filename='img/recipes/' + recipe.image) }}" alt="image missing">
+    <img id="rcp-img" class="rcp-img mr-auto ml-auto" src="{{ url_for('static', filename='img/recipes/' + recipe.image) }}" alt="image missing">
 </header>
 
 <main class="container">
 
-	<section class="rcp-section">
+    <section class="rcp-section">
 
-		<h1>{{ recipe.name }}</h1>
-		<p>{{ recipe.description }}</p>
-		<div class="valign-wrapper">
-			<span class="material-icons">access_time</span>
-			<span class="ml-2">{{ recipe.time.total|min_to_hour }}'</span>
-			<span class="border-l pl-2 ml-2 material-icons">people</span>
-			<span class="ml-2">{{ recipe.serves }}</span>
-			<span class="border-l pl-2 ml-2 material-icons">restaurant_menu</span>
-			<span class="ml-2">{{ recipe.difficulty }}</span>
-		</div>
+        <h1>{{ recipe.name }}</h1>
+        <p>{{ recipe.description }}</p>
+        <div class="valign-wrapper">
+            <span class="material-icons">access_time</span>
+            <span class="ml-2">{{ recipe.time.total|min_to_hour }}'</span>
+            <span class="border-l pl-2 ml-2 material-icons">people</span>
+            <span class="ml-2">{{ recipe.serves }}</span>
+            <span class="border-l pl-2 ml-2 material-icons">restaurant_menu</span>
+            <span class="ml-2">{{ recipe.difficulty }}</span>
+        </div>
 
-		<div class="mt-4">
-			<a id="favme" class="tooltipped" href="#" onclick="favMe()" data-tooltip="" data-position="bottom">
-				<i class="material-icons">favorite_border</i>
-			</a>
-		</div>
-	</section>
+        <div class="mt-4">
+            <a id="favme" class="tooltipped" href="#" onclick="favMe()" data-tooltip="" data-position="bottom">
+                <i class="material-icons">favorite_border</i>
+            </a>
+        </div>
+    </section>
 
-	<div class="divider"></div>
+    <div class="divider"></div>
 
-	<section class="rcp-section valign-wrapper">
-		<a href="{{ url_for('profile', profile_id=recipe.author_id) }}">
+    <section class="rcp-section valign-wrapper">
+        <a href="{{ url_for('profile', profile_id=recipe.author_id) }}">
             <img class="rcp-author-tbn" src="{{ url_for('static', filename='img/users/' + author.avatar) }}" width="50" height="50">
         </a>
         <div class="ml-3">
-			<div>{{ author.username }}</div>
-			<div>
-				<small>Edited : {{ recipe.updated }}</small>
-			</div>
-		</div>
-	</section>
+            <div>{{ author.username }}</div>
+            <div>
+                <small>Edited : {{ recipe.updated }}</small>
+            </div>
+        </div>
+    </section>
 
-	<div class="divider"></div>
+    <div class="divider"></div>
 
-	<section class="rcp-section">
-		<h2>Ingredients</h2>
-		<ul>
-			{% for food in recipe.ingredients %}
-			<li>{{ food.amount }} of {{ food.name }}</li>
-			{% endfor %}
-		</ul>
-	</section>
+    <section class="rcp-section">
+        <h2>Ingredients</h2>
+        <ul>
+            {% for food in recipe.ingredients %}
+                <li>{{ food.amount }} of {{ food.name }}</li>
+            {% endfor %}
+        </ul>
+    </section>
 
-	<div class="divider"></div>
+    <div class="divider"></div>
 
-	<section class="rcp-section">
-		<h2>Instructions</h2>
-		{% for step in recipe.steps %}
-		<p>{{ loop.index }}. {{ step.description }}</p>
-		{# add step image if provided #}
-		{% endfor %}
-	</section>
+    <section class="rcp-section">
+        <h2>Instructions</h2>
+        {% for step in recipe.steps %}
+            <p>{{ loop.index }}. {{ step.description }}</p>
+            {# add step image if provided #}
+        {% endfor %}
+    </section>
 
-	{% if 'user' in session and session['user']['username'] == author.username %}
-		<a class="btn mb-5 modal-trigger" href="#del-recipe">Delete</a>
-		<a class="btn mb-5" href="{{ url_for('edit_recipe', recipe_id=recipe._id) }}">Edit</a>
-	{% endif %}
+    {% if 'user' in session and session['user']['username'] == author.username %}
+        <a class="btn mb-5 modal-trigger" href="#del-recipe">Delete</a>
+        <a class="btn mb-5" href="{{ url_for('edit_recipe', recipe_id=recipe._id) }}">Edit</a>
+    {% endif %}
 </main>
-    <!-- Delete confirmation modal -->
-    <div id="del-recipe" class="modal">
-        <div class="modal-content">
-          <h4 class="border-b pb-3">Delete your recipe ?</h4>
-            <p>Please confirm to permanently delete your recipe.</p>
-        </div>
-        <div class="modal-footer">
-          <a href="{{ url_for('delete_recipe', recipe_id=recipe._id ) }}" class="btn red modal-close">Delete</a>
-          <a class="btn modal-close">Cancel</a>
-        </div>
+<!-- Delete confirmation modal -->
+<div id="del-recipe" class="modal">
+    <div class="modal-content">
+        <h4 class="border-b pb-3">Delete your recipe ?</h4>
+        <p>Please confirm to permanently delete your recipe.</p>
     </div>
+    <div class="modal-footer">
+        <a href="{{ url_for('delete_recipe', recipe_id=recipe._id ) }}" class="btn red modal-close">Delete</a>
+        <a class="btn modal-close">Cancel</a>
+    </div>
+</div>
+<!-- Recipe image modal -->
+<div id="recipe-viewer" class="viewer-window valign-wrapper">
+    <div class="viewer-content">
+        <a id="viewer-close" class="viewer-close"><i class="material-icons">cancel</i></a>
+        <img id="viewer-img" class="viewer-img" src="{{ url_for('static', filename='img/recipes/' + recipe.image) }}" alt="image missing">
+    </div>
+</div>
 {% endblock %}
 
 {% block script %}
+    
 <script type="text/javascript">
-	{% if 'user' in session %}
-		var sessionUser = {{ session['user']|tojson }};
-	{% else %}
-		var sessionUser = "";
-	{% endif %}
+    {% if 'user' in session %}
+        var sessionUser = {{ session['user']|tojson }};
+    {% else %}
+        var sessionUser = "";
+    {% endif %}
 
-	var authorname = {{ author['username']|tojson }};
-	var recipe_id = "{{ recipe._id }}";
+    var authorname = {{ author['username']|tojson }};
+    var recipe_id = "{{ recipe._id }}";
 </script>
 
-<script src="{{ url_for('static', filename='js/session.js')}}"></script>
+<script>
+    $(document).ready(function() {
+        let rcpImg = $("#rcp-img").get(0);
+        let picRatio = rcpImg.naturalWidth / rcpImg.naturalHeight;
+
+        function resizeViewer() {
+            $("#viewer-img").css("maxHeight", window.innerHeight - 100 + "px");
+            $(".viewer-content").css("maxWidth", parseInt($("#viewer-img").css("maxHeight")) * picRatio + "px");
+        }
+
+        $("#rcp-img").click(function() {
+            resizeViewer();
+            $(window).on("resize", resizeViewer);
+            $("#recipe-viewer").css("display", "block");
+        });
+
+        $("#viewer-close").click(function() {
+            $(window).off("resize");
+            $("#recipe-viewer").css("display", "none");
+        });
+    });
+</script>
+
+<script src="{{ url_for('static', filename='js/session.js') }}"></script>
+
 {% endblock %}
