@@ -81,8 +81,11 @@
 <!-- Recipe image modal -->
 <div id="recipe-viewer" class="viewer-window valign-wrapper">
     <div class="viewer-content">
-        <a id="viewer-close" class="viewer-close"><i class="material-icons">cancel</i></a>
-        <img id="viewer-img" class="viewer-img" src="{{ url_for('static', filename='img/recipes/' + recipe.image) }}" alt="image missing">
+        <div class="viewer-btns">
+            <i class="material-icons" onclick="toggleFullScreen()">zoom_out_map</i>
+            <a id="viewer-close"><i class="material-icons">cancel</i></a>
+        </div>
+        <img id="viewer-img" class="viewer-img" src="{{ url_for('static', filename='img/recipes/' + recipe.image) }}" alt="image missing" onclick="toggleFullScreen()">
     </div>
 </div>
 {% endblock %}
@@ -104,6 +107,7 @@
     $(document).ready(function() {
         let rcpImg = $("#rcp-img").get(0);
         let picRatio = rcpImg.naturalWidth / rcpImg.naturalHeight;
+        let viewer = $("#viewer-img").get(0);
 
         function resizeViewer() {
             $("#viewer-img").css("maxHeight", window.innerHeight - 100 + "px");
@@ -120,6 +124,15 @@
             $(window).off("resize");
             $("#recipe-viewer").css("display", "none");
         });
+
+        window.toggleFullScreen = function() {
+            if (!document.fullscreenElement) {
+                viewer.requestFullscreen();
+            } else if (document.fullscreenElement) {
+                document.exitFullscreen();
+                $("#recipe-viewer").css("display", "none");
+            }
+        }
     });
 </script>
 
