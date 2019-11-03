@@ -101,7 +101,7 @@ def make_query(requested_data):
 class Paginate:
     """ Queries MongoDB for recipes and builds pagination """
 
-    per_page = 4
+    per_page = 6
 
     def __init__(self, query, sort, target_page=1):
         self.total_pages = math.ceil(mongo.db.recipes.find(query).count() / self.per_page)

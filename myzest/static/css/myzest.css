@@ -362,6 +362,91 @@ strong {
   font-size: 12px;
 }
 
+/*
+        ___ Recipes on home page ___
+*/
+.rcp-sel {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.rcp-sel-title {
+  font-family: "Donegal One", serif;
+  font-size: 2rem;
+  padding-top: 0.5em;
+  margin-left: 1em;
+}
+
+.rcp-sel-short {
+  overflow-x: scroll;
+  white-space: nowrap;
+  display: flex;
+  padding: 10px;
+}
+.rcp-sel-short .rcpcard {
+  width: 220px;
+}
+.rcp-sel-short .rcpcard-header {
+  width: 220px;
+}
+
+@media (min-width: 768px) {
+  .rcp-sel {
+    width: 80%;
+    max-width: 960px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .rcp-sel-short {
+    overflow-x: unset;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin-left: 10px;
+  }
+  .rcp-sel-short .rcpcard {
+    flex-grow: 1;
+    flex-basis: 240px;
+  }
+  .rcp-sel-short .rcpcard-header {
+    width: unset;
+  }
+}
+/*
+        ___ Recipes on results and profile page ___
+*/
+.rcp-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 10px;
+}
+.rcp-results .rcpcard {
+  width: 100%;
+}
+
+@media (min-width: 500px) {
+  .rcp-results {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin-left: 10px;
+  }
+  .rcp-results .rcpcard {
+    flex-grow: 1;
+    flex-basis: 220px;
+  }
+}
+@media (min-width: 1326px) {
+  .rcp-results {
+    max-width: 1200px;
+  }
+  .rcp-results .rcpcard {
+    flex-basis: 240px;
+  }
+}
 html, body {
   font-size: 14px;
   height: 100%;
@@ -376,7 +461,12 @@ html, body {
   font-family: "Sahitya", serif;
 }
 
+.main-wrapper {
+  min-height: calc(100% - 165px);
+}
+
 #main-footer {
+  height: 165px;
   padding-top: 20px;
   background-color: #2A3038;
   color: white;
@@ -431,31 +521,6 @@ html, body {
 
 #landing-title {
   font-size: 6rem;
-}
-
-.rcp-sel {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  margin-left: 1em;
-}
-
-.rcp-sel-title {
-  font-family: "Donegal One", serif;
-  font-size: 2rem;
-  padding-top: 0.5em;
-  margin-left: 1em;
-}
-
-.rcp-sel-short {
-  overflow-x: scroll;
-  white-space: nowrap;
-  display: flex;
-}
-.rcp-sel-short .rcpcard {
-  width: 220px;
-}
-.rcp-sel-short .rcpcard .rcpcard-header {
-  width: 220px;
 }
 
 #home-search {
@@ -633,29 +698,6 @@ html, body {
     opacity: 1;
   }
 }
-.rcp-results {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: 10px;
-}
-.rcp-results .rcpcard {
-  width: 100%;
-  max-width: 280px;
-}
-
-@media (min-width: 500px) {
-  .rcp-results {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: left;
-    align-items: stretch;
-    margin-left: 10px;
-  }
-  .rcp-results .rcpcard {
-    width: 220px;
-  }
-}
 .profile-title {
   font-family: "Donegal One", serif;
   font-size: 2em;
@@ -664,6 +706,9 @@ html, body {
 
 #profile {
   position: relative;
+  width: 90%;
+  margin-right: auto;
+  margin-left: auto;
 }
 #profile .profile-tbn {
   border-radius: 50%;
@@ -723,6 +768,12 @@ html, body {
   left: -10px;
   height: 200%;
   width: 200%;
+}
+
+#slide-search {
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 100%;
 }
 
 /*# sourceMappingURL=myzest.css.map */

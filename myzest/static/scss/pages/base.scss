@@ -8,8 +8,13 @@ html, body {
 }
 .brand-title {
 	font-family: 'Sahitya', serif;
+
+}
+.main-wrapper {
+	min-height: calc(100% - 165px);
 }
 #main-footer {
+	height: 165px;
 	padding-top: 20px;
 	background-color: $mz-darkblue;
 	color: white;

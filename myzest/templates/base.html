@@ -24,90 +24,91 @@
 
 </head>
 <body>
-
-<div class="navbar-fixed">
-    <nav id="myzest-nav">
-        <div class="nav-wrapper container">
-            <a href="{{ url_for('home') }}" class="brand-logo brand-title left">MyZest</a>
-            <ul class="right">
-                <li class="sidenav-trigger hide-on-large-only" data-target="slide-search">
-                    <a href="#"><i class="material-icons">search</i></a>
-                </li>
-                <li>
-                    <a href="#" data-target="side-menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
-                </li>
-            </ul>
-            <ul class="right hide-on-med-and-down">
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li class="sidenav-trigger" data-target="slide-search"><a href="#">Search</a></li>
-                {% if 'user' not in session %}
-                <li><a href="{{ url_for('register') }}">Register</a></li>
-                <li><a href="{{ url_for('login') }}">Login</a></li>
-                {% endif %}
-                {% if 'user' in session %}
-                <li><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
-                <li><a href="{{ url_for('profile', profile_id=session['user']['_id']) }}">Profile</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
-</div>
-<ul class="sidenav" id="side-menu">
-    <li><a href="{{ url_for('home') }}">Home</a></li>
-    <li><a class="modal-trigger sidenav-close" href="#text-search-mod">Quick Search</a></li>
-    {% if 'user' not in session %}
-    <li><a href="{{ url_for('register') }}">Register</a></li>
-    <li><a href="{{ url_for('login') }}">Login</a></li>
-    {% endif %}
-    {% if 'user' in session %}
-    <li><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
-    <li><a href="{{ url_for('profile', profile_id=session['user']['_id']) }}">Profile</a></li>
-    <li><a href="{{ url_for('logout') }}">Logout</a></li>
-    {% endif %}
-</ul>
-
-<!--text search modal-->
-<div id="text-search-mod" class="modal">
-    <div class="modal-content">
-        <form id="textSearchForm" action="{{ url_for('search_recipes') }}" method="post">
-            <div class="input-field">
-                <label for="modal-search">Search for ...</label>
-                <input id="modal-search" name="textSearch" type="text" placeholder="ingredient, name ..."
-                       class="center-align">
+<div class="main-wrapper">
+    <div class="navbar-fixed">
+        <nav id="myzest-nav">
+            <div class="nav-wrapper container">
+                <a href="{{ url_for('home') }}" class="brand-logo brand-title left">MyZest</a>
+                <ul class="right">
+                    <li class="sidenav-trigger hide-on-large-only" data-target="slide-search">
+                        <a href="#"><i class="material-icons">search</i></a>
+                    </li>
+                    <li>
+                        <a href="#" data-target="side-menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
+                    </li>
+                </ul>
+                <ul class="right hide-on-med-and-down">
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                    <li class="sidenav-trigger" data-target="slide-search"><a href="#">Search</a></li>
+                    {% if 'user' not in session %}
+                    <li><a href="{{ url_for('register') }}">Register</a></li>
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% endif %}
+                    {% if 'user' in session %}
+                    <li><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
+                    <li><a href="{{ url_for('profile', profile_id=session['user']['_id']) }}">Profile</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% endif %}
+                </ul>
             </div>
-            <input type="hidden" name="sort" value="updated">
-        </form>
+        </nav>
     </div>
+
+    <ul class="sidenav" id="side-menu">
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a class="modal-trigger sidenav-close" href="#text-search-mod">Quick Search</a></li>
+        {% if 'user' not in session %}
+        <li><a href="{{ url_for('register') }}">Register</a></li>
+        <li><a href="{{ url_for('login') }}">Login</a></li>
+        {% endif %}
+        {% if 'user' in session %}
+        <li><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
+        <li><a href="{{ url_for('profile', profile_id=session['user']['_id']) }}">Profile</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        {% endif %}
+    </ul>
+
+    <!--text search modal-->
+    <div id="text-search-mod" class="modal">
+        <div class="modal-content">
+            <form id="textSearchForm" action="{{ url_for('search_recipes') }}" method="post">
+                <div class="input-field">
+                    <label for="modal-search">Search for ...</label>
+                    <input id="modal-search" name="textSearch" type="text" placeholder="ingredient, name ..."
+                           class="center-align">
+                </div>
+                <input type="hidden" name="sort" value="updated">
+            </form>
+        </div>
+    </div>
+
+    <!-- Search recipe sidenav bar -->
+    {% include "slide-search.html" %}
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <section class="card-panel flash-{{ category }} txt-ctr mr-auto ml-auto">
+                <span>{{ message }}</span>
+            </section>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}
+    {% endblock %}
 </div>
-
-<!-- Search recipe sidenav bar -->
-{% include "slide-search.html" %}
-
-{% with messages = get_flashed_messages(with_categories=True) %}
-	{% if messages %}
-		{% for category, message in messages %}
-		<section class="card-panel flash-{{ category }} txt-ctr mr-auto ml-auto">
-			<span>{{ message }}</span>
-		</section>
-		{% endfor %}
-	{% endif %}
-{% endwith %}
-
-{% block content %}
-{% endblock %}
-
 <footer id="main-footer">
     <div class="container">
         <div class="row">
-            <section class="col s5 offset-s2">
+            <section class="col s5 offset-s2 m3 offset-m2 l2 offset-l3">
                 <!-- support -->
                 <ul class="footer-links">
                     <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
                 </ul>
             </section>
             <!-- follow Us -->
-            <section class="col s5">
+            <section class="col s4 offset-s1 m4 offset-m3 l4 offset-l3">
                 <ul class="footer-social">
                     <li><a class="tooltipped" data-position="left" data-tooltip="Not connected yet" href="#">Twitter</a></li>
                     <li><a class="tooltipped" data-position="right" data-tooltip="Not connected yet" href="#">Facebook</a></li>
@@ -126,7 +127,6 @@
         </div>
     </div>
 </footer>
-
 <!-- Materialize JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 

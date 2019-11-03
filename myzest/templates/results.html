@@ -1,18 +1,20 @@
 {% extends 'base.html' %}
 {% block pagetitle %} - search results {% endblock %}
 {% block content %}
-<header>
+<header class="container">
 	<h3 class="rcp-sel-title mt-4">Your search results</h3>
 </header>
 
 <!-- Recipes Found -->
-<section class="mt-5 mb-5">
+<section class="mt-5 mb-5 container">
+
 	<!-- recipe cards -->
 	<ul class="rcp-results">
 		{% for recipe in results %}
 		{% include "rcpcard.html" %}
 		{% endfor %}
 	</ul>
+
 	{% if paginate.total_pages > 1 %}
 	<ul class="pagination center">
 
