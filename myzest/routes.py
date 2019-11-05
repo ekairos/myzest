@@ -33,7 +33,10 @@ class JSONEncoder(json.JSONEncoder):
 def min_to_hour(time):
     h = time // 60
     m = time % 60
-    return str(h) + "h" + str(m) if h > 0 else str(m)
+    if h > 0:
+        return str(h) + "h" + str(m) if m > 0 else str(h) + "h"
+    else:
+        return str(m) + "m"
 
 
 @app.template_filter()
