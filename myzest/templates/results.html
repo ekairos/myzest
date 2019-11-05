@@ -2,51 +2,60 @@
 {% block pagetitle %} - search results {% endblock %}
 {% block content %}
 <header class="container">
-	<h3 class="rcp-sel-title mt-4">Your search results</h3>
+    {% if paginate.total_recipes != 0 %}
+	    <h3 class="rcp-sel-title mt-4">Your search results</h3>
+    {% else %}
+        <h3 class="rcp-sel-title mt-4">Sorry !</h3>
+        <p>There are no recipes yet that match your criteria.</p>
+    {% endif %}
 </header>
 
 <!-- Recipes Found -->
 <section class="mt-5 mb-5 container">
 
-	<!-- recipe cards -->
-	<ul class="rcp-results">
-		{% for recipe in results %}
-		{% include "rcpcard.html" %}
-		{% endfor %}
-	</ul>
+    {% if paginate.total_recipes != 0 %}
 
-	{% if paginate.total_pages > 1 %}
-	<ul class="pagination center">
+        <!-- recipe cards -->
+        <ul class="rcp-results">
+            {% for recipe in results %}
+            {% include "rcpcard.html" %}
+            {% endfor %}
+        </ul>
 
-		{% if paginate.current == 1 %}
-		<li class="disabled">
-			<a><i class="material-icons">chevron_left</i></a>
-		</li>
-		{% else %}
-		<li>
-			<a href="{{ url_for('search_recipes', target_page=paginate.current-1) }}"><i class="material-icons">chevron_left</i></a>
-		</li>
-		{% endif %}
+        {% if paginate.total_pages > 1 %}
+        <ul class="pagination center">
 
-		{% for current_page in range(1, paginate.total_pages + 1) %}
-			{% if current_page == paginate.current %}
-			<li class="active"><a>{{ loop.index }}</a></li>
-			{% else %}
-			<li><a href="{{ url_for('search_recipes', target_page=loop.index) }}">{{ loop.index }}</a></li>
-			{% endif %}
-		{% endfor %}
+            {% if paginate.current == 1 %}
+            <li class="disabled">
+                <a><i class="material-icons">chevron_left</i></a>
+            </li>
+            {% else %}
+            <li>
+                <a href="{{ url_for('search_recipes', target_page=paginate.current-1) }}"><i class="material-icons">chevron_left</i></a>
+            </li>
+            {% endif %}
 
-		{% if paginate.current == paginate.total_pages %}
-		<li class="disabled">
-			<a><i class="material-icons">chevron_right</i></a>
-		</li>
-		{% else %}
-		<li>
-			<a href="{{ url_for('search_recipes', target_page=paginate.current+1) }}"><i class="material-icons">chevron_right</i></a>
-		</li>
-		{% endif %}
+            {% for current_page in range(1, paginate.total_pages + 1) %}
+                {% if current_page == paginate.current %}
+                <li class="active"><a>{{ loop.index }}</a></li>
+                {% else %}
+                <li><a href="{{ url_for('search_recipes', target_page=loop.index) }}">{{ loop.index }}</a></li>
+                {% endif %}
+            {% endfor %}
 
-	</ul>
-	{% endif %}
+            {% if paginate.current == paginate.total_pages %}
+            <li class="disabled">
+                <a><i class="material-icons">chevron_right</i></a>
+            </li>
+            {% else %}
+            <li>
+                <a href="{{ url_for('search_recipes', target_page=paginate.current+1) }}"><i class="material-icons">chevron_right</i></a>
+            </li>
+            {% endif %}
+
+        </ul>
+        {% endif %}
+
+    {% endif %}
 </section>
 {% endblock %}

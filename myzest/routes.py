@@ -104,7 +104,8 @@ class Paginate:
     per_page = 6
 
     def __init__(self, query, sort, target_page=1):
-        self.total_pages = math.ceil(mongo.db.recipes.find(query).count() / self.per_page)
+        self.total_recipes = mongo.db.recipes.find(query).count()
+        self.total_pages = math.ceil(self.total_recipes / self.per_page)
         self.current = target_page
         self.to_skip = self.per_page * (self.current - 1)
         self.recipes = mongo.db.recipes.aggregate([
