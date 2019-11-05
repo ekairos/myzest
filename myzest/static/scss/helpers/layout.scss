@@ -4,8 +4,55 @@
 strong {
     font-weight: bold;
 }
+a {
+	transition: color 0.2s ease-out;
+    color: $mz-orange;
+	&:hover {
+		color: $mz-darkorange;
+	}
+	&:visited {
+		color: $mz-darkorange;
+		border-color: $mz-darkorange;
+		&:hover {
+			border-color: $mz-orange;
+		}
+	}
+}
 .txt-ctr {
     text-align: center;
+}
+.detail {
+	color: $mz-coolgray;
+}
+.cancel {
+  color: $mz-red;
+  cursor: pointer;
+	transition: color 0.2s ease-out;
+	&:hover {
+		color: $mz-darkred;
+	}
+}
+.title {
+	font-family: "Donegal One", serif;
+}
+
+/*
+        ___ Lists elements ___
+*/
+.sidenav li {
+	&:hover {
+		background-color: $mz-lightcoolgray;
+	}
+	&.active {
+		color: $mz-darkorange;
+		background-color: $mz-darkblue;
+		&:hover a {
+			color: $mz-darkorange;
+		}
+		a {
+			color: $mz-lightorange;
+		}
+	}
 }
 
 /*
@@ -26,16 +73,76 @@ strong {
 }
 
 /*
-        ___ Recipes on home page ___
+		___ Materializecss override ___
+*/
+
+//		Buttons
+
+.btn {
+	color: $mz-orange;
+	background-color: unset;
+	border: 1px solid $mz-orange;
+	&:hover, &:focus {
+		color: $mz-darkblue;
+		background-color: $mz-orange;
+		a {
+			color: $mz-darkblue;
+			background-color: unset;
+		}
+	}
+  &.btn-cancel {
+    color: $mz-darkred;
+    background-color: $mz-red;
+  }
+}
+.btn-floating {
+	background-color: $mz-orange;
+	&:hover {
+		color: $mz-darkblue;
+		background-color: $mz-lightorange;
+	}
+}
+.floating-edit-btn {
+    position: absolute;
+    bottom: -2em;
+    right: 1em;
+}
+
+//		Pagination
+
+.pagination li {
+	&.active {
+		background-color: $mz-orange;
+	}
+	&:not(.disabled):not(.active) {
+		a:hover {
+			color: $mz-orange;
+		}
+	}
+}
+
+//    Forms
+
+.input-field > label {
+	color: $mz-coolgray;
+	font-style: italic;
+}
+.dropdown-content li span {
+	color: $mz-orange;
+}
+
+/*
+        ___ Recipes on home and profile pages ___
 */
 .rcp-sel {
 	margin-top: 20px;
 	margin-bottom: 20px;
 }
 .rcp-sel-title {
+	color: $mz-darkblue;
 	font: {
 		family: 'Donegal One', serif;
-		size: 2rem;
+
 	}
 	padding-top: 0.5em;
 	margin-left: 1em;

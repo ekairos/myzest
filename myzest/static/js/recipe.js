@@ -19,7 +19,7 @@ $(document).ready(function() {
                             <input id="amount-' + ingredientCount + '" class="validate" type="text" maxlength="10" name="amount-' + ingredientCount + '" pattern="[0-9A-Za-z\\s]{1,10}" required>\
                             <span class="helper-text" data-error="Specify valid amount or delete"></span>\
                         </div>\
-                        <i class="material-icons col s1" onclick="removeIngredient(this)">cancel</i>\
+                        <i class="material-icons cancel col s1" onclick="removeIngredient(this)">cancel</i>\
                     </li>'
         $('#ingredient-list').append(ingredient);
     }
@@ -64,7 +64,7 @@ $(document).ready(function() {
                     <textarea class="validate materialize-textarea" name="step-' + stepCount + '" required maxlength="300"></textarea>\
                     <span class="helper-text" data-error="This field is required"></span>\
                     </div class="col s1">\
-                    <i class="material-icons col s1" onclick="removeStep(this)">cancel</i>\
+                    <i class="material-icons cancel col s1" onclick="removeStep(this)">cancel</i>\
                     </li>'
         $('#step-list').append(step);
     }

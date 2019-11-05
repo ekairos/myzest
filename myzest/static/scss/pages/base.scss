@@ -1,14 +1,26 @@
 html, body {
 	font-size: 14px;
 	height: 100%;
+	font-family: 'Lato', sans-serif;
 }
 #myzest-nav {
     background-color: $mz-darkblue;
     @include thinshw(outset);
+	a {
+		color: white;
+		&:hover {
+			color: $bright-gray;
+		}
+	}
+	li.active a {
+		color: $mz-lightorange;
+	}
 }
 .brand-title {
 	font-family: 'Sahitya', serif;
-
+}
+.sidenav {
+	@include thinshw(outset);
 }
 .main-wrapper {
 	min-height: calc(100% - 165px);

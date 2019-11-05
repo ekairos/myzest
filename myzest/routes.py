@@ -370,6 +370,7 @@ def delete_recipe(recipe_id):
 @app.route('/editrecipe/<recipe_id>', methods=['GET', 'POST'])
 def edit_recipe(recipe_id):
     this_recipe = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})
+    author = mongo.db.users.find_one({'_id': ObjectId(this_recipe['author_id'])}, {'username': 1})
     if request.method == 'POST':
         # Keep checking for active valid connection
         if 'user' not in session:
@@ -432,7 +433,7 @@ def edit_recipe(recipe_id):
 
         return redirect('/recipe/{}'.format(recipe_id))
 
-    return render_template('editrecipe.html', recipe=this_recipe)
+    return render_template('editrecipe.html', recipe=this_recipe, author=author)
 
 
 @app.route('/favme', methods=['POST'])

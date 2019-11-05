@@ -2,7 +2,7 @@
 {% block pagetitle %} - Login {% endblock %}
 {% block content %}
 <header class="container mt-6 mb-6">
-	<h1>Login the community</h1>
+	<h1 class="title">Login the community</h1>
 </header>
 <form id="login" class="container mb-6" action="{{ url_for('log_usr') }}" method="POST">
 	<!-- email -->
@@ -19,7 +19,7 @@
 	</div>
 	<!-- Submit -->
 	<div class="input-field">
-		<button class="btn" type="submit">Login</button>
+		<button class="btn btn-small" type="submit">Login</button>
 	</div>
 </form>
 <section class="container mb-4">

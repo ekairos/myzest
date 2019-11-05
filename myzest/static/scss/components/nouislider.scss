@@ -1,7 +1,10 @@
+/*
+		___ noUi-slider override ___
+*/
 .noUi-horizontal {
 
 	height: 3px;
-	background-origin: none;
+	background-origin: unset;
 	border: none;
 
 	.noUi-handle {
@@ -23,4 +26,13 @@
 	left: -10px;
 	height: 200%;
 	width: 200%;
+}
+input[type="range"]::-moz-range-thumb {
+  background: $mz-orange;
+}
+input[type=range]+.thumb {
+  background-color: $mz-orange;
+}
+.noUi-connect {
+  background: $mz-orange;
 }

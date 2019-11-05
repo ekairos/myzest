@@ -13,7 +13,7 @@
                     <span class="border-l pl-2 ml-2 ">{{ profile.faved if profile.faved else 0 }}</span>
                     <span class="pl-1 material-icons">favorite</span>
                 </div>
-                <small>since {{ profile._id.generation_time|oid_date }}</small>
+                <small class="detail">since {{ profile._id.generation_time|oid_date }}</small>
             </div>
         </div>
         <div class="divider"></div>
@@ -28,8 +28,10 @@
                 <p>Nothing about {{ profile.username }} yet.</p>
             {% endif %}
         {% endif %}
+
+        <!-- edit button -->
         {% if 'user' in session and session['user']['username'] == profile.username %}
-            <a id="profile-edit-btn" class="btn-floating mb-3 tooltipped" href="{{ url_for('edit_profile', profile_id=profile._id) }}"
+            <a class="btn-floating floating-edit-btn mb-3 tooltipped" href="{{ url_for('edit_profile', profile_id=profile._id) }}"
             data-position="left" data-tooltip="Edit your profile">
                 <i class="material-icons">mode_edit</i></a>
         {% endif %}
@@ -38,9 +40,9 @@
     <!-- recipes section -->
     <section>
     {% if session['user'] and profile.username == session['user']['username'] %}
-        <h3 class="ml-3 rcp-sel-title">Your recipes</h3>
+        <h4 class="ml-3 rcp-sel-title">Your recipes</h4>
     {% else %}
-        <h3 class="ml-3 rcp-sel-title">{{ profile.username }}'s recipes</h3>
+        <h4 class="ml-3 rcp-sel-title">{{ profile.username }}'s recipes</h4>
     {% endif %}
 
     {% if profile.recipes %}
@@ -64,9 +66,9 @@
     <!-- fav section -->
     <section>
     {% if session['user'] and profile.username == session['user']['username'] %}
-        <h3 class="rcp-sel-title">Your favorites</h3>
+        <h4 class="rcp-sel-title">Your favorites</h4>
     {% else %}
-        <h3 class="rcp-sel-title">{{ profile.username }}'s favorites</h3>
+        <h4 class="rcp-sel-title">{{ profile.username }}'s favorites</h4>
     {% endif %}
 
     {% if profile.favorites != [] %}

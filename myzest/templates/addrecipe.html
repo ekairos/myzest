@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block pagetitle %} - Add recipe {% endblock %}
 {% block content %}
-<header class="container mt-3 mb-4">
-	<h1>Add your new recipe</h1>
+<header class="container">
+	<h1 class="title pt-3 pb-3">Add your new recipe</h1>
 </header>
 <main class="container">
 	<form id="newRecipeForm" action="{{ url_for('insert_recipe') }}" method="POST" enctype="multipart/form-data">
@@ -66,7 +66,7 @@
 					</div>
 				</li>
 			</ul>
-			<a id="add-ing-btn" class="btn" onclick="addIngredient()">add ingredient</a>
+			<a id="add-ing-btn" class="btn btn-small" onclick="addIngredient()">add ingredient</a>
 		</div>
 
 		<div class="border-b mb-5"></div>
@@ -83,7 +83,7 @@
 					</div>
 				</li>
 			</ul>
-			<span id="add-step-btn" class="btn" onclick="addStep()">add step</span>
+			<span id="add-step-btn" class="btn btn-small" onclick="addStep()">add step</span>
 		</div>
 
 		<div class="border-b mb-5"></div>
@@ -92,7 +92,7 @@
 		<div class="mb-5">
 			<h3>Add photo</h3>
 			<div class="file-field input-field">
-				<div class="btn">
+				<div class="btn btn-small">
 					<span>Photo</span>
 					<input id="img-btn" class="validate" type="file" name="img" accept=".gif, .jpeg, .jpg, .png" required>
 				</div>
@@ -128,13 +128,10 @@
 		</ul> <!-- /collapsible -->
 
 		<!-- Submission -->
-		<div id="submit-btn">
-			<button class="btn mb-4" type="submit" onclick="validateForm()">
-				<div class="valign-wrapper">
-					<span class="mr-3">Submit</span><i class="material-icons">send</i>
-				</div>
-			</button>
-		</div>
+    <footer class="mb-4">
+        <button class="btn btn-small" type="submit" onclick="validateForm()">Add Recipe</button>
+        <button class="btn btn-small ml-4" type="button"><a href="{{ url_for('home') }}">Cancel</a></button>
+    </footer>
 	</form>
 </main>
 {% endblock %}

@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block pagetitle %} - Edit recipe {% endblock %}
 {% block content %}
-<header class="container mt-3 mb-4">
-	<h1>Edit your recipe</h1>
+<header class="container">
+	<h1 class="title pt-3 pb-3">Edit your recipe</h1>
 </header>
-<main class="container">
+<main class="container border-b pb-3">
 	<form id="updRecipeForm" action="" method="POST" enctype="multipart/form-data">
 
 		<div class="input-field mb-2">
@@ -80,7 +80,7 @@
 						<input id="amount-{{ loop.index }}" name="amount-{{ loop.index }}" class="validate" type="text" maxlength="10" value="{{ ing.amount }}" pattern="[0-9A-Za-z\s]{1,10}"  required>
 						<span class="helper-text" data-error="Specify valid amount or delete"></span>
 					</div>
-					<i class="material-icons col s1" onclick="removeIngredient(this)">cancel</i>
+					<i class="material-icons cancel col s1" onclick="removeIngredient(this)">cancel</i>
 					{% endif %}
 				</li>
 				{% endfor %}
@@ -108,7 +108,7 @@
 						<textarea class="validate materialize-textarea" name="step-{{ loop.index }}" required maxlength="300">{{ step.description }}</textarea>
 						<span class="helper-text" data-error="This field is required"></span>
 					</div>
-					<i class="material-icons col s1" onclick="removeStep(this)">cancel</i>
+					<i class="material-icons cancel col s1" onclick="removeStep(this)">cancel</i>
 					{% endif %}
 				</li>
 				{% endfor %}
@@ -162,22 +162,32 @@
 		</ul> <!-- /collapsible -->
 
 		<!-- Submission -->
-        <footer class="valign-wrapper mb-4">
-            <div id="submit-btn">
-                <button class="btn" type="submit" onclick="validateForm()">
-                    <div class="valign-wrapper">
-                        <span>Submit</span>
-                    </div>
-                </button>
-            </div>
-            <a class="btn ml-4" href="{{ url_for('get_recipe', recipe_id=recipe._id) }}">
-                <div class="valign-wrapper">
-                    <span>Cancel</span>
-                </div>
-            </a>
+        <footer class="mb-4">
+            {% if 'user' in session and session['user']['username'] == author.username %}
+                <button class="btn btn-small" type="submit" onclick="validateForm()">Save Changes</button>
+                <button class="btn btn-small ml-4" type="button"><a href="{{ url_for('get_recipe', recipe_id=recipe._id) }}">Cancel</a></button>
+            {% endif %}
         </footer>
 	</form>
 </main>
+
+<footer class="container mt-5 mb-5">
+    {% if 'user' in session and author.username == session['user']['username'] %}
+        <small><a class="modal-trigger" href="#del-recipe">Delete</a> your recipe.</small>
+    {%  endif %}
+</footer>
+
+<!-- Delete confirmation modal -->
+<div id="del-recipe" class="modal">
+    <div class="modal-content">
+        <h4 class="border-b pb-3">Delete your recipe ?</h4>
+        <p>Please confirm to permanently delete your recipe.</p>
+    </div>
+    <div class="modal-footer">
+        <a class="btn btn-small btn-cancel" href="{{ url_for('delete_recipe', recipe_id=recipe._id ) }}">Delete</a>
+        <a class="btn btn-small modal-close">Cancel</a>
+    </div>
+</div>
 {% endblock %}
 
 {% block script %}

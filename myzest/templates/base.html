@@ -17,8 +17,7 @@
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='vendor/nouislider/distribute/nouislider.min.css')}}">
     <!-- Custom Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Donegal+One|Sahitya:700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css?family=Donegal+One|Lato|Sahitya:700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/myzest.css') }}">
 
@@ -54,15 +53,15 @@
         </nav>
     </div>
 
-    <ul class="sidenav" id="side-menu">
+    <ul id="side-menu" class="sidenav">
         <li><a href="{{ url_for('home') }}">Home</a></li>
-        <li><a class="modal-trigger sidenav-close" href="#text-search-mod">Quick Search</a></li>
+        <li class="border-t"><a class="modal-trigger sidenav-close" href="#text-search-mod">Quick Search</a></li>
         {% if 'user' not in session %}
-        <li><a href="{{ url_for('register') }}">Register</a></li>
+        <li class="border-t"><a href="{{ url_for('register') }}">Register</a></li>
         <li><a href="{{ url_for('login') }}">Login</a></li>
         {% endif %}
         {% if 'user' in session %}
-        <li><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
+        <li class="border-t"><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
         <li><a href="{{ url_for('profile', profile_id=session['user']['_id']) }}">Profile</a></li>
         <li><a href="{{ url_for('logout') }}">Logout</a></li>
         {% endif %}

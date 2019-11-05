@@ -2,7 +2,7 @@
 {% block pagetitle %} - Register {% endblock %}
 {% block content %}
 <header class="container mt-6 mb-6">
-	<h1>Join the community</h1>
+	<h1 class="title">Join the community</h1>
 </header>
 <form id="registration" class="container mb-6" action="{{ url_for('add_user') }}" method="POST">
 	<!-- username -->
@@ -31,7 +31,7 @@
 	</div>
 	<!-- Submit -->
 	<div class="input-field">
-		<button class="btn" type="submit">Register</button>
+		<button class="btn btn-small" type="submit">Register</button>
 	</div>
 </form>
 <section class="container mb-4">

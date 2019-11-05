@@ -3,7 +3,7 @@
 {% block content %}
 <main class="container border-b pb-3">
     <form id="editprofile" action="{{ url_for('edit_profile', profile_id=profile._id) }}" method="POST" enctype="multipart/form-data">
-        <h1 class="mt-2 mb-3">Edit your profile</h1>
+        <h1 class="title pt-3 pb-3">Edit your profile</h1>
 
         <section class="mb-5">
             <h3>Info</h3>
@@ -23,7 +23,7 @@
                     <textarea id="bio" class="validate materialize-textarea" name="bio" maxlength="350">{{ profile.bio }}</textarea>
                     <span class="helper-text" data-error="Please write few words about you or delete"></span>
                 </div>
-                <i class="material-icons col s1" onclick="clearField(this)">cancel</i>
+                <i class="material-icons cancel col s1" onclick="clearField(this)">cancel</i>
             </div>
 
             <!-- Profile pic -->
@@ -31,7 +31,7 @@
                 <div class="col s12">
                     <label>Profile photo</label>
                     <div class="file-field input-field">
-                        <div class="btn">
+                        <div class="btn btn-small">
                             <span>Photo</span>
                             <input id="img-btn" class="validate" type="file" name="img" accept=".gif, .jpeg, .jpg, .png">
                         </div>
@@ -75,24 +75,14 @@
         </section>
 
         <!-- Submission -->
-        <footer class="valign-wrapper mb-4">
-            <div id="submit-btn">
-                <button class="btn" type="submit">
-                    <div class="valign-wrapper">
-                        <span class="mr-3">Submit</span><i class="material-icons">send</i>
-                    </div>
-                </button>
-            </div>
-            <a class="btn ml-4" href="{{ url_for('profile', profile_id=profile._id) }}">
-                <div class="valign-wrapper">
-                    <span class="mr-3">Cancel</span><i class="material-icons">cancel</i>
-                </div>
-            </a>
+        <footer class="mb-4">
+            <button class="btn btn-small" type="submit">Save Changes</button>
+            <button class="btn btn-small ml-4" type="button"><a href="{{ url_for('profile', profile_id=profile._id) }}">Cancel</a></button>
         </footer>
     </form>
 </main>
 <footer class="container mt-5 mb-5">
-    {% if session['user'] and profile.username == session['user']['username'] %}
+    {% if 'user' in session and profile.username == session['user']['username'] %}
     <small><a class="modal-trigger" href="#del-account">Delete</a> your account.</small>
     {%  endif %}
 </footer>
@@ -101,15 +91,15 @@
 <div id="del-account" class="modal">
     <div class="modal-content">
       <h4 class="border-b pb-3">Delete your account ?</h4>
-        <p>If you proceed with your account deletion :</p>
-        <ul>
-            <li>- All your recipes will be permanently erased. You won't be able to retrieve them.</li>
-            <li>- Your favorite recipes list will be lost. You will have to search for them.</li>
-        </ul>
+      <p>If you proceed with your account deletion :</p>
+      <ul>
+        <li>- All your recipes will be permanently erased. You won't be able to retrieve them.</li>
+        <li>- Your favorite recipes list will be lost. You will have to search for them.</li>
+      </ul>
     </div>
     <div class="modal-footer">
-      <a href="{{ url_for('delete_user', user_id=profile._id ) }}" class="btn red modal-close">Delete</a>
-      <a class="btn modal-close">Cancel</a>
+      <a href="{{ url_for('delete_user', user_id=profile._id ) }}" class="btn btn-small btn-cancel">Delete</a>
+      <a class="btn btn-small modal-close">Cancel</a>
     </div>
 </div>
 
