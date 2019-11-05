@@ -56,12 +56,12 @@
 				<li class="row valign-wrapper ing-item">
 					<div class="input-field col s8">
 						<label for="ingredient-1">Ingredient</label>
-						<input id="ingredient-1" name="ingredient-1" class="validate" type="text" maxlength="30" pattern="[0-9A-Za-z\s]{3,30}" required>
+						<input id="ingredient-1" name="ingredient-1" class="validate" type="text" maxlength="30" pattern="[0-9A-Za-z\s()]{3,30}" required>
 						<span class="helper-text" data-error="This first ingredient is required"></span>
 					</div>
 					<div class="input-field col s4">
 						<label for="amount-1">Amount</label>
-						<input id="amount-1" name="amount-1" class="validate" type="text" maxlength="8" pattern="[0-9]+\s?[A-Za-z]{1,8}" required>
+						<input id="amount-1" name="amount-1" class="validate" type="text" maxlength="15" pattern="[0-9A-Za-z\s]{1,15}" required>
 						<span class="helper-text" data-error="Specify valid amount"></span>
 					</div>
 				</li>
