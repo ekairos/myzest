@@ -19,11 +19,13 @@
             <span class="ml-2">{{ recipe.difficulty }}</span>
         </div>
 
+        {% if 'user' not in session or session['user']['username'] != author.username %}
         <div class="mt-4">
             <a id="favme" class="tooltipped" href="#" onclick="favMe()" data-tooltip="" data-position="bottom">
                 <i class="material-icons">favorite_border</i>
             </a>
         </div>
+        {% endif %}
 
         <!-- edit button -->
         {% if 'user' in session and session['user']['username'] == author.username %}

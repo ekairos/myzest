@@ -97,7 +97,7 @@ a {
 }
 .btn-floating {
 	background-color: $mz-orange;
-	&:hover {
+	&:hover, &:focus {
 		color: $mz-darkblue;
 		background-color: $mz-lightorange;
 	}

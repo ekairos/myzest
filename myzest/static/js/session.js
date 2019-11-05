@@ -28,8 +28,6 @@ $(document).ready(function() {
 	if (sessionUser === "") {
     	$("#favme").attr("data-tooltip", "Login to add as favorite");
 	    $("#favme").attr("href", "/login");
-	} else if (sessionUser.username === authorname) {
-        $("#favme").attr("data-tooltip", "This recipe is yours");
     } else if (sessionUser.hasOwnProperty('favorites') && sessionUser.favorites.includes(recipe_id)) {
         $("#favme .material-icons").html("favorite");
         $("#favme").attr("data-tooltip", "Remove from favorites");
