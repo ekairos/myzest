@@ -21,7 +21,7 @@
 
         {% if 'user' not in session or session['user']['username'] != author.username %}
         <div class="mt-4">
-            <a id="favme" class="tooltipped" href="#" onclick="favMe()" data-tooltip="" data-position="bottom">
+            <a id="favme" class="tooltipped modal-trigger" href="#log-modal" data-tooltip="" data-position="bottom">
                 <i class="material-icons">favorite_border</i>
             </a>
         </div>
@@ -74,13 +74,26 @@
 </main>
 
 <!-- Recipe image modal -->
-<div id="recipe-viewer" class="viewer-window valign-wrapper">
+<div id="recipe-viewer" class="viewer-window">
     <div class="viewer-content">
         <div class="viewer-btns">
             <i class="material-icons" onclick="toggleFullScreen()">zoom_out_map</i>
             <a id="viewer-close"><i class="material-icons">cancel</i></a>
         </div>
         <img id="viewer-img" class="viewer-img" src="{{ url_for('static', filename='img/recipes/' + recipe.image) }}" alt="image missing" onclick="toggleFullScreen()">
+    </div>
+</div>
+
+<!-- to login confirmation modal -->
+<div id="log-modal" class="modal">
+    <div class="modal-content">
+        <h4 class="border-b pb-3">You are not logged in.</h4>
+        <p>To Fav this recipe you need to login or register :</p>
+        <a class="btn btn-small" href="{{ url_for('login') }}">Login</a>
+        <a class="btn btn-small" href="{{ url_for('register') }}">Register</a>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-small modal-close">Cancel</button>
     </div>
 </div>
 {% endblock %}

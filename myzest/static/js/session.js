@@ -27,7 +27,6 @@ $(document).ready(function() {
     // Fav icon
 	if (sessionUser === "") {
     	$("#favme").attr("data-tooltip", "Login to add as favorite");
-	    $("#favme").attr("href", "/login");
     } else if (sessionUser.hasOwnProperty('favorites') && sessionUser.favorites.includes(recipe_id)) {
         $("#favme .material-icons").html("favorite");
         $("#favme").attr("data-tooltip", "Remove from favorites");
