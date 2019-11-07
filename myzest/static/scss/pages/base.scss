@@ -48,6 +48,15 @@ html, body {
 /*
 		Alerts - flash messages
 */
+section.card-panel {
+	position: absolute;
+	z-index: 100;
+	top: 45px;
+	width: 100%;
+	border-radius: 0;
+	background: linear-gradient(rgba(255,255,255,0.8) 20%, rgba(255,255,255,0));
+	box-shadow: unset;
+}
 .flash-warning {
     @include flash-message;
     color: #a0101c;

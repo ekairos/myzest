@@ -87,8 +87,8 @@
     {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
             {% for category, message in messages %}
-            <section class="card-panel flash-{{ category }} txt-ctr mr-auto ml-auto">
-                <span>{{ message }}</span>
+            <section class="card-panel">
+                <div class="flash-{{ category }} txt-ctr mr-auto ml-auto">{{ message }}</div>
             </section>
             {% endfor %}
         {% endif %}
@@ -132,18 +132,21 @@
 <script>
     $(document).ready(function () {
 
-        // Init materialize sidenav for main navbar
+        // Init Materializecss sidenav for main navbar
         $("#side-menu").sidenav();
 
-        // Init materializecss form select
+        // Init Materializecss form select
         $("select").formSelect();
 
-        // Init Modal
+        // Init Materializecss Modal
         $('.modal').modal({
             onOpenEnd: function() {
                 $('.modal input').first().focus();
             }
         });
+
+        // Init Materializecss Tabs
+        $('.tabs').tabs();
 
         // navbar active page
         var currentPath = location.pathname;
@@ -156,7 +159,7 @@
             }
         });
 
-        // Init materialize tooltips
+        // Init Materializecss tooltips
         $('.tooltipped').tooltip();
 
     });

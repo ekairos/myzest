@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block pagetitle %} {{ recipe.name }} {% endblock %}
 {% block content %}
+{% set location = "recipe/" + recipe._id|string %}
 <header class="rcp-header">
     <img id="rcp-img" class="rcp-img mr-auto ml-auto" src="{{ url_for('static', filename='img/recipes/' + recipe.image) }}" alt="image missing">
 </header>
@@ -19,9 +20,15 @@
             <span class="ml-2">{{ recipe.difficulty }}</span>
         </div>
 
-        {% if 'user' not in session or session['user']['username'] != author.username %}
+        {% if 'user' not in session  %}
         <div class="mt-4">
             <a id="favme" class="tooltipped modal-trigger" href="#log-modal" data-tooltip="" data-position="bottom">
+                <i class="material-icons">favorite_border</i>
+            </a>
+        </div>
+        {% elif session['user']['username'] != author.username %}
+        <div class="mt-4">
+            <a id="favme" class="tooltipped" onclick="favMe()" href="#" data-tooltip="" data-position="bottom">
                 <i class="material-icons">favorite_border</i>
             </a>
         </div>
@@ -87,10 +94,11 @@
 <!-- to login confirmation modal -->
 <div id="log-modal" class="modal">
     <div class="modal-content">
-        <h4 class="border-b pb-3">You are not logged in.</h4>
+        <h4 class="border-b pb-3">You need to be logged in.</h4>
         <p>To Fav this recipe you need to login or register :</p>
-        <a class="btn btn-small" href="{{ url_for('login') }}">Login</a>
-        <a class="btn btn-small" href="{{ url_for('register') }}">Register</a>
+
+        {% include "signin.html" %}
+
     </div>
     <div class="modal-footer">
         <button class="btn btn-small modal-close">Cancel</button>

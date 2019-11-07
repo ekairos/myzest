@@ -108,6 +108,43 @@ a {
     right: 1em;
 }
 
+//		Tabs
+.tabs li {
+	&.indicator {
+		background-color: $mz-lightorange;
+	}
+	&.tab a {
+		color: $mz-orange;
+		&.active {
+			background-color: $mz-brightorange;
+			color: $mz-darkblue;
+		}
+
+		&:hover,
+		&.active:focus {
+			background-color: $mz-brightorange;
+			color: $mz-darkblue;
+		}
+	}
+}
+
+//		Modals
+
+.modal .modal-footer {
+	.btn, .btn-large, .btn-small {
+		margin: 0 1em 0 0;
+	}
+}
+@media (max-width: 576px) {
+	.modal .modal-content {
+		padding: 15px 10px 10px;
+	}
+	.modal .modal-footer {
+		height: auto;
+		padding: 0 1em 1em 0;
+	}
+}
+
 //		Pagination
 
 .pagination li {
@@ -132,7 +169,7 @@ a {
 }
 
 /*
-        ___ Recipes on home and profile pages ___
+		___ Recipes on home and profile pages ___
 */
 .rcp-sel {
 	margin-top: 20px;
@@ -184,7 +221,7 @@ a {
 	}
 }
 /*
-        ___ Recipes on results and profile page ___
+		___ Recipes on results and profile page ___
 */
 .rcp-results {
 	display: flex;
