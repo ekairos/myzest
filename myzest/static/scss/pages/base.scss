@@ -54,7 +54,7 @@ section.card-panel {
 	top: 45px;
 	width: 100%;
 	border-radius: 0;
-	background: linear-gradient(rgba(255,255,255,0.8) 20%, rgba(255,255,255,0));
+	background: linear-gradient(rgba(255,255,255,0.8) 15%, rgba(255,255,255,0));
 	box-shadow: unset;
 }
 .flash-warning {
@@ -71,7 +71,7 @@ section.card-panel {
 }
 .flash-info {
     @include flash-message;
-    color: #225a70;
-    background-color: #ddf8fd;
-    border-color: #c4ebf1;
+    color: $mz-darkorange;
+    background-color: $mz-brightorange;
+    border-color: $mz-lightorange;
 }

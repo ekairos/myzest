@@ -76,6 +76,17 @@ a {
 		___ Materializecss override ___
 */
 
+.row {
+    margin-bottom: 0;
+}
+.collapsible {
+    border: none;
+    box-shadow: none;
+    .collapsible-header {
+        padding: 0;
+    }
+}
+
 //		Buttons
 
 .btn {
@@ -109,6 +120,7 @@ a {
 }
 
 //		Tabs
+
 .tabs li {
 	&.indicator {
 		background-color: $mz-lightorange;
@@ -130,9 +142,17 @@ a {
 
 //		Modals
 
+.modal {
+	max-width: 600px;
+}
+.modal .modal-content {
+	background-color: white;
+	border-bottom: 1px solid $bright-gray;
+}
 .modal .modal-footer {
+	height: unset;
 	.btn, .btn-large, .btn-small {
-		margin: 0 1em 0 0;
+		margin: 1em;
 	}
 }
 @media (max-width: 576px) {

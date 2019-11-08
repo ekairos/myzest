@@ -44,12 +44,12 @@ $(document).ready(function(){
 	});
 
 	$("#reg-username").on("blur", function() {
-		checkInput($(this), $(this).parents("form").attr("name"));
+		checkInput($(this), $(this).parents("form").attr("id"));
 	});
 
 	$("[type=password]").on("blur", function() {
 		if ($("#reg-password").val() !== "" && $("#reg-passwConfirm").val() !== "" && $("#reg-passwConfirm").length !== 0) {
-			if ($("#passwConfirm").val() !== $("#password").val()) {
+			if ($("#reg-passwConfirm").val() !== $("#reg-password").val()) {
 				$("[type=password]").addClass("invalid");
 				$("[type=password]").next("span").attr("data-error", "Passwords do not match");
 			} else {

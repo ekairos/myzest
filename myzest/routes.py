@@ -256,6 +256,7 @@ def log_user():
     next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
     user_in_db = mongo.db.users.find_one({'email': data['email'].lower()})
+
     if user_in_db and bcrypt.check_password_hash(user_in_db['password'], data['password']):
         user = mongo.db.users.find_one({'_id': user_in_db['_id']}, {'username': 1, 'favorites': 1})
         user = JSONEncoder().encode(user)
@@ -268,12 +269,14 @@ def log_user():
                         mongo.db.recipes.update({'_id': ObjectId(viewed)}, {'$inc': {'views': -1}})
         flash('Welcome back {} !'.format(user_in_db['username']), 'success')
         return redirect('home') if next_loc is None else redirect(next_loc)
+
     elif user_in_db and not bcrypt.check_password_hash(user_in_db['password'], data['password']):
         flash('Login unsuccessful. Please check email and password provided', 'warning')
-        return redirect('login')
+
     elif not user_in_db:
         flash('Login unsuccessful. Please check email', 'warning')
-        return render_template('login.html')
+
+    return redirect('login') if next_loc is None else redirect(next_loc)
 
 
 @app.route('/logout')

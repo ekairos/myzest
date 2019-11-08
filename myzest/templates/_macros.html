@@ -27,9 +27,11 @@
             <button class="btn btn-small" type="submit">Login</button>
         </div>
     </form>
+    {% if location == None %}
     <section class="container mb-4">
         <small>Don't have an account yet ? <a href="{{ url_for('register') }}">Register here</a></small>
     </section>
+    {% endif %}
 
 {% endmacro %}
 
@@ -73,8 +75,10 @@
             <button class="btn btn-small" type="submit">Register</button>
         </div>
     </form>
+    {% if location == None %}
     <section class="container mb-4">
         <small>Already have an account ? <a href="{{ url_for('login') }}">Login here</a></small>
     </section>
+    {% endif %}
 
 {% endmacro %}

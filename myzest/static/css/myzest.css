@@ -53,21 +53,6 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: textfield;
 }
 
-/*
-        ___ Materialize CSS OVERRIDE ___
-*/
-.row {
-  margin-bottom: 0;
-}
-
-.collapsible {
-  border: none;
-  box-shadow: none;
-}
-.collapsible .collapsible-header {
-  padding: 0;
-}
-
 .mt-0 {
   margin-top: 0;
 }
@@ -414,6 +399,18 @@ a:visited:hover {
 /*
 		___ Materializecss override ___
 */
+.row {
+  margin-bottom: 0;
+}
+
+.collapsible {
+  border: none;
+  box-shadow: none;
+}
+.collapsible .collapsible-header {
+  padding: 0;
+}
+
 .btn {
   color: #E86900;
   background-color: unset;
@@ -461,8 +458,20 @@ a:visited:hover {
   color: #2A3038;
 }
 
+.modal {
+  max-width: 600px;
+}
+
+.modal .modal-content {
+  background-color: white;
+  border-bottom: 1px solid #E6E6E6;
+}
+
+.modal .modal-footer {
+  height: unset;
+}
 .modal .modal-footer .btn, .modal .modal-footer .btn-large, .modal .modal-footer .btn-small {
-  margin: 0 1em 0 0;
+  margin: 1em;
 }
 
 @media (max-width: 576px) {
@@ -637,7 +646,7 @@ section.card-panel {
   top: 45px;
   width: 100%;
   border-radius: 0;
-  background: linear-gradient(rgba(255, 255, 255, 0.8) 20%, rgba(255, 255, 255, 0));
+  background: linear-gradient(rgba(255, 255, 255, 0.8) 15%, rgba(255, 255, 255, 0));
   box-shadow: unset;
 }
 
@@ -647,6 +656,7 @@ section.card-panel {
   border-radius: 5px;
   padding: 0.5em;
   width: 60%;
+  max-width: 500px;
   color: #a0101c;
   background-color: #fadadf;
   border-color: #faced0;
@@ -658,6 +668,7 @@ section.card-panel {
   border-radius: 5px;
   padding: 0.5em;
   width: 60%;
+  max-width: 500px;
   color: #14752a;
   background-color: #d4ede0;
   border-color: #c2e2c8;
@@ -669,9 +680,10 @@ section.card-panel {
   border-radius: 5px;
   padding: 0.5em;
   width: 60%;
-  color: #225a70;
-  background-color: #ddf8fd;
-  border-color: #c4ebf1;
+  max-width: 500px;
+  color: #993918;
+  background-color: #F9EECB;
+  border-color: #F5B458;
 }
 
 .landing {
@@ -865,12 +877,6 @@ section.card-panel {
     opacity: 1;
   }
 }
-/*    --- FavMe modal ---
-*/
-#log-modal {
-  max-width: 600px;
-}
-
 .profile-title {
   font-family: "Donegal One", serif;
   font-size: 2em;
