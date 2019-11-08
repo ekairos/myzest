@@ -44,17 +44,3 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: textfield;
 }
-
-/*
-        ___ Materialize CSS OVERRIDE ___
-*/
-.row {
-    margin-bottom: 0;
-}
-.collapsible {
-    border: none;
-    box-shadow: none;
-    .collapsible-header {
-        padding: 0;
-    }
-}

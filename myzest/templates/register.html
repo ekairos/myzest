@@ -1,42 +1,9 @@
 {% extends 'base.html' %}
 {% block pagetitle %} - Register {% endblock %}
+{% from "_macros.html" import register with context %}
 {% block content %}
-<header class="container mt-6 mb-6">
-	<h1 class="title">Join the community</h1>
-</header>
-<form id="registration" class="container mb-6" action="{{ url_for('add_user') }}" method="POST">
-	<!-- username -->
-	<div class="input-field">
-		<label for="username">Your Username</label>
-		<input id="username" class="validate" name="username" type="text" min="3" maxlenth="30" pattern="[A-Za-z]{2,15}\s?[A-Za-z]{1,15}" required>
-		<span id="username_help" class="helper-text" data-error="Invalid format, please match up to two words of 15 letters each"></span>
-	</div>
-	<!-- email -->
-	<div class="input-field">
-		<label for="email">Your Email</label>
-		<input id="email" class="validate" name="email" type="email" pattern="[A-Za-z0-9._-]{2,30}[A-Za-z0-9]@[A-Za-z0-9-._]+\.[A-Za-z]{2,11}" required>
-		<span id="email_help" class="helper-text" data-error=""></span>
-	</div>
-	<!-- password -->
-	<div class="input-field">
-		<label for="password">Password</label>
-		<input id="password" class="validate" name="password" type="password" required>
-		<span class="helper-text" data-error=""></span>
-	</div>
-	<!-- confirm password -->
-	<div class="input-field">
-		<label for="passwConfirm">Password</label>
-		<input id="passwConfirm" class="validate" name="passwConfirm" type="password" required>
-		<span class="helper-text" data-error=""></span>
-	</div>
-	<!-- Submit -->
-	<div class="input-field">
-		<button class="btn btn-small" type="submit">Register</button>
-	</div>
-</form>
-<section class="container mb-4">
-	<small>Already have an account ? <a href="{{ url_for('login') }}">Login here</a></small>
-</section>
+
+    {{ register() }}
 
 {% endblock %}
 {% block script %}

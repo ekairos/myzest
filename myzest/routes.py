@@ -200,6 +200,7 @@ def register():
 
 @app.route('/add_user', methods=['POST'])
 def add_user():
+    next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
     new_user = {
         'username': data['username'].title(),
@@ -221,7 +222,7 @@ def add_user():
         }
         flash('Welcome {} ! Your account was created with {}'
               .format(new_user['username'], new_user['email']), 'success')
-    return redirect('home')
+    return redirect('home') if next_loc is None else redirect(next_loc)
 
 
 @app.route('/check_user', methods=['POST'])
@@ -250,10 +251,12 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/log_usr', methods=['POST'])
-def log_usr():
+@app.route('/log_user', methods=['POST'])
+def log_user():
+    next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
     user_in_db = mongo.db.users.find_one({'email': data['email'].lower()})
+
     if user_in_db and bcrypt.check_password_hash(user_in_db['password'], data['password']):
         user = mongo.db.users.find_one({'_id': user_in_db['_id']}, {'username': 1, 'favorites': 1})
         user = JSONEncoder().encode(user)
@@ -265,13 +268,15 @@ def log_usr():
                     if str(r) == viewed:
                         mongo.db.recipes.update({'_id': ObjectId(viewed)}, {'$inc': {'views': -1}})
         flash('Welcome back {} !'.format(user_in_db['username']), 'success')
-        return redirect('home')
+        return redirect('home') if next_loc is None else redirect(next_loc)
+
     elif user_in_db and not bcrypt.check_password_hash(user_in_db['password'], data['password']):
         flash('Login unsuccessful. Please check email and password provided', 'warning')
-        return redirect('login')
+
     elif not user_in_db:
         flash('Login unsuccessful. Please check email', 'warning')
-        return render_template('login.html')
+
+    return redirect('login') if next_loc is None else redirect(next_loc)
 
 
 @app.route('/logout')

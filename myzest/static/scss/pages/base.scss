@@ -48,6 +48,15 @@ html, body {
 /*
 		Alerts - flash messages
 */
+section.card-panel {
+	position: absolute;
+	z-index: 100;
+	top: 45px;
+	width: 100%;
+	border-radius: 0;
+	background: linear-gradient(rgba(255,255,255,0.8) 15%, rgba(255,255,255,0));
+	box-shadow: unset;
+}
 .flash-warning {
     @include flash-message;
     color: #a0101c;
@@ -62,7 +71,7 @@ html, body {
 }
 .flash-info {
     @include flash-message;
-    color: #225a70;
-    background-color: #ddf8fd;
-    border-color: #c4ebf1;
+    color: $mz-darkorange;
+    background-color: $mz-brightorange;
+    border-color: $mz-lightorange;
 }
