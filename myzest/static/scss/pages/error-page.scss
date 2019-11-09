@@ -1,26 +1,26 @@
 .error-page {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  // full page height - navbar and footer
-  height: calc(100% - 219px);
-
-  header {
-    z-index: 2;
-    text-align: center;
-    padding: 30px;
-    background: rgba(255,255,255,0.6);
-    border-radius: 10px;
-    @include thinshw(outset);
-  }
-}
-#cracked-bg {
-  z-index: -2;
-  position: absolute;
-  height: 100%;
   width: 100%;
+  min-height: calc(100vh - 229px);
+  display: grid;
+  place-items: center;
+}
+.error-page::before {
+  content: "";
+  top: 64px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 229px);
+  position: absolute;
+  background-image: url("/static/img/crack.jpg");
   background-size: cover;
-  background-image: url("../img/crack.jpg");
-  filter: blur(1px) saturate(60%);
+  background-position: center;
+  filter: blur(2px);
+  z-index: -5;
+}
+.error-msg {
+  text-align: center;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  @include thinshw(outset);
 }
