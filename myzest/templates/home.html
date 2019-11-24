@@ -5,14 +5,16 @@
 	<h1 id="landing-title" class="brand-title pt-1 pb-3">MyZest</h1>
 	<!-- add logo here -->
 
-	<div id="searching-side" class="sidenav-trigger valign-wrapper pt-5 pl-2 pr-2 border-b" data-target="slide-search">
-		<span>Search in the community ... </span>
-		<i class="material-icons">search</i>
-	</div>
+	<form action="{{ url_for('search_recipes') }}" method="post">
+		<div class="input-field">
+			<i class="material-icons prefix">search</i>
+			<input id="home-search" name="textSearch" type="text" placeholder="search ingredient, name ..."
+                   class="center-align">
+		</div>
+		<input type="hidden" name="sort" value="updated">
+	</form>
 
 </header>
-
-{% include "slide-search.html" %}
 
 <!-- Latest Recipes Section -->
 <section class="rcp-sel">

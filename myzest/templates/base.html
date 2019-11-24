@@ -1,133 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
-	<title>My Zest{% block pagetitle %}{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+    <title>My Zest{% block pagetitle %}{% endblock %}</title>
 
-	<script src="https://code.jquery.com/jquery-3.4.1.min.js"
-			  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-			  crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
 
-	<!--Import Google Icon Font-->
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-	<!--Import materialize.css-->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-	<!-- NoUiSlider -->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendors/nouislider/distribute/nouislider.min.css')}}">
-	<!-- Custom Fonts -->
-	<link href="https://fonts.googleapis.com/css?family=Donegal+One|Sahitya:700&display=swap" rel="stylesheet">
-
-	<!-- Custom CSS -->
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/myzest.css') }}">
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- NoUiSlider -->
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='vendor/nouislider/distribute/nouislider.min.css')}}">
+    <!-- Custom Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Donegal+One|Lato|Sahitya:700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/myzest.css') }}">
 
 </head>
 <body>
+<div class="main-wrapper">
+    <div class="navbar-fixed">
+        <nav id="myzest-nav">
+            <div class="nav-wrapper container">
+                <a href="{{ url_for('home') }}" class="brand-logo brand-title left">MyZest</a>
+                <ul class="right">
+                    <li class="sidenav-trigger hide-on-large-only" data-target="slide-search">
+                        <a href="#"><i class="material-icons">search</i></a>
+                    </li>
+                    <li>
+                        <a href="#" data-target="side-menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
+                    </li>
+                </ul>
+                <ul class="right hide-on-med-and-down">
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                    <li class="sidenav-trigger" data-target="slide-search"><a href="#">Search</a></li>
+                    {% if 'user' not in session %}
+                    <li><a href="{{ url_for('register') }}">Register</a></li>
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% endif %}
+                    {% if 'user' in session %}
+                    <li><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
+                    <li><a href="{{ url_for('profile', profile_id=session['user']['_id']) }}">Profile</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </div>
 
-<div class="navbar-fixed">
-	<nav id="myzest-nav">
-		<div class="nav-wrapper container">
-			<a href="{{ url_for('home') }}" class="brand-logo brand-title left">MyZest</a>
-			<a href="#" data-target="side-menu" class="sidenav-trigger right"><i class="material-icons">menu</i></a>
-			<ul class="right hide-on-med-and-down">
-				<li class=""><a href="{{ url_for('home') }}">Home</a></li>
-				<li class="sidenav-trigger" data-target="slide-search"><a href="#">Search</a></li>
-				{% if 'user' not in session %}
-					<li class=""><a href="{{ url_for('register') }}">Register</a></li>
-					<li class=""><a href="{{ url_for('login') }}">Login</a></li>
-				{% endif %}
-				{% if 'user' in session %}
-					<li class=""><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
-					<li class=""><a href="{{ url_for('logout') }}">Logout</a></li>
-				{% endif %}
-			</ul>
-		</div>
-	</nav>
+    <ul id="side-menu" class="sidenav">
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li class="border-t"><a class="modal-trigger sidenav-close" href="#text-search-mod">Quick Search</a></li>
+        {% if 'user' not in session %}
+        <li class="border-t"><a href="{{ url_for('register') }}">Register</a></li>
+        <li><a href="{{ url_for('login') }}">Login</a></li>
+        {% endif %}
+        {% if 'user' in session %}
+        <li class="border-t"><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
+        <li><a href="{{ url_for('profile', profile_id=session['user']['_id']) }}">Profile</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        {% endif %}
+    </ul>
+
+    <!--text search modal-->
+    <div id="text-search-mod" class="modal">
+        <div class="modal-content">
+            <form id="textSearchForm" action="{{ url_for('search_recipes') }}" method="post">
+                <div class="input-field">
+                    <label for="modal-search">Search for ...</label>
+                    <input id="modal-search" name="textSearch" type="text" placeholder="ingredient, name ..."
+                           class="center-align">
+                </div>
+                <input type="hidden" name="sort" value="updated">
+            </form>
+        </div>
+    </div>
+
+    <!-- Search recipe sidenav bar -->
+    {% include "slide-search.html" %}
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <section class="card-panel">
+                <div class="flash-{{ category }} txt-ctr mr-auto ml-auto">{{ message }}</div>
+            </section>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}
+    {% endblock %}
 </div>
-<ul class="sidenav" id="side-menu">
-	<li class=""><a href="{{ url_for('home') }}">Home</a></li>
-	<li class="sidenav-trigger sidenav-close" data-target="slide-search"><a href="#">Search</a></li>
-	{% if 'user' not in session %}
-		<li class=""><a href="{{ url_for('register') }}">Register</a></li>
-		<li class=""><a href="{{ url_for('login') }}">Login</a></li>
-	{% endif %}
-	{% if 'user' in session %}
-		<li class=""><a href="{{ url_for('add_recipe') }}">Add recipe</a></li>
-		<li class=""><a href="{{ url_for('logout') }}">Logout</a></li>
-	{% endif %}
-</ul>
-
-{% with messages = get_flashed_messages(with_categories=True) %}
-	{% if messages %}
-		{% for category, message in messages %}
-			<section class="card-panel flash-{{ category }} txt-ctr mr-auto ml-auto">
-				<span>{{ message }}</span>
-			</section>
-		{% endfor %}
-	{% endif %}
-{% endwith %}
-
-{% block content %}
-{% endblock %}
-
 <footer id="main-footer">
-	<div class="container">
-		<div class="row">
-			<section class="col s5 offset-s2">
-				<!-- support -->
-				<ul class="footer-links">
-					<li><a href="#">Site Map</a></li>
-					<li><a href="#">Contact Us</a></li>
-				</ul>
-			</section>
-			<!-- follow Us -->
-			<section class="col s5">
-				<ul class="footer-social">
-					<li><a href="#">Twitter</a></li>
-					<li><a href="#">Facebook</a></li>
-				</ul>
-			</section>
-			<!-- Subscription -->
-		</div>
-		<!-- app navigation links & copyrights -->
-		<div class="row">
-			<!-- Legal Info -->
-			<ul class="col s12 copyright">
-				<li>Copyright &copy 2019 MyZest. All Rights Reserved</li>
-				<li><a href="#">Privacy Policy</a></li>
-				<li><a href="#">Data Policy</a></li>
-			</ul>
-		</div>
-	</div>
+    <div class="container">
+        <div class="row">
+            <section class="col s5 offset-s2 m3 offset-m2 l2 offset-l3">
+                <!-- support -->
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
+                </ul>
+            </section>
+            <!-- follow Us -->
+            <section class="col s4 offset-s1 m4 offset-m3 l4 offset-l3">
+                <ul class="footer-social">
+                    <li><a class="tooltipped" data-position="left" data-tooltip="Not connected yet" href="#">Twitter</a></li>
+                    <li><a class="tooltipped" data-position="right" data-tooltip="Not connected yet" href="#">Facebook</a></li>
+                </ul>
+            </section>
+            <!-- Subscription -->
+        </div>
+        <!-- app navigation links & copyrights -->
+        <div class="row">
+            <!-- Legal Info -->
+            <ul class="col s12 copyright">
+                <li>Copyright &copy 2019 MyZest. All Rights Reserved</li>
+                <li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li>
+                <li><a href="{{ url_for('terms') }}">Terms Of Use</a></li>
+            </ul>
+        </div>
+    </div>
 </footer>
-
 <!-- Materialize JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
 <script>
-  $(document).ready(function(){
+    $(document).ready(function () {
 
-     // Init materialize sidenav for main navbar
-    $("#side-menu").sidenav();
+        // Init Materializecss sidenav for main navbar
+        $("#side-menu").sidenav();
 
-    // Init materializecss form select
-		$("select").formSelect();
+        // Init Materializecss form select
+        $("select").formSelect();
 
-    // navbar active page
-    var currentPath = location.pathname;
-    $("#myzest-nav ul [href], .sidenav [href]").each(function() {
-    	if ($(this).attr("href") == currentPath) {
-    		$(this).parent("li").addClass("active");
-    	}
-    	if (currentPath == "/") {
-    		$("[href='/home']").parent("li").addClass("active");
-    	}
+        // Init Materializecss Modal
+        $('.modal').modal({
+            onOpenEnd: function() {
+                $('.modal input').first().focus();
+            }
+        });
+
+        // Init Materializecss Tabs
+        $('.tabs').tabs();
+
+        // navbar active page
+        var currentPath = location.pathname;
+        $("#myzest-nav ul [href], .sidenav [href]").each(function () {
+            if ($(this).attr("href") == currentPath) {
+                $(this).parent("li").addClass("active");
+            }
+            if (currentPath == "/") {
+                $("[href='/home']").parent("li").addClass("active");
+            }
+        });
+
+        // Init Materializecss tooltips
+        $('.tooltipped').tooltip();
+
     });
-
-    // Init materialize tooltips
-    $('.tooltipped').tooltip();
-
-  });
 </script>
 
 {% block script %}

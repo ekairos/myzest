@@ -5,20 +5,17 @@ import re
 import json
 import math
 from datetime import date
-from os import path
+from os import path, remove as os_remove
 
-
-rcp_diff = ("easy", "average", "hard")
-rcp_sorting = (("name", "Name"),
-               ("updated", "Date"),
-               ("favorite", "Popularity"),
-               ("views", "Viewed"),
-               ("time.total", "Time"),
-               ("serves", "Servings"))
-rcp_foodTypes = mongo.db.foodtype.distinct("name")
-rcp_foodTypes.sort()
-rcp_foodCategories = mongo.db.category.distinct("name")
-rcp_foodCategories.sort()
+rcp = {
+        'difficulties': ("easy", "average", "hard"),
+        'sortings': (("name", "Name"), ("updated", "Date"), ("favorite", "Popularity"), ("views", "Viewed"),
+                     ("time.total", "Time"), ("serves", "Servings")),
+        'foodTypes': mongo.db.foodtype.distinct("name"),
+        'foodCategories': mongo.db.category.distinct("name")
+    }
+rcp['foodTypes'].sort()
+rcp['foodCategories'].sort()
 
 pic_extensions = ("jpg", "jpeg", "png", "gif")
 
@@ -32,26 +29,153 @@ class JSONEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
+@app.template_filter()
+def min_to_hour(time):
+    h = time // 60
+    m = time % 60
+    if h > 0:
+        return str(h) + "h" + str(m) if m > 0 else str(h) + "h"
+    else:
+        return str(m) + "m"
+
+
+@app.template_filter()
+def oid_date(time):
+    return time.date()
+
+
+def formdata_to_query(data):
+    """ Processes data from the search form to build query with relevant fields only"""
+    # time and serves
+    try:
+        time = {
+            "$gte": int(data.pop("timer.start")),
+            "$lte": int(data.pop("timer.stop"))
+        }
+        serves = {
+            '$gte': int(data.pop('serve.start')),
+            '$lte': int(data.pop('serve.stop'))
+        }
+    except(KeyError):
+        time = {
+            "$gte": int(5),
+            "$lte": int(240)
+        }
+        serves = {
+            '$gte': int(1),
+            '$lte': int(20)
+        }
+    # text
+    try:
+        if data['textSearch'] == '':
+            text_search = False
+            del data['textSearch']
+        else:
+            text_search = True
+            words = {'$search': data.pop('textSearch')}
+    except(KeyError):
+        text_search = False
+    query = {k: v for (k, v) in data.items() if data[k] not in ["any", ""]}
+    query['serves'] = serves
+    query['time.total'] = time
+
+    if text_search:
+        query['$text'] = words
+
+    return query
+
+
+def make_query(requested_data):
+    """ Builds mongoDB query from form data posted to search_recipes
+    and stores into session 'search' dict """
+
+    data = requested_data.to_dict()
+
+    sort = {data.pop("sort"): -1} if data['sort'] in ['favorite', 'views', 'updated'] else {data.pop("sort"): 1}
+
+    query = formdata_to_query(data)
+
+    session['search'] = {'query': query,
+                         'sort': sort}
+
+    return query, sort
+
+
+class Paginate:
+    """ Queries MongoDB for recipes and builds pagination """
+
+    per_page = 6
+
+    def __init__(self, query, sort, target_page=1):
+        self.total_recipes = mongo.db.recipes.find(query).count()
+        self.total_pages = math.ceil(self.total_recipes / self.per_page)
+        self.current = target_page
+        self.to_skip = self.per_page * (self.current - 1)
+        self.recipes = mongo.db.recipes.aggregate([
+            {'$match': query},
+            {'$sort': sort},
+            {'$skip': self.to_skip},
+            {'$limit': self.per_page},
+            {'$lookup': {
+                'from': 'users',
+                'localField': 'author_id',
+                'foreignField': '_id',
+                'as': 'author'
+            }},
+            {'$unwind': {'path': '$author'}},
+            {'$addFields': {'avatar': '$author.avatar'}},
+            {'$project': {'author': 0}}
+        ])
+
+    def get_page(self):
+        return self.recipes
+
+
+def hash_password(password):
+    return bcrypt.generate_password_hash(password).decode('utf-8')
+
+
 @app.route('/')
 @app.route('/home')
 def home():
+    # store recipe criterias
+    session['rcp'] = rcp
+
     if 'views' not in session:
         session['views'] = []
 
     top_faved = mongo.db.recipes.aggregate([
+        {'$lookup': {
+            'from': 'users',
+            'localField': 'author_id',
+            'foreignField': '_id',
+            'as': 'author'
+        }},
+        {'$unwind': {'path': '$author'}},
+        {'$addFields': {'avatar': '$author.avatar'}},
+        {'$project': {'author': 0}},
         {'$sort': {'favorite': -1}},
         {'$limit': 5}
     ])
     latests = mongo.db.recipes.aggregate([
+        {'$lookup': {
+            'from': 'users',
+            'localField': 'author_id',
+            'foreignField': '_id',
+            'as': 'author'
+        }},
+        {'$unwind': {'path': '$author'}},
+        {'$addFields': {'avatar': '$author.avatar'}},
+        {'$project': {'author': 0}},
         {'$sort': {'updated': -1}},
         {'$limit': 5}
     ])
-    return render_template('home.html',
-                           latests=latests,
-                           top_faved=top_faved,
-                           foodtypes=rcp_foodTypes,
-                           sorts=rcp_sorting,
-                           difficulties=rcp_diff)
+
+    query = session['search']['query'] if 'search' in session else {}
+    sort = session['search']['sort'] if 'search' in session else session['rcp']['sortings']
+
+    return render_template('home.html', latests=latests, top_faved=top_faved,
+                           query=query, sort=sort)
 
 
 @app.route('/recipe/<recipe_id>')
@@ -76,39 +200,47 @@ def register():
 
 @app.route('/add_user', methods=['POST'])
 def add_user():
+    next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
-    hashed_passw = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     new_user = {
         'username': data['username'].title(),
         'email': data['email'].lower(),
-        'password': hashed_passw,
-        'favorites': []
+        'password': hash_password(data['password']),
+        'favorites': [],
+        'avatar': "default.png"
     }
     user_in_db = mongo.db.users.find_one({"$or": [{"username": new_user["username"]}, {"email": new_user["email"]}]})
     if user_in_db:
         flash('This user already exists', 'warning')
     elif user_in_db is None:
         registered_user = mongo.db.users.insert_one(new_user)
-        # start first session with 'username' and '_id' only
-        session['user'] = {'username': new_user['username'], '_id': str(registered_user.inserted_id)}
+        # user session object keeps only _id, name and favorites for interaction
+        session['user'] = {
+            'username': new_user['username'],
+            '_id': str(registered_user.inserted_id),
+            'favorites': new_user['favorites']
+        }
         flash('Welcome {} ! Your account was created with {}'
               .format(new_user['username'], new_user['email']), 'success')
-    return redirect('home')
+    return redirect('home') if next_loc is None else redirect(next_loc)
 
 
-@app.route('/check_usr', methods=['POST'])
-def check_usr():
+@app.route('/check_user', methods=['POST'])
+def check_user():
     data = request.get_json()
     if data['field'] == 'username':
-        if mongo.db.users.find_one({'username': data['userdata'].title()}):
-            return jsonify({'error': 'username', 'message': 'This username is already taken'})
-    if data['field'] == 'email':
-        email = mongo.db.users.find_one({'email': data['userdata'].lower()})
-        if data['form'] == "registration" and email is not None:
-            return jsonify({'error': 'email', 'message': 'This email is already in use'})
-        if data['form'] == "login" and email is None:
-            return jsonify({'error': 'email', 'message': 'This email is not registered'})
-    return 'success'
+        value = data['value'].title()
+    else:
+        value = data['value'].lower()
+    document = bool(mongo.db.users.find_one({data['field']: value}))
+
+    if data['form'] == "registration":
+        return jsonify({'error': "This {} is already taken".format(data['field'])}) if document else "success"
+    elif data['form'] == 'editprofile':
+        session_user = mongo.db.users.find_one({'username': session['user']['username']})
+        return jsonify({'error': "This {} is already used by someone else".format(data['field'])}) if document and session_user[data['field']] != value else "success"
+    else:
+        return "success" if document else jsonify({'error': "This {} is not registered".format(data['field'])})
 
 
 @app.route('/login')
@@ -119,10 +251,12 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/log_usr', methods=['POST'])
-def log_usr():
+@app.route('/log_user', methods=['POST'])
+def log_user():
+    next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
     user_in_db = mongo.db.users.find_one({'email': data['email'].lower()})
+
     if user_in_db and bcrypt.check_password_hash(user_in_db['password'], data['password']):
         user = mongo.db.users.find_one({'_id': user_in_db['_id']}, {'username': 1, 'favorites': 1})
         user = JSONEncoder().encode(user)
@@ -134,13 +268,15 @@ def log_usr():
                     if str(r) == viewed:
                         mongo.db.recipes.update({'_id': ObjectId(viewed)}, {'$inc': {'views': -1}})
         flash('Welcome back {} !'.format(user_in_db['username']), 'success')
-        return redirect('home')
+        return redirect('home') if next_loc is None else redirect(next_loc)
+
     elif user_in_db and not bcrypt.check_password_hash(user_in_db['password'], data['password']):
         flash('Login unsuccessful. Please check email and password provided', 'warning')
-        return redirect('login')
+
     elif not user_in_db:
         flash('Login unsuccessful. Please check email', 'warning')
-        return render_template('login.html')
+
+    return redirect('login') if next_loc is None else redirect(next_loc)
 
 
 @app.route('/logout')
@@ -148,7 +284,6 @@ def logout():
     if 'user' in session:
         username = session['user']['username']
         session.pop('user')
-        session['views'] = []
         flash('We hope to see you soon {}'.format(username), 'info')
     else:
         flash('You are not logged in', 'warning')
@@ -160,7 +295,7 @@ def add_recipe():
     if 'user' not in session:
         flash('To add recipes, you need to login first', 'warning')
         return redirect('login')
-    return render_template('addrecipe.html', foodtype=rcp_foodTypes, difficulties=rcp_diff)
+    return render_template('addrecipe.html')
 
 
 @app.route('/insertrecipe', methods=['GET', 'POST'])
@@ -229,10 +364,11 @@ def insert_recipe():
     return redirect('/recipe/{}'.format(rcp.inserted_id))
 
 
-@app.route('/del_rcp/<recipe_id>')
-def del_rcp(recipe_id):
+@app.route('/deleterecipe/<recipe_id>')
+def delete_recipe(recipe_id):
     recipe_id = recipe_id
     mongo.db.users.update({"_id": ObjectId(session['user']['_id'])}, {'$pull': {'recipes': ObjectId(recipe_id)}})
+    os_remove(path.join(app.config['RECIPE_PIC_DIR'], mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})['image']))
     mongo.db.recipes.remove({"_id": ObjectId(recipe_id)})
     mongo.db.users.update_many(
         {'favorites': {'$elemMatch': {'$eq': ObjectId(recipe_id)}}},
@@ -240,9 +376,10 @@ def del_rcp(recipe_id):
     return redirect('/home')
 
 
-@app.route('/update_rcp/<recipe_id>', methods=['GET', 'POST'])
-def update_rcp(recipe_id):
+@app.route('/editrecipe/<recipe_id>', methods=['GET', 'POST'])
+def edit_recipe(recipe_id):
     this_recipe = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})
+    author = mongo.db.users.find_one({'_id': ObjectId(this_recipe['author_id'])}, {'username': 1})
     if request.method == 'POST':
         # Keep checking for active valid connection
         if 'user' not in session:
@@ -293,7 +430,7 @@ def update_rcp(recipe_id):
             # double check for valid file extension
             if not filename.endswith(pic_extensions):
                 flash('wrong file extension', 'warning')
-                return redirect('/update_rcp/{}'.format(recipe_id))
+                return redirect('/editrecipe/{}'.format(recipe_id))
             else:
                 upd_recipe['image'] = filename
                 request.files['img'].save(path.join(app.config['RECIPE_PIC_DIR'], filename))
@@ -305,7 +442,7 @@ def update_rcp(recipe_id):
 
         return redirect('/recipe/{}'.format(recipe_id))
 
-    return render_template('updaterecipe.html', recipe=this_recipe, foodtypes=rcp_foodTypes, difficulties=rcp_diff)
+    return render_template('editrecipe.html', recipe=this_recipe, author=author)
 
 
 @app.route('/favme', methods=['POST'])
@@ -322,6 +459,7 @@ def favme():
 
         faved.remove(data['recipe_id'])
         session['user']['favorites'] = faved
+        # apply modification to session object
         session.modified = True
         return jsonify({"message": "removed"})
 
@@ -333,6 +471,7 @@ def favme():
 
         faved.append(data['recipe_id'])
         session['user']['favorites'] = faved
+        # apply modification to session object
         session.modified = True
         return jsonify({"message": "added"})
     else:
@@ -341,52 +480,199 @@ def favme():
 
 @app.route('/searchrecipes', methods=['GET', 'POST'])
 def search_recipes():
-
-    per_page = 4
-    target_page = 1
-
-    if 'search' not in session:
-        query = {}
-        order = {}
+    """ Queries DB and paginate results;
+     End point is first accessed with POST request which stores query and sort in session object """
 
     if request.method == "POST":
 
+        query, sort = make_query(request.form)
+        paginate = Paginate(query, sort)
+
+    elif request.method == 'GET':
+        query = session['search']['query']
+        sort = session['search']['sort']
+
+        paginate = Paginate(query, sort, int(request.args['target_page']))
+
+    results = paginate.get_page()
+
+    return render_template('results.html',
+                           query=query,
+                           sort=sort,
+                           results=results,
+                           paginate=paginate)
+
+
+@app.route('/searchcount', methods=['POST'])
+def searchcount():
+    data = request.get_json()
+    query = formdata_to_query(data)
+    nbr_recipes = mongo.db.recipes.find(query).count()
+    return jsonify({"nbr_recipes": nbr_recipes})
+
+
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
+
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+
+@app.route('/contact')
+def contact():
+    if 'user' in session:
+        user_email = mongo.db.users.distinct('email', {'_id': ObjectId(session['user']['_id'])})[0]
+        return render_template('contact.html', user=session['user'], email=user_email)
+    return render_template('contact.html')
+
+
+@app.route('/profile/<profile_id>')
+def profile(profile_id):
+    recipes = mongo.db.recipes.aggregate([
+        {'$match': {'author_id': ObjectId(profile_id)}},
+        {'$lookup': {
+            'from': 'users',
+            'localField': 'author_id',
+            'foreignField': '_id',
+            'as': 'author'
+        }},
+        {'$unwind': {'path': '$author'}},
+        {'$addFields': {'avatar': '$author.avatar'}},
+        {'$project': {'author': 0}}
+    ])
+
+    full_profile = mongo.db.users.aggregate([
+        {'$match': {'_id': ObjectId(profile_id)}},
+        {'$lookup': {'from': 'recipes',
+                     'pipeline': [
+                         {'$match': {'author_id': ObjectId(profile_id)}},
+                         {'$group': {'_id': '$author_id',
+                                     'faved': {'$sum': '$favorite'}
+                                     }
+                          }
+                     ],
+                     'as': 'recipefaved'
+                     }
+         },
+        {'$replaceRoot': {'newRoot': {'$mergeObjects': [{'$arrayElemAt': ['$recipefaved', 0]}, '$$ROOT']}}},
+        {'$project': {'recipefaved': 0}}
+    ])
+    profile = list(full_profile)[0]
+
+    from_favorite = [
+        mongo.db.recipes.aggregate([
+            {'$match': {'_id': recipe}},
+            {'$lookup': {
+                'from': 'users',
+                'localField': 'author_id',
+                'foreignField': '_id',
+                'as': 'author'
+            }},
+            {'$unwind': {'path': '$author'}},
+            {'$addFields': {'avatar': '$author.avatar'}},
+            {'$project': {'author': 0}}
+        ]) for recipe in profile['favorites']
+    ]
+    faved = [recipe for cursor in from_favorite for recipe in cursor]
+    return render_template('profile.html', session=session, profile=profile, recipes=recipes, faved=faved)
+
+
+@app.route('/edit-profile/<profile_id>', methods=['GET', 'POST'])
+def edit_profile(profile_id):
+    if request.method == 'GET':
+        profile = mongo.db.users.find_one({'_id': ObjectId(profile_id)})
+        return render_template('editprofile.html', session=session, profile=profile)
+    elif request.method == 'POST':
         data = request.form.to_dict()
 
-        order = [(data.pop("order"), -1) if data['order'] in ['favorite', 'views', 'updated']
-                 else (data.pop("order"), 1)]
-        time = {
-            "$gte": int(data.pop("timer.start")),
-            "$lte": int(data.pop("timer.stop"))
-        }
-        serves = {
-            '$gte': int(data.pop('serve.start')),
-            '$lte': int(data.pop('serve.stop'))
-        }
-        query = {k: v for (k, v) in data.items() if data[k] != "any"}
-        query['serves'] = serves
-        query['time.total'] = time
+        data['username'] = data['username'].title()
+        data['email'] = data['email'].lower()
 
-        session['search'] = {'query': query,
-                             'order': order}
+        update = {k: v for (k, v) in data.items() if data[k] != ""}
 
-    if request.method == 'GET':
-        query = session['search']['query']
-        order = session['search']['order']
-        target_page = int(request.args['target_page'])
+        # consider bio removed if not in update (empty)
+        if 'bio' in update:
+            update['bio'] = update['bio'].strip()
+        if 'bio' not in update:
+            mongo.db.users.update_one(
+                {'_id': ObjectId(session['user']['_id'])},
+                {'$unset': {'bio': ""}}
+            )
 
-    recipes = mongo.db.recipes.find(query).sort(order)
+        if 'password' in update:
+            if 'passwConfirm' not in update or update['passwConfirm'] != update['password']:
+                flash('Password confirmation does not match', 'warning')
+                return redirect('/edit-profile/{}'.format(profile_id))
+            else:
+                update['password'] = hash_password(update['password'])
+                del update['passwConfirm']
 
-    pages = math.ceil(recipes.count() / per_page)
-    to_skip = per_page * (target_page - 1)
+        # Rename and store image using user's id
+        pic = request.files['img']
+        if pic:
+            file_ext = pic.filename.rsplit('.', 1)[-1].lower()
+            filename = str(session['user']['_id']) + '.' + file_ext
+            # double check file extension
+            if not filename.endswith(pic_extensions):
+                flash('wrong file extension', 'warning')
+                return redirect('/edit-profile/{}'.format(profile_id))
+            else:
+                pic.save(path.join(app.config['USER_PIC_DIR'], filename))
 
-    results = recipes.skip(to_skip).limit(per_page)
+            update['avatar'] = filename
 
-    return render_template('recipes.html', difficulties=rcp_diff,
-                           foodtypes=rcp_foodTypes,
-                           sorts=rcp_sorting,
-                           query=query,
-                           order=order[0][0],
-                           recipes=results,
-                           pages=pages,
-                           current_page=target_page)
+        mongo.db.users.update_one(
+            {'_id': ObjectId(session['user']['_id'])},
+            {'$set': update}
+        )
+
+        # update session user object
+        user = mongo.db.users.find_one({'_id': ObjectId(session['user']['_id'])}, {'username': 1, 'favorites': 1})
+        user = JSONEncoder().encode(user)
+        session['user'] = json.loads(user)
+        session.modified = True
+        return redirect('/profile/{}'.format(profile_id))
+
+
+@app.route('/deluser/<user_id>')
+def delete_user(user_id):
+    """ Deleting the user's accounts:
+    decrement fav_count for recipe in his favorite list,
+    removes his recipes from other users favorite list then remove them,
+    finally remove his account and logout from session.
+    """
+
+    user = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+
+    if 'recipes' in user and len(user['recipes']) > 0:
+        # removes each user's recipe from other users favorites
+        # removes recipe in DB and image file on server
+        for recipe in user['recipes']:
+            mongo.db.users.update_many({}, {'$pull': {'favorites': recipe}})
+            os_remove(path.join(app.config['RECIPE_PIC_DIR'],
+                                mongo.db.recipes.find_one({'_id': ObjectId(recipe)})['image']))
+            mongo.db.recipes.remove({"_id": recipe})
+
+    if 'favorites' in user and len(user['favorites']) > 0:
+        # for each faved recipe decrement favorite count on recipe
+        for recipe in user['favorites']:
+            mongo.db.recipes.update_many({'_id': ObjectId(recipe)}, {'$inc': {'favorite': -1}})
+
+    # then delete user and avatar file
+    if user['avatar'] != "default.png":
+        os_remove(path.join(app.config['USER_PIC_DIR'], user['avatar']))
+    mongo.db.users.remove({"_id": ObjectId(user_id)})
+
+    flash("We are sorry to see you leave {}. Feel free to come back anytime !".
+          format(session['user']['username']), "info")
+    session.pop('user')
+    return redirect('/home')
+
+
+@app.errorhandler(500)
+@app.errorhandler(404)
+def page_error(error):
+    return render_template('error.html')

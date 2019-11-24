@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block pagetitle %} - Add recipe {% endblock %}
 {% block content %}
-<header class="container mt-3 mb-4">
-	<h1>Add your new recipe</h1>
+<header class="container">
+	<h1 class="title pt-3 pb-3">Add your new recipe</h1>
 </header>
 <main class="container">
 	<form id="newRecipeForm" action="{{ url_for('insert_recipe') }}" method="POST" enctype="multipart/form-data">
@@ -18,12 +18,12 @@
 			<textarea class="validate materialize-textarea" name="description" required maxlength="180"></textarea>
 			<span class="helper-text" data-error="This field is required"></span>
 		</div>
-
+		
 		<!-- Difficulty -->
 		<div class="input-field mb-3 col s12">
 			<select id="difficulty" name="difficulty" class="validate" required>
 				<option selected disabled>Difficulty...</option>
-				{% for diff in difficulties %}
+				{% for diff in session.rcp.difficulties %}
 				<option value="{{ diff }}">{{ diff|title }}</option>
 				{% endfor %}
 			</select>
@@ -56,17 +56,17 @@
 				<li class="row valign-wrapper ing-item">
 					<div class="input-field col s8">
 						<label for="ingredient-1">Ingredient</label>
-						<input id="ingredient-1" name="ingredient-1" class="validate" type="text" required>
-						<span class="helper-text" data-error="This field is required"></span>
+						<input id="ingredient-1" name="ingredient-1" class="validate" type="text" maxlength="30" pattern="[0-9A-Za-z\s()]{3,30}" required>
+						<span class="helper-text" data-error="This first ingredient is required"></span>
 					</div>
 					<div class="input-field col s4">
 						<label for="amount-1">Amount</label>
-						<input id="amount-1" name="amount-1" class="validate" type="text" required>
-						<span class="helper-text" data-error="This field is required"></span>
+						<input id="amount-1" name="amount-1" class="validate" type="text" maxlength="15" pattern="[0-9A-Za-z\s]{1,15}" required>
+						<span class="helper-text" data-error="Specify valid amount"></span>
 					</div>
 				</li>
 			</ul>
-			<a id="add-ing-btn" class="btn" onclick="addIngredient()">add ingredient</a>
+			<a id="add-ing-btn" class="btn btn-small" onclick="addIngredient()">add ingredient</a>
 		</div>
 
 		<div class="border-b mb-5"></div>
@@ -78,12 +78,12 @@
 				<li class="row step-item">
 					<div class="input-field col s12 mb-2 mt-2">
 						<label for="step-1">Step 1</label>
-						<textarea class="validate materialize-textarea" name="step-1" required maxlength="300"></textarea>
+						<textarea class="validate materialize-textarea" name="step-1" required maxlength="350"></textarea>
 						<span class="helper-text" data-error="This field is required"></span>
 					</div>
 				</li>
 			</ul>
-			<span id="add-step-btn" class="btn" onclick="addStep()">add step</span>
+			<span id="add-step-btn" class="btn btn-small" onclick="addStep()">add step</span>
 		</div>
 
 		<div class="border-b mb-5"></div>
@@ -92,7 +92,7 @@
 		<div class="mb-5">
 			<h3>Add photo</h3>
 			<div class="file-field input-field">
-				<div class="btn">
+				<div class="btn btn-small">
 					<span>Photo</span>
 					<input id="img-btn" class="validate" type="file" name="img" accept=".gif, .jpeg, .jpg, .png" required>
 				</div>
@@ -114,7 +114,7 @@
 					<div class="input-field mb-3">
 						<select class="custom-select mr-sm-2" id="newRcpFType" name="foodType">
 							<option selected value="">select...</option>
-							{% for food in foodtype %}
+							{% for food in session.rcp.foodTypes %}
 								<option value="{{ food }}">{{ food|title }}</option>
 							{% endfor %}
 						</select>
@@ -128,13 +128,10 @@
 		</ul> <!-- /collapsible -->
 
 		<!-- Submission -->
-		<div id="submit-btn">
-			<button class="btn mb-4" type="submit" onclick="validateForm()">
-				<div class="valign-wrapper">
-					<span class="mr-3">Submit</span><i class="material-icons">send</i>
-				</div>
-			</button>
-		</div>
+    <footer class="mb-4">
+        <button class="btn btn-small" type="submit" onclick="validateForm()">Add Recipe</button>
+        <button class="btn btn-small ml-4" type="button"><a href="{{ url_for('home') }}">Cancel</a></button>
+    </footer>
 	</form>
 </main>
 {% endblock %}

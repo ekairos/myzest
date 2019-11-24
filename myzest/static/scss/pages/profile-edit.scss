@@ -1,0 +1,16 @@
+.profile-title {
+  font-family: "Donegal One", serif;
+  font-size: 2em;
+  word-break: break-word;
+}
+#profile {
+  position: relative;
+  width: 90%;
+  margin-right: auto;
+  margin-left: auto;
+
+  .profile-tbn {
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}

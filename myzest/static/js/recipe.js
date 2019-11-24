@@ -11,15 +11,15 @@ $(document).ready(function() {
         let ingredient = '<li class="row valign-wrapper">\
                         <div class="input-field col s7">\
                             <label for="ingredient-' + ingredientCount + '">Ingredient ' + ingredientCount + '</label>\
-                            <input id="ingredient-' + ingredientCount + '" class="validate" type="text" name="ingredient-' + ingredientCount + '" required>\
-                            <span class="helper-text" data-error="Specify ingredient\'s name or delete ingredient"></span>\
+                            <input id="ingredient-' + ingredientCount + '" class="validate" type="text" maxlength="30" name="ingredient-' + ingredientCount + '" pattern="[0-9A-Za-z()\\s]{3,30}" required>\
+                            <span class="helper-text" data-error="Specify ingredient\'s name or delete"></span>\
                         </div>\
                         <div class="input-field col s4">\
                             <label for="amount-' +ingredientCount +'">Amount</label>\
-                            <input id="amount-' + ingredientCount + '" class="validate" type="text" name="amount-' + ingredientCount + '" required>\
-                            <span class="helper-text" data-error="Specify amount or delete ingredient"></span>\
+                            <input id="amount-' + ingredientCount + '" class="validate" type="text" maxlength="15" name="amount-' + ingredientCount + '" pattern="[0-9A-Za-z\\s]{1,15}" required>\
+                            <span class="helper-text" data-error="Specify valid amount or delete"></span>\
                         </div>\
-                        <i class="material-icons col s1" onclick="removeIngredient(this)">cancel</i>\
+                        <i class="material-icons cancel col s1" onclick="removeIngredient(this)">cancel</i>\
                     </li>'
         $('#ingredient-list').append(ingredient);
     }
@@ -64,7 +64,7 @@ $(document).ready(function() {
                     <textarea class="validate materialize-textarea" name="step-' + stepCount + '" required maxlength="300"></textarea>\
                     <span class="helper-text" data-error="This field is required"></span>\
                     </div class="col s1">\
-                    <i class="material-icons col s1" onclick="removeStep(this)">cancel</i>\
+                    <i class="material-icons cancel col s1" onclick="removeStep(this)">cancel</i>\
                     </li>'
         $('#step-list').append(step);
     }

@@ -1,15 +1,32 @@
 html, body {
 	font-size: 14px;
 	height: 100%;
+	font-family: 'Lato', sans-serif;
 }
 #myzest-nav {
     background-color: $mz-darkblue;
     @include thinshw(outset);
+	a {
+		color: white;
+		&:hover {
+			color: $bright-gray;
+		}
+	}
+	li.active a {
+		color: $mz-lightorange;
+	}
 }
 .brand-title {
 	font-family: 'Sahitya', serif;
 }
+.sidenav {
+	@include thinshw(outset);
+}
+.main-wrapper {
+	min-height: calc(100% - 165px);
+}
 #main-footer {
+	height: 165px;
 	padding-top: 20px;
 	background-color: $mz-darkblue;
 	color: white;
@@ -31,6 +48,15 @@ html, body {
 /*
 		Alerts - flash messages
 */
+section.card-panel {
+	position: absolute;
+	z-index: 100;
+	top: 45px;
+	width: 100%;
+	border-radius: 0;
+	background: linear-gradient(rgba(255,255,255,0.8) 15%, rgba(255,255,255,0));
+	box-shadow: unset;
+}
 .flash-warning {
     @include flash-message;
     color: #a0101c;
@@ -45,7 +71,7 @@ html, body {
 }
 .flash-info {
     @include flash-message;
-    color: #225a70;
-    background-color: #ddf8fd;
-    border-color: #c4ebf1;
+    color: $mz-darkorange;
+    background-color: $mz-brightorange;
+    border-color: $mz-lightorange;
 }

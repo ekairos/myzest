@@ -1,0 +1,84 @@
+{# LOGIN MACRO #}
+{% macro login(location=None) %}
+
+    {% if location == None %}
+        <header class="container mt-6 mb-6">
+            <h1 class="title">Login the community</h1>
+        </header>
+        <form id="login" class="container mb-6" action="{{ url_for('log_user', next_loc=location) }}" method="POST">
+    {% else %}
+        <form id="login" action="{{ url_for('log_user', next_loc=location) }}" method="POST">
+    {% endif %}
+
+        <!-- email -->
+        <div class="input-field">
+            <label for="email">Your Email</label>
+            <input id="log-email" class="validate" name="email" type="email" pattern="[A-Za-z0-9._-]{2,30}[A-Za-z0-9]@[A-Za-z0-9-._]+\.[A-Za-z]{2,11}" required>
+            <span id="email_help" class="helper-text" data-error=""></span>
+        </div>
+        <!-- password -->
+        <div class="input-field">
+            <label for="password">Password</label>
+            <input id="log-password" class="validate" name="password" type="password" required>
+            <span class="helper-text" data-error=""></span>
+        </div>
+        <!-- Submit -->
+        <div class="input-field">
+            <button class="btn btn-small" type="submit">Login</button>
+        </div>
+    </form>
+    {% if location == None %}
+    <section class="container mb-4">
+        <small>Don't have an account yet ? <a href="{{ url_for('register') }}">Register here</a></small>
+    </section>
+    {% endif %}
+
+{% endmacro %}
+
+{# REGISTRATION MACRO #}
+{% macro register(location=None) %}
+    {% if location == None %}
+        <header class="container mt-6 mb-6">
+            <h1 class="title">Join the community</h1>
+        </header>
+        <form id="registration" class="container mb-6" action="{{ url_for('add_user') }}" method="POST">
+    {% else %}
+        <form id="registration" action="{{ url_for('add_user', next_loc=location) }}" method="POST">
+    {% endif %}
+
+        <!-- username -->
+        <div class="input-field">
+            <label for="username">Your Username</label>
+            <input id="reg-username" class="validate" name="username" type="text" min="3" maxlenth="30" pattern="[A-Za-z]{2,15}\s?[A-Za-z]{1,15}" required>
+            <span id="username_help" class="helper-text" data-error="Invalid format, please match up to two words of 15 letters each"></span>
+        </div>
+        <!-- email -->
+        <div class="input-field">
+            <label for="email">Your Email</label>
+            <input id="reg-email" class="validate" name="email" type="email" pattern="[A-Za-z0-9._-]{2,30}[A-Za-z0-9]@[A-Za-z0-9-._]+\.[A-Za-z]{2,11}" required>
+            <span id="email_help" class="helper-text" data-error=""></span>
+        </div>
+        <!-- password -->
+        <div class="input-field">
+            <label for="password">Password</label>
+            <input id="reg-password" class="validate" name="password" type="password" required>
+            <span class="helper-text" data-error=""></span>
+        </div>
+        <!-- confirm password -->
+        <div class="input-field">
+            <label for="passwConfirm">Password</label>
+            <input id="reg-passwConfirm" class="validate" name="passwConfirm" type="password" required>
+            <span class="helper-text" data-error=""></span>
+        </div>
+        <!-- Submit -->
+        <div class="input-field">
+            <button class="btn btn-small" type="submit">Register</button>
+        </div>
+    </form>
+    {% if location == None %}
+    <section class="container mb-4">
+        <small>Already have an account ? <a href="{{ url_for('login') }}">Login here</a></small>
+    </section>
+    {% endif %}
+
+{% endmacro %}

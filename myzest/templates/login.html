@@ -1,30 +1,9 @@
 {% extends 'base.html' %}
 {% block pagetitle %} - Login {% endblock %}
+{% from "_macros.html" import login with context %}
 {% block content %}
-<header class="container mt-6 mb-6">
-	<h1>Login the community</h1>
-</header>
-<form id="login" class="container mb-6" action="{{ url_for('log_usr') }}" method="POST">
-	<!-- email -->
-	<div class="input-field">
-		<label for="email">Your Email</label>
-		<input id="email" class="validate" name="email" type="email" pattern="[A-Za-z0-9._-]{2,30}[A-Za-z0-9]@[A-Za-z0-9-._]+\.[A-Za-z]{2,11}" required>
-		<span id="email_help" class="helper-text" data-error=""></span>
-	</div>
-	<!-- password -->
-	<div class="input-field">
-		<label for="password">Password</label>
-		<input id="password" class="validate" name="password" type="password" required>
-		<span class="helper-text" data-error=""></span>
-	</div>
-	<!-- Submit -->
-	<div class="input-field">
-		<button class="btn" type="submit">Login</button>
-	</div>
-</form>
-<section class="container mb-4">
-	<small>Don't have an account yet ? <a href="{{ url_for('register') }}">Register here</a></small>
-</section>
+
+{{ login() }}
 
 {% endblock %}
 {% block script %}
