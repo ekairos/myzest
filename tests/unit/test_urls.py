@@ -1,6 +1,6 @@
 import unittest
 from myzest import app, mongo
-import json
+from tests.testing_data import fake_author, fake_recipe
 
 
 class TestURLs(unittest.TestCase):
@@ -33,25 +33,27 @@ class TestURLs(unittest.TestCase):
         """ '/recipe' needs a recipe id as path variable
          '/recipe/<recipe_id> """
         response = self.client.get('/recipe/')
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.location, "http://localhost/error")
 
-        author_file = open('tests/fake_user.json', 'r')
-        author = json.load(author_file)
-        ins_author = mongo.db.users.insert_one(author)
-        author_file.close()
+        mongo.db.users.insert_one(fake_author)
+        # ins_author = mongo.db.users.insert_one({})
 
-        rcp_file = open('tests/fake_recipe.json', 'r')
-        recipe = json.load(rcp_file)
-        recipe['author_id'] = ins_author.inserted_id
-        ins_rcp = mongo.db.recipes.insert_one(recipe)
-        rcp_file.close()
+        ins_rcp = mongo.db.recipes.insert_one(fake_recipe)
+        # ins_rcp = mongo.db.recipes.find_one({})
 
         self.client.get('/')
         response = self.client.get('/recipe/{}'.format(ins_rcp.inserted_id))
         self.assertEqual(response.status_code, 200)
 
     def test_failed_add_recipe(self):
-        """ App should redirect to login anonymous user """
+        """ App should redirect anonymous user to login page """
         response = self.client.get('/addrecipe')
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.headers['Location'], 'http://localhost/login')
+
+    def test_fake_endpoint(self):
+        """ App should redirect to error page if url is incorrect """
+        response = self.client.get('/fake')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers['Location'], 'http://localhost/error')

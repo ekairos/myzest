@@ -21,6 +21,7 @@
 		<div id="food-field" class="input-field pb-2">
 			<select class="custom-select mr-sm-2" name="foodType">
 				<option selected value="any">Any</option>
+            {% if 'rcp' in session %}
 				{% for food in session.rcp.foodTypes %}
 					{% if query and query.foodType == food %}
 					<option selected value="{{ food }}">{{ food|title }}</option>
@@ -28,6 +29,7 @@
 					<option value="{{ food }}">{{ food|title }}</option>
 					{% endif %}
 				{% endfor %}
+            {% endif %}
 			</select>
 			<label>Food Type</label>
 		</div>
@@ -36,6 +38,7 @@
 		<div id="diff-field" class="input-field">
 			<select class="custom-select mr-sm-2" name="difficulty">
 				<option selected value="any">Any</option>
+            {% if 'rcp' in session %}
 				{% for diff in session.rcp.difficulties %}
 					{% if query and query.difficulty == diff %}
 					<option selected value="{{ diff }}">{{ diff|title }}</option>
@@ -43,6 +46,7 @@
 					<option value="{{ diff }}">{{ diff|title }}</option>
 					{% endif %}
 				{% endfor %}
+            {% endif %}
 			</select>
 			<label>Difficulty</label>
 		</div>
@@ -84,6 +88,7 @@
 			<div class="row">
 				<div class="input-field col s12">
 					<select class="custom-select mr-sm-2" name="sort">
+                    {% if 'rcp' in session %}
 						{% for sorting in session.rcp.sortings %}
 							{% if sort and sort == sorting[0] %}
 							<option selected value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
@@ -91,6 +96,7 @@
 							<option value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
 							{% endif %}
 						{% endfor %}
+                    {% endif %}
 					</select>
 				</div>
 			</div>

@@ -31,8 +31,8 @@ class JSONEncoder(json.JSONEncoder):
 
 @app.template_filter()
 def min_to_hour(time):
-    h = time // 60
-    m = time % 60
+    h = int(time) // 60
+    m = int(time) % 60
     if h > 0:
         return str(h) + "h" + str(m) if m > 0 else str(h) + "h"
     else:
@@ -56,7 +56,7 @@ def formdata_to_query(data):
             '$gte': int(data.pop('serve.start')),
             '$lte': int(data.pop('serve.stop'))
         }
-    except(KeyError):
+    except KeyError:
         time = {
             "$gte": int(5),
             "$lte": int(240)
@@ -73,7 +73,7 @@ def formdata_to_query(data):
         else:
             text_search = True
             words = {'$search': data.pop('textSearch')}
-    except(KeyError):
+    except KeyError:
         text_search = False
     query = {k: v for (k, v) in data.items() if data[k] not in ["any", ""]}
     query['serves'] = serves
@@ -186,8 +186,8 @@ def get_recipe(recipe_id):
         session['views'].append(recipe_id)
         session.modified = True
         if 'user' not in session or session['user']['_id'] != str(author['_id']):
-            mongo.db.recipes.update({'_id': ObjectId(recipe_id)}, {'$inc': {'views': 1}})
-    return render_template('recipe.html', recipe=recipe, author=author, session=session)
+            mongo.db.recipes.update_many({'_id': ObjectId(recipe_id)}, {'$inc': {'views': 1}})
+    return render_template('recipe.html', recipe=recipe, author=author)
 
 
 @app.route('/register')
@@ -202,6 +202,13 @@ def register():
 def add_user():
     next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
+    for i in ['username', 'email', 'password', 'passwConfirm']:
+        if i not in data.keys():
+            flash("Some data is missing, please try again.", 'warning')
+            return redirect('register')
+    if data['password'] != data['passwConfirm']:
+        flash("Password confirmation do not match", 'warning')
+        return redirect('register')
     new_user = {
         'username': data['username'].title(),
         'email': data['email'].lower(),
@@ -212,6 +219,7 @@ def add_user():
     user_in_db = mongo.db.users.find_one({"$or": [{"username": new_user["username"]}, {"email": new_user["email"]}]})
     if user_in_db:
         flash('This user already exists', 'warning')
+        return redirect('register')
     elif user_in_db is None:
         registered_user = mongo.db.users.insert_one(new_user)
         # user session object keeps only _id, name and favorites for interaction
@@ -255,6 +263,10 @@ def login():
 def log_user():
     next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
+    if 'email' not in data or 'password' not in data:
+        flash('Login unsuccessful. Please check email and password provided', 'warning')
+        return redirect('login')
+
     user_in_db = mongo.db.users.find_one({'email': data['email'].lower()})
 
     if user_in_db and bcrypt.check_password_hash(user_in_db['password'], data['password']):
@@ -577,14 +589,14 @@ def profile(profile_id):
         ]) for recipe in profile['favorites']
     ]
     faved = [recipe for cursor in from_favorite for recipe in cursor]
-    return render_template('profile.html', session=session, profile=profile, recipes=recipes, faved=faved)
+    return render_template('profile.html', profile=profile, recipes=recipes, faved=faved)
 
 
 @app.route('/edit-profile/<profile_id>', methods=['GET', 'POST'])
 def edit_profile(profile_id):
     if request.method == 'GET':
         profile = mongo.db.users.find_one({'_id': ObjectId(profile_id)})
-        return render_template('editprofile.html', session=session, profile=profile)
+        return render_template('editprofile.html', profile=profile)
     elif request.method == 'POST':
         data = request.form.to_dict()
 
@@ -672,7 +684,12 @@ def delete_user(user_id):
     return redirect('/home')
 
 
+@app.route('/error')
+def error_page():
+    return render_template('error.html')
+
+
 @app.errorhandler(500)
 @app.errorhandler(404)
 def page_error(error):
-    return render_template('error.html')
+    return redirect('/error')
