@@ -2,10 +2,25 @@
 {% block pagetitle %} - Register {% endblock %}
 {% from "_macros.html" import register with context %}
 {% block content %}
+    <div class="container">
+        <header class=" mt-6 mb-6">
+            <h1 class="title">Join the community</h1>
+        </header>
 
-    {{ register() }}
+        <section class="mb-6">
+            {{ register(next_loc) }}
+        </section>
 
+        <footer class="mb-4">
+            {% if next_loc != None %}
+                <small>Already have an account ? <a href="{{ url_for('login', next_loc=next_loc) }}">Login
+                    here</a></small>
+            {% else %}
+                <small>Already have an account ? <a href="{{ url_for('login') }}">Login here</a></small>
+            {% endif %}
+        </footer>
+    </div>
 {% endblock %}
 {% block script %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/form_helper.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/form_helper.js') }}"></script>
 {% endblock %}
