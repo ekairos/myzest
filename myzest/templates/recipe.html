@@ -61,9 +61,12 @@
 
     <section class="rcp-section">
         <h2>Ingredients</h2>
-        <ul>
+        <ul class="listing">
             {% for food in recipe.ingredients %}
-                <li>{{ food.amount }} of {{ food.name }}</li>
+                <li class="row">
+                    <span class="col s4 l3">{{ food.amount }}</span>
+                    <span class="col s8 l9">{{ food.name }}</span>
+                </li>
             {% endfor %}
         </ul>
     </section>

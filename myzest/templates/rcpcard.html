@@ -37,7 +37,7 @@
 		</ul>
 		<!-- <p>Short description paragraph</p> -->
 	</section>
-	<footer class="row mb-2 mr-2 rcpcard-footer valign-wrapper">
+	<footer class="row pb-2 pr-2 rcpcard-footer valign-wrapper">
 		<span class="rcpcard-upd detail mr-2">{{ recipe.updated }}</span>
 		<a href="{{ url_for('profile', profile_id=recipe.author_id) }}">
             <img class="author-tbn" src="{{ url_for('static', filename='img/users/' + recipe.avatar) }}" align="user">
