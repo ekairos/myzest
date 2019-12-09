@@ -8,14 +8,14 @@ from datetime import date
 from os import path, remove as os_remove
 
 rcp = {
-        'difficulties': ("easy", "average", "hard"),
+        'difficulty': mongo.db.difficulty.distinct("name"),
         'sortings': (("name", "Name"), ("updated", "Date"), ("favorite", "Popularity"), ("views", "Viewed"),
                      ("time.total", "Time"), ("serves", "Servings")),
-        'foodTypes': mongo.db.foodtype.distinct("name"),
-        'foodCategories': mongo.db.category.distinct("name")
+        'foodType': mongo.db.foodtype.distinct("name"),
+        'foodCategory': mongo.db.category.distinct("name")
     }
-rcp['foodTypes'].sort()
-rcp['foodCategories'].sort()
+rcp['foodType'].sort()
+rcp['foodCategory'].sort()
 
 pic_extensions = ("jpg", "jpeg", "png", "gif")
 
@@ -31,17 +31,23 @@ class JSONEncoder(json.JSONEncoder):
 
 @app.template_filter()
 def min_to_hour(time):
-    h = time // 60
-    m = time % 60
-    if h > 0:
-        return str(h) + "h" + str(m) if m > 0 else str(h) + "h"
-    else:
-        return str(m) + "m"
+    try:
+        if type(time) not in [int, float]:
+            raise TypeError
+        h = int(time) // 60
+        m = int(time) % 60
+        if h > 0:
+            return str(h) + "h" + str(m) if m > 0 else str(h) + "h"
+        else:
+            return str(m) + "m"
+    except (ValueError, TypeError):
+        print("Wrong recipe time format from DB")
+        return "error"
 
 
 @app.template_filter()
-def oid_date(time):
-    return time.date()
+def oid_date(oid):
+    return oid.generation_time.date()
 
 
 def formdata_to_query(data):
@@ -52,15 +58,17 @@ def formdata_to_query(data):
             "$gte": int(data.pop("timer.start")),
             "$lte": int(data.pop("timer.stop"))
         }
-        serves = {
-            '$gte': int(data.pop('serve.start')),
-            '$lte': int(data.pop('serve.stop'))
-        }
-    except(KeyError):
+    except KeyError:
         time = {
             "$gte": int(5),
             "$lte": int(240)
         }
+    try:
+        serves = {
+            '$gte': int(data.pop('serve.start')),
+            '$lte': int(data.pop('serve.stop'))
+        }
+    except KeyError:
         serves = {
             '$gte': int(1),
             '$lte': int(20)
@@ -73,9 +81,9 @@ def formdata_to_query(data):
         else:
             text_search = True
             words = {'$search': data.pop('textSearch')}
-    except(KeyError):
+    except KeyError:
         text_search = False
-    query = {k: v for (k, v) in data.items() if data[k] not in ["any", ""]}
+    query = {k: v for (k, v) in data.items() if data[k] not in ["any", ""] and data[k] in rcp[k]}
     query['serves'] = serves
     query['time.total'] = time
 
@@ -89,14 +97,11 @@ def make_query(requested_data):
     """ Builds mongoDB query from form data posted to search_recipes
     and stores into session 'search' dict """
 
-    data = requested_data.to_dict()
+    data = requested_data
 
     sort = {data.pop("sort"): -1} if data['sort'] in ['favorite', 'views', 'updated'] else {data.pop("sort"): 1}
 
     query = formdata_to_query(data)
-
-    session['search'] = {'query': query,
-                         'sort': sort}
 
     return query, sort
 
@@ -107,10 +112,10 @@ class Paginate:
     per_page = 6
 
     def __init__(self, query, sort, target_page=1):
-        self.total_recipes = mongo.db.recipes.find(query).count()
-        self.total_pages = math.ceil(self.total_recipes / self.per_page)
         self.current = target_page
         self.to_skip = self.per_page * (self.current - 1)
+        self.total_recipes = mongo.db.recipes.count_documents(query)
+        self.total_pages = math.ceil(self.total_recipes / self.per_page)
         self.recipes = mongo.db.recipes.aggregate([
             {'$match': query},
             {'$sort': sort},
@@ -128,7 +133,8 @@ class Paginate:
         ])
 
     def get_page(self):
-        return self.recipes
+        results = list(self.recipes)
+        return results
 
 
 def hash_password(password):
@@ -186,8 +192,8 @@ def get_recipe(recipe_id):
         session['views'].append(recipe_id)
         session.modified = True
         if 'user' not in session or session['user']['_id'] != str(author['_id']):
-            mongo.db.recipes.update({'_id': ObjectId(recipe_id)}, {'$inc': {'views': 1}})
-    return render_template('recipe.html', recipe=recipe, author=author, session=session)
+            mongo.db.recipes.update_many({'_id': ObjectId(recipe_id)}, {'$inc': {'views': 1}})
+    return render_template('recipe.html', recipe=recipe, author=author)
 
 
 @app.route('/register')
@@ -202,6 +208,13 @@ def register():
 def add_user():
     next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
+    for i in ['username', 'email', 'password', 'passwConfirm']:
+        if i not in data.keys():
+            flash("Some data is missing, please try again.", 'warning')
+            return redirect('register')
+    if data['password'] != data['passwConfirm']:
+        flash("Password confirmation do not match", 'warning')
+        return redirect('register')
     new_user = {
         'username': data['username'].title(),
         'email': data['email'].lower(),
@@ -212,6 +225,7 @@ def add_user():
     user_in_db = mongo.db.users.find_one({"$or": [{"username": new_user["username"]}, {"email": new_user["email"]}]})
     if user_in_db:
         flash('This user already exists', 'warning')
+        return redirect('register')
     elif user_in_db is None:
         registered_user = mongo.db.users.insert_one(new_user)
         # user session object keeps only _id, name and favorites for interaction
@@ -255,6 +269,10 @@ def login():
 def log_user():
     next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
+    if 'email' not in data or 'password' not in data:
+        flash('Login unsuccessful. Please check email and password provided', 'warning')
+        return redirect('login')
+
     user_in_db = mongo.db.users.find_one({'email': data['email'].lower()})
 
     if user_in_db and bcrypt.check_password_hash(user_in_db['password'], data['password']):
@@ -342,15 +360,15 @@ def insert_recipe():
     if "foodType" in data and data['foodType'] != "":
         new_recipe['foodType'] = data.pop('foodType')
 
-    rcp = mongo.db.recipes.insert_one(new_recipe)
+    recipe = mongo.db.recipes.insert_one(new_recipe)
 
     # Add recipe's id to user's recipe list
-    mongo.db.users.update({'_id': ObjectId(session['user']['_id'])}, {'$push': {'recipes': rcp.inserted_id}})
+    mongo.db.users.update({'_id': ObjectId(session['user']['_id'])}, {'$push': {'recipes': recipe.inserted_id}})
 
     # Rename and store image using recipe's id
     pic = request.files['img']
     file_ext = pic.filename.rsplit('.', 1)[-1].lower()
-    filename = str(rcp.inserted_id) + '.' + file_ext
+    filename = str(recipe.inserted_id) + '.' + file_ext
     # double check file extension
     if not filename.endswith(pic_extensions):
         flash('wrong file extension', 'warning')
@@ -359,9 +377,9 @@ def insert_recipe():
         pic.save(path.join(app.config['RECIPE_PIC_DIR'], filename))
 
     # update recipe on db with image filename
-    mongo.db.recipes.update({'_id': rcp.inserted_id}, {'$set': {'image': filename}})
+    mongo.db.recipes.update({'_id': recipe.inserted_id}, {'$set': {'image': filename}})
 
-    return redirect('/recipe/{}'.format(rcp.inserted_id))
+    return redirect('/recipe/{}'.format(recipe.inserted_id))
 
 
 @app.route('/deleterecipe/<recipe_id>')
@@ -485,8 +503,11 @@ def search_recipes():
 
     if request.method == "POST":
 
-        query, sort = make_query(request.form)
+        query, sort = make_query(request.form.to_dict())
         paginate = Paginate(query, sort)
+
+        session['search'] = {'query': query,
+                             'sort': sort}
 
     elif request.method == 'GET':
         query = session['search']['query']
@@ -560,7 +581,7 @@ def profile(profile_id):
         {'$replaceRoot': {'newRoot': {'$mergeObjects': [{'$arrayElemAt': ['$recipefaved', 0]}, '$$ROOT']}}},
         {'$project': {'recipefaved': 0}}
     ])
-    profile = list(full_profile)[0]
+    profile = list(full_profile)[0]  # converts aggregation result
 
     from_favorite = [
         mongo.db.recipes.aggregate([
@@ -577,14 +598,14 @@ def profile(profile_id):
         ]) for recipe in profile['favorites']
     ]
     faved = [recipe for cursor in from_favorite for recipe in cursor]
-    return render_template('profile.html', session=session, profile=profile, recipes=recipes, faved=faved)
+    return render_template('profile.html', profile=profile, recipes=recipes, faved=faved)
 
 
 @app.route('/edit-profile/<profile_id>', methods=['GET', 'POST'])
 def edit_profile(profile_id):
     if request.method == 'GET':
         profile = mongo.db.users.find_one({'_id': ObjectId(profile_id)})
-        return render_template('editprofile.html', session=session, profile=profile)
+        return render_template('editprofile.html', profile=profile)
     elif request.method == 'POST':
         data = request.form.to_dict()
 
@@ -672,7 +693,12 @@ def delete_user(user_id):
     return redirect('/home')
 
 
+@app.route('/error')
+def error_page():
+    return render_template('error.html')
+
+
 @app.errorhandler(500)
 @app.errorhandler(404)
 def page_error(error):
-    return render_template('error.html')
+    return redirect('/error')

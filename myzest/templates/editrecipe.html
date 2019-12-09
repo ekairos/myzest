@@ -22,7 +22,7 @@
 		<!-- Difficulty -->
 		<div class="input-field mb-3 col s12">
 			<select id="difficulty" name="difficulty" class="validate" required>
-				{% for diff in session.rcp.difficulties %}
+				{% for diff in session.rcp.difficulty %}
 				{% if diff == recipe.difficulty %}
 				<option selected value="{{ diff }}">{{ diff|title }}</option>
 				{% else %}
@@ -144,7 +144,7 @@
 					<div class="input-field mb-3">
 						<select class="custom-select" id="newRcpFType" name="foodType">
 							<option selected value="none">None</option>
-							{% for foodtype in session.rcp.foodTypes %}
+							{% for foodtype in session.rcp.foodType %}
 							{% if foodtype == recipe.foodType %}
 							<option selected value="{{ foodtype }}">{{ foodtype|title }}</option>
 							{% else %}

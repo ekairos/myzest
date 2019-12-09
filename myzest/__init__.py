@@ -18,7 +18,7 @@ Set MongoDB URI for Testing and Dev ENV
 for testing ENV run 'TEST_FLAG=true python -m unittest'
 """
 
-app.config['MONGO_URI'] = config.test_mongo_uri if os.environ.get('TEST_FLAG') else config.mongo_uri
+app.config['MONGO_URI'] = config.test_mongo_uri if os.environ.get('TEST') else config.mongo_uri
 
 mongo = PyMongo(app)
 

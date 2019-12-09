@@ -7,6 +7,7 @@ Table Of Content
 - [Overview](#overview)
 - [Features](#features)
 - [Tech used](#main-tech-used)
+- [Tests](#tests)
 - [License](#license)
 
 
@@ -52,6 +53,38 @@ Recipes author has the possibility to change the privacy of any of their recipes
     - The **MaterializeCSS** framework provides default styling and animations as a good starting point.
 - [jQuery](https://jquery.com/)
 	- **jQuery** library is used to ease DOM manipulation.
+
+### Testing
+
+- [Selenium 3.1](https://selenium.dev)
+    - I use Selenium WebDriver with Python for End To End testing to ensure MyZest provides appropriate feedback to the user interaction.
+
+
+## Tests
+
+_Tests are run on a different database to ensure no data loss. It also makes some assertions easier to write.
+You need to set a different URI in the `config.py` file ( as `test_mongo_uri = <uri> ` )_
+
+**Running Unit tests**
+
+Simply run unittest with ` TEST ` environment variable :
+```bash
+TEST=true python -m unittest discover -s tests/unit/
+```
+
+**Running End-to-End tests**
+
+Make sure Selenium and the correct browsers [driver](https://selenium.dev/selenium/docs/api/py/index.html#drivers) are installed :
+
+1. Start Flask server in terminal :  
+    ```bash  
+    TEST=true python run.py  
+    ```  
+2. Run the tests in a separate terminal :
+    ```bash
+    TEST=true python -m unittest discover -s tests/e2e/
+    ```
+
 
 
 ## License
