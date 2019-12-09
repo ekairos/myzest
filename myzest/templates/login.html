@@ -2,10 +2,25 @@
 {% block pagetitle %} - Login {% endblock %}
 {% from "_macros.html" import login with context %}
 {% block content %}
+    <div class="container">
+        <header class="mt-6 mb-6">
+            <h1 class="title">Login the community</h1>
+        </header>
 
-{{ login() }}
+        <section class="mb-6">
+            {{ login(next_loc) }}
+        </section>
 
+        <footer class="mb-4">
+            {% if next_loc != None %}
+                <small>Don't have an account yet ? <a href="{{ url_for('register', next_loc=next_loc) }}">Register
+                    here</a></small>
+            {% else %}
+                <small>Don't have an account yet ? <a href="{{ url_for('register') }}">Register here</a></small>
+            {% endif %}
+        </footer>
+    </div>
 {% endblock %}
 {% block script %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/form_helper.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/form_helper.js') }}"></script>
 {% endblock %}

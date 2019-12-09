@@ -55,7 +55,7 @@ class TestUpdateUser(unittest.TestCase):
         """Should nav to login page"""
         self.driver.get("http://localhost:5000/")
         self.driver.find_element_by_css_selector(".sidenav-trigger.right").click()
-        self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[4]/a[@href='/login']").click()
+        self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[5]/a[@href='/login']").click()
         WebDriverWait(self.driver, 2).until(EC.url_changes)
         self.assertEqual(self.driver.current_url, "http://localhost:5000/login")
 

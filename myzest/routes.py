@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify, redirect, flash, session
+from flask import render_template, request, jsonify, redirect, flash, session, url_for
 from myzest import app, mongo, bcrypt
 from bson.objectid import ObjectId
 import re
@@ -198,10 +198,11 @@ def get_recipe(recipe_id):
 
 @app.route('/register')
 def register():
+    next_loc = request.args.get('next_loc')
     if 'user' in session:
         flash('{}, you are already logged in'.format(session['user']['username']), 'info')
         return redirect('home')
-    return render_template('register.html')
+    return render_template('register.html', next_loc=next_loc)
 
 
 @app.route('/add_user', methods=['POST'])
@@ -259,10 +260,11 @@ def check_user():
 
 @app.route('/login')
 def login():
+    next_loc = request.args.get('next_loc')
     if 'user' in session:
         flash('{}, you are already logged in'.format(session['user']['username']), 'info')
         return redirect('home')
-    return render_template('login.html')
+    return render_template('login.html', next_loc=next_loc)
 
 
 @app.route('/log_user', methods=['POST'])
@@ -311,8 +313,9 @@ def logout():
 @app.route('/addrecipe')
 def add_recipe():
     if 'user' not in session:
+        next_loc = request.args.get('next_loc')
         flash('To add recipes, you need to login first', 'warning')
-        return redirect('login')
+        return redirect(url_for('login', next_loc=next_loc))
     return render_template('addrecipe.html')
 
 
