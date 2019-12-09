@@ -1,9 +1,24 @@
+"""
+    *******************
+    *     WARNING     *
+    *******************
+
+MAKE SURE TO RUN THESE TESTS WITH TEST FLAG IN CLI AS THEY ERASE DB ENTRIES:
+
+'TEST=true python -m unittest tests/unit/test_urls.py'
+
+or all unit tests :
+'TEST=true python -m unittest discover -s tests/unit/'
+
+"""
+
 import unittest
 from myzest import app, mongo
 from tests.testing_data import fake_author, fake_recipe
 
 
 class TestURLs(unittest.TestCase):
+    """Tests view functions render or redirect to html pages as expected"""
 
     def setUp(self):
         self.client = app.test_client()

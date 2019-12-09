@@ -1,3 +1,16 @@
+"""
+    *******************
+    *     WARNING     *
+    *******************
+
+MAKE SURE TO RUN THESE TESTS WITH TEST FLAG IN CLI AS THEY ERASE DB ENTRIES:
+
+'TEST=true python -m unittest tests/unit/test_registration.py'
+
+or all unit tests :
+'TEST=true python -m unittest discover -s tests/unit/'
+
+"""
 import unittest
 from myzest import app, mongo, bcrypt
 from flask import session, request

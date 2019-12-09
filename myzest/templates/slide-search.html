@@ -22,7 +22,7 @@
 			<select class="custom-select mr-sm-2" name="foodType">
 				<option selected value="any">Any</option>
             {% if 'rcp' in session %}
-				{% for food in session.rcp.foodTypes %}
+				{% for food in session.rcp.foodType %}
 					{% if query and query.foodType == food %}
 					<option selected value="{{ food }}">{{ food|title }}</option>
 					{% else %}
@@ -39,7 +39,7 @@
 			<select class="custom-select mr-sm-2" name="difficulty">
 				<option selected value="any">Any</option>
             {% if 'rcp' in session %}
-				{% for diff in session.rcp.difficulties %}
+				{% for diff in session.rcp.difficulty %}
 					{% if query and query.difficulty == diff %}
 					<option selected value="{{ diff }}">{{ diff|title }}</option>
 					{% else %}

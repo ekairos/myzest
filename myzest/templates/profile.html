@@ -13,7 +13,7 @@
                     <span class="border-l pl-2 ml-2 ">{{ profile.faved if profile.faved else 0 }}</span>
                     <span class="pl-1 material-icons">favorite</span>
                 </div>
-                <small class="detail">since {{ profile._id.generation_time|oid_date }}</small>
+                <small class="detail">since {{ profile._id|oid_date }}</small>
             </div>
         </div>
         <div class="divider"></div>

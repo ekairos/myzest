@@ -8,14 +8,14 @@ from datetime import date
 from os import path, remove as os_remove
 
 rcp = {
-        'difficulties': ("easy", "average", "hard"),
+        'difficulty': mongo.db.difficulty.distinct("name"),
         'sortings': (("name", "Name"), ("updated", "Date"), ("favorite", "Popularity"), ("views", "Viewed"),
                      ("time.total", "Time"), ("serves", "Servings")),
-        'foodTypes': mongo.db.foodtype.distinct("name"),
-        'foodCategories': mongo.db.category.distinct("name")
+        'foodType': mongo.db.foodtype.distinct("name"),
+        'foodCategory': mongo.db.category.distinct("name")
     }
-rcp['foodTypes'].sort()
-rcp['foodCategories'].sort()
+rcp['foodType'].sort()
+rcp['foodCategory'].sort()
 
 pic_extensions = ("jpg", "jpeg", "png", "gif")
 
@@ -31,17 +31,23 @@ class JSONEncoder(json.JSONEncoder):
 
 @app.template_filter()
 def min_to_hour(time):
-    h = int(time) // 60
-    m = int(time) % 60
-    if h > 0:
-        return str(h) + "h" + str(m) if m > 0 else str(h) + "h"
-    else:
-        return str(m) + "m"
+    try:
+        if type(time) not in [int, float]:
+            raise TypeError
+        h = int(time) // 60
+        m = int(time) % 60
+        if h > 0:
+            return str(h) + "h" + str(m) if m > 0 else str(h) + "h"
+        else:
+            return str(m) + "m"
+    except (ValueError, TypeError):
+        print("Wrong recipe time format from DB")
+        return "error"
 
 
 @app.template_filter()
-def oid_date(time):
-    return time.date()
+def oid_date(oid):
+    return oid.generation_time.date()
 
 
 def formdata_to_query(data):
@@ -52,15 +58,17 @@ def formdata_to_query(data):
             "$gte": int(data.pop("timer.start")),
             "$lte": int(data.pop("timer.stop"))
         }
-        serves = {
-            '$gte': int(data.pop('serve.start')),
-            '$lte': int(data.pop('serve.stop'))
-        }
     except KeyError:
         time = {
             "$gte": int(5),
             "$lte": int(240)
         }
+    try:
+        serves = {
+            '$gte': int(data.pop('serve.start')),
+            '$lte': int(data.pop('serve.stop'))
+        }
+    except KeyError:
         serves = {
             '$gte': int(1),
             '$lte': int(20)
@@ -75,7 +83,7 @@ def formdata_to_query(data):
             words = {'$search': data.pop('textSearch')}
     except KeyError:
         text_search = False
-    query = {k: v for (k, v) in data.items() if data[k] not in ["any", ""]}
+    query = {k: v for (k, v) in data.items() if data[k] not in ["any", ""] and data[k] in rcp[k]}
     query['serves'] = serves
     query['time.total'] = time
 
@@ -89,14 +97,11 @@ def make_query(requested_data):
     """ Builds mongoDB query from form data posted to search_recipes
     and stores into session 'search' dict """
 
-    data = requested_data.to_dict()
+    data = requested_data
 
     sort = {data.pop("sort"): -1} if data['sort'] in ['favorite', 'views', 'updated'] else {data.pop("sort"): 1}
 
     query = formdata_to_query(data)
-
-    session['search'] = {'query': query,
-                         'sort': sort}
 
     return query, sort
 
@@ -107,10 +112,10 @@ class Paginate:
     per_page = 6
 
     def __init__(self, query, sort, target_page=1):
-        self.total_recipes = mongo.db.recipes.find(query).count()
-        self.total_pages = math.ceil(self.total_recipes / self.per_page)
         self.current = target_page
         self.to_skip = self.per_page * (self.current - 1)
+        self.total_recipes = mongo.db.recipes.count_documents(query)
+        self.total_pages = math.ceil(self.total_recipes / self.per_page)
         self.recipes = mongo.db.recipes.aggregate([
             {'$match': query},
             {'$sort': sort},
@@ -128,7 +133,8 @@ class Paginate:
         ])
 
     def get_page(self):
-        return self.recipes
+        results = list(self.recipes)
+        return results
 
 
 def hash_password(password):
@@ -354,15 +360,15 @@ def insert_recipe():
     if "foodType" in data and data['foodType'] != "":
         new_recipe['foodType'] = data.pop('foodType')
 
-    rcp = mongo.db.recipes.insert_one(new_recipe)
+    recipe = mongo.db.recipes.insert_one(new_recipe)
 
     # Add recipe's id to user's recipe list
-    mongo.db.users.update({'_id': ObjectId(session['user']['_id'])}, {'$push': {'recipes': rcp.inserted_id}})
+    mongo.db.users.update({'_id': ObjectId(session['user']['_id'])}, {'$push': {'recipes': recipe.inserted_id}})
 
     # Rename and store image using recipe's id
     pic = request.files['img']
     file_ext = pic.filename.rsplit('.', 1)[-1].lower()
-    filename = str(rcp.inserted_id) + '.' + file_ext
+    filename = str(recipe.inserted_id) + '.' + file_ext
     # double check file extension
     if not filename.endswith(pic_extensions):
         flash('wrong file extension', 'warning')
@@ -371,9 +377,9 @@ def insert_recipe():
         pic.save(path.join(app.config['RECIPE_PIC_DIR'], filename))
 
     # update recipe on db with image filename
-    mongo.db.recipes.update({'_id': rcp.inserted_id}, {'$set': {'image': filename}})
+    mongo.db.recipes.update({'_id': recipe.inserted_id}, {'$set': {'image': filename}})
 
-    return redirect('/recipe/{}'.format(rcp.inserted_id))
+    return redirect('/recipe/{}'.format(recipe.inserted_id))
 
 
 @app.route('/deleterecipe/<recipe_id>')
@@ -497,8 +503,11 @@ def search_recipes():
 
     if request.method == "POST":
 
-        query, sort = make_query(request.form)
+        query, sort = make_query(request.form.to_dict())
         paginate = Paginate(query, sort)
+
+        session['search'] = {'query': query,
+                             'sort': sort}
 
     elif request.method == 'GET':
         query = session['search']['query']
@@ -572,7 +581,7 @@ def profile(profile_id):
         {'$replaceRoot': {'newRoot': {'$mergeObjects': [{'$arrayElemAt': ['$recipefaved', 0]}, '$$ROOT']}}},
         {'$project': {'recipefaved': 0}}
     ])
-    profile = list(full_profile)[0]
+    profile = list(full_profile)[0]  # converts aggregation result
 
     from_favorite = [
         mongo.db.recipes.aggregate([
