@@ -62,7 +62,7 @@ class TestLogin(unittest.TestCase):
         # NAV TO LOGIN
         self.driver.get("http://localhost:5000/")
         burger = self.driver.find_element_by_css_selector(".sidenav-trigger.right")
-        login_nav = self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[5]/a[@href='/login']")
+        login_nav = self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[4]/a[@href='/login']")
 
         burger.click()
         login_nav.click()

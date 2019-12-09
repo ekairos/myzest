@@ -62,7 +62,7 @@ class TestDeleteUser(unittest.TestCase):
         """Should nav to login page"""
         self.driver.get("http://localhost:5000/")
         self.driver.find_element_by_css_selector(".sidenav-trigger.right").click()
-        self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[5]/a[@href='/login']").click()
+        self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[4]/a[@href='/login']").click()
         WebDriverWait(self.driver, 2).until(EC.url_changes)
         self.assertEqual(self.driver.current_url, "http://localhost:5000/login")
 
@@ -75,7 +75,7 @@ class TestDeleteUser(unittest.TestCase):
     def nav_to_profile(self):
         """Should nav to profile page"""
         self.driver.find_element_by_css_selector(".sidenav-trigger.right").click()
-        self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[4]/a").click()
+        self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[3]/a").click()
         WebDriverWait(self.driver, 3).until(EC.url_changes)
         self.assertRegex(self.driver.current_url, "^http://localhost:5000/profile/")
 
@@ -108,7 +108,7 @@ class TestDeleteUser(unittest.TestCase):
             Register form's validation should mark fields valid as absent in database
         """
         self.driver.find_element_by_css_selector(".sidenav-trigger.right").click()
-        self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[4]/a[@href='/register']").click()
+        self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[3]/a[@href='/register']").click()
         WebDriverWait(self.driver, 2).until(EC.url_changes)
         self.assertEqual(self.driver.current_url, "http://localhost:5000/register")
         self.driver.find_element_by_id("reg-username").send_keys("Billy")
