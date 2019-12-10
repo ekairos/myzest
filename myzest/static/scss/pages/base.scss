@@ -32,6 +32,11 @@ html, body {
 	color: white;
 	@include thinshw(inset);
 
+	.container .row section.col {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
 	a {
 		text-decoration: none;
 		color: white;

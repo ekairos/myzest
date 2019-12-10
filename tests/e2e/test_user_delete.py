@@ -75,7 +75,7 @@ class TestDeleteUser(unittest.TestCase):
     def nav_to_profile(self):
         """Should nav to profile page"""
         self.driver.find_element_by_css_selector(".sidenav-trigger.right").click()
-        self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[4]/a").click()
+        self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[3]/a").click()
         WebDriverWait(self.driver, 3).until(EC.url_changes)
         self.assertRegex(self.driver.current_url, "^http://localhost:5000/profile/")
 

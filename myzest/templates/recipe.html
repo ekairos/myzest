@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block pagetitle %} {{ recipe.name }} {% endblock %}
 {% block content %}
-{% set location = "recipe/" + recipe._id|string %}
 <header class="rcp-header">
     <img id="rcp-img" class="rcp-img mr-auto ml-auto" src="{{ url_for('static', filename='img/recipes/' + recipe.image) }}" alt="image missing">
 </header>
@@ -62,9 +61,12 @@
 
     <section class="rcp-section">
         <h2>Ingredients</h2>
-        <ul>
+        <ul class="listing">
             {% for food in recipe.ingredients %}
-                <li>{{ food.amount }} of {{ food.name }}</li>
+                <li class="row">
+                    <span class="col s4 l3">{{ food.amount }}</span>
+                    <span class="col s8 l9">{{ food.name }}</span>
+                </li>
             {% endfor %}
         </ul>
     </section>
@@ -91,12 +93,13 @@
     </div>
 </div>
 
-<!-- to login confirmation modal -->
+<!-- login modal -->
 <div id="signin-modal" class="modal">
     <div class="modal-content">
         <h4 class="border-b pb-3">You need to be logged in.</h4>
         <p>To Fav this recipe you need to login or register :</p>
 
+        {% set location = "recipe/" + recipe._id|string %}
         {% include "signin.html" %}
 
     </div>
