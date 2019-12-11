@@ -23,7 +23,7 @@ fake_author = {
     "username": "George",
     "email": "george@gmail.com",
     "password": "1234",
-    "recipes": ["ObjectId('5ddee63cae10027121293947')"],
+    "recipes": [ObjectId('5ddee63cae10027121293947')],
     "favorites": [],
     "avatar": "default.png"
 }
@@ -49,7 +49,7 @@ fake_recipe = {
         {'description': 'Place the desired amount of sushi rice in your hand and gently squeeze it into an easy-to-eat shape.'},
         {'description': 'Place the salmon slice on top and gently press the Nigiri into shape.'},
         {'description': 'Repeat the last 2 steps until you run out of rice or salmon.'}],
-    'views': 0,
+    'views': 1,
     'image': 'none.jpg',
     'updated': '2019-08-20'}
 

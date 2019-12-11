@@ -207,6 +207,20 @@ def save_recipe_pic(image_file, recipe_id):
     mongo.db.recipes.update_one({'_id': recipe_id}, {'$set': {'image': filename}})
 
 
+def update_recipe_views(recipe_id, increment):
+    """Increment or decrement a recipe's 'views' field.
+    Function is called when a user visits a recipe page and by decrement_session_views function"""
+    mongo.db.recipes.update_one({'_id': ObjectId(recipe_id)}, {'$inc': {'views': increment}})
+
+
+def decrement_session_views(recipe_list, viewed_list):
+    """Decrement each recipe's 'views' field count that is common to both recipes lists provided"""
+    for user_recipe in recipe_list:
+        for viewed in viewed_list:
+            if str(viewed) == str(user_recipe):
+                update_recipe_views(viewed, -1)
+
+
 @app.route('/')
 @app.route('/home')
 def home():
@@ -297,10 +311,9 @@ def add_user():
 @app.route('/check_user', methods=['POST'])
 def check_user():
     data = request.get_json()
-    if data['field'] == 'username':
-        value = data['value'].title()
-    else:
-        value = data['value'].lower()
+
+    value = data['value'].title() if data['field'] == "username" else data['value'].lower()
+
     document = bool(mongo.db.users.find_one({data['field']: value}))
 
     if data['form'] == "registration":
@@ -325,6 +338,7 @@ def login():
 def log_user():
     next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
+
     if 'email' not in data or 'password' not in data:
         flash('Login unsuccessful. Please check email and password provided', 'warning')
         return redirect('login')
@@ -335,12 +349,10 @@ def log_user():
         user = mongo.db.users.find_one({'_id': user_in_db['_id']}, {'username': 1, 'favorites': 1})
         user = JSONEncoder().encode(user)
         session['user'] = json.loads(user)
-        views = session['views']
-        for viewed in views:
-            if 'recipes' in user_in_db:
-                for r in user_in_db['recipes']:
-                    if str(r) == viewed:
-                        mongo.db.recipes.update({'_id': ObjectId(viewed)}, {'$inc': {'views': -1}})
+
+        if 'recipes' in user_in_db:
+            decrement_session_views(user_in_db['recipes'], session['views'])
+
         flash('Welcome back {} !'.format(user_in_db['username']), 'success')
         return redirect('home') if next_loc is None else redirect(next_loc)
 
@@ -372,7 +384,7 @@ def get_recipe(recipe_id):
         session['views'].append(recipe_id)
         session.modified = True
         if 'user' not in session or session['user']['_id'] != str(author['_id']):
-            mongo.db.recipes.update_many({'_id': ObjectId(recipe_id)}, {'$inc': {'views': 1}})
+            update_recipe_views(recipe_id, 1)
     return render_template('recipe.html', recipe=recipe, author=author)
 
 

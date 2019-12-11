@@ -15,20 +15,23 @@ or all unit tests :
 import unittest
 from myzest import mongo, app
 from myzest.routes import min_to_hour, oid_date, formdata_to_query, make_query, build_recipe, recipe_to_db,\
-    check_file_ext, pic_extensions
+    check_file_ext, pic_extensions, update_recipe_views, decrement_session_views
 import datetime
-from tests.testing_data import fake_author, chocolate_recipe_entry, fake_user
+from tests.testing_data import fake_author, chocolate_recipe_entry, fake_user, fake_recipe
+from bson import ObjectId
 
 
 class TestMainFunctions(unittest.TestCase):
     """Tests template filters and core functions for MyZest"""
 
-    chocolate_recipe_indb = {
+    chocolate_recipe_expected = {
         'author_id': fake_author['_id'],
         'name': 'Chocolate Brownie',
         'description': 'Easy dark chocolate brownie with peanuts',
-        'difficulty': 'easy', 'serves': 8,
-        'time': {'total': 50}, 'views': 0,
+        'difficulty': 'easy',
+        'serves': 8,
+        'time': {'total': 50},
+        'views': 0,
         'updated': datetime.date.today().isoformat(),
         'ingredients': [{'name': 'dark bitter chocolate', 'amount': '300g'},
                         {'name': 'butter', 'amount': '100g'},
@@ -170,7 +173,7 @@ class TestMainFunctions(unittest.TestCase):
             recipe = build_recipe(author_id=fake_author['_id'], data=chocolate_recipe_entry)
             self.maxDiff = None
             self.assertEqual(type(recipe), dict)
-            self.assertEqual(recipe, self.chocolate_recipe_indb)
+            self.assertEqual(recipe, self.chocolate_recipe_expected)
             # 2.
             recipe_inserted = recipe_to_db(author_id=fake_author['_id'], recipe=recipe)
             recipe_in_db = mongo.db.recipes.find_one(recipe)
@@ -179,6 +182,45 @@ class TestMainFunctions(unittest.TestCase):
             self.assertNotIn(recipe_inserted, lily['recipes'])
             george = mongo.db.users.find_one({'_id': fake_author['_id']})
             self.assertIn(recipe_inserted, george['recipes'])
+
+    def test_update_view(self):
+        """DB recipe with given _id should have its 'views' field incremented or decremented by one
+        update_view is called when user visits a recipe's page and by decrement_session_views function"""
+        mongo.db.recipes.insert_one(fake_recipe)
+        sushis = mongo.db.recipes.find_one({})
+        self.assertEqual(sushis['views'], 1)
+
+        update_recipe_views(sushis['_id'], 1)
+        sushis = mongo.db.recipes.find_one({})
+        self.assertEqual(sushis['views'], 2)
+
+        update_recipe_views(sushis['_id'], -1)
+        sushis = mongo.db.recipes.find_one({})
+        self.assertEqual(sushis['views'], 1)
+
+    def test_decrement_session_views(self):
+        """Tests a recipe's 'views' field is decremented if the author logs in after viewing the recipe page"""
+        mongo.db.recipes.insert_one(fake_recipe)
+        sushis = mongo.db.recipes.find_one({})
+        self.assertEqual(sushis['views'], 1)
+
+        decrement_session_views(fake_author['recipes'], [fake_recipe['_id']])
+        sushis = mongo.db.recipes.find_one({})
+        self.assertEqual(sushis['views'], 0)
+
+    def test_no_decrement_views(self):
+        """Tests the recipe's views is not decremented when another user than recipe's author logs in
+        after viewing the recipe"""
+        mongo.db.recipes.insert_one(fake_recipe)
+        sushis = mongo.db.recipes.find_one({})
+        self.assertEqual(sushis['views'], 1)
+
+        update_recipe_views(sushis['_id'], 1)
+        decrement_session_views([fake_user['recipes']], [sushis['_id']])
+        sushis = mongo.db.recipes.find_one({})
+        self.assertEqual(sushis['views'], 2)
+
+
 
 
 if __name__ == '__main__':
