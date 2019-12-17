@@ -68,7 +68,7 @@ class TestRegistration(unittest.TestCase):
         # NAV TO REGISTRATION
         self.driver.get("http://localhost:5000/")
         burger = self.driver.find_element_by_css_selector(".sidenav-trigger.right")
-        rego_nav = self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[4]/a[@href='/register']")
+        rego_nav = self.driver.find_element_by_xpath("//ul[@id='side-menu']/li[3]/a[@href='/register']")
 
         burger.click()
         rego_nav.click()
