@@ -804,6 +804,7 @@ section.card-panel {
   max-height: 340px;
   object-fit: cover;
   cursor: pointer;
+  box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.5);
 }
 
 .rcp-section {

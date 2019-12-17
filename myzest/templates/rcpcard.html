@@ -1,18 +1,20 @@
 <li class="rcpcard hoverable">
 	<header class="rcpcard-header">
-		<img class="rcpcard-img" src="{{ url_for('static', filename='img/recipes/' + recipe.image) }}"
-		     alt="{{ recipe.name }}" width="100%">
-		<div class="rcpcard-grad-overlay"></div>
-			<div class="rcpcard-hview valign-wrapper">
-				<span>{{ recipe.views }}</span>
-				<i class="material-icons ml-1">visibility</i>
-			</div>
-			{% if "favorite" in recipe %}
-			<div class="rcpcard-hrate valign-wrapper">
-				<span>{{ recipe.favorite }}</span>
-				<i class="material-icons ml-1">favorite</i>
-			</div>
-			{% endif %}
+        <a href="{{ url_for('get_recipe', recipe_id=recipe._id) }}">
+            <img class="rcpcard-img" src="{{ url_for('static', filename='img/recipes/' + recipe.image) }}"
+                 alt="{{ recipe.name }}" width="100%">
+            <div class="rcpcard-grad-overlay"></div>
+        </a>
+        <div class="rcpcard-hview valign-wrapper">
+            <span>{{ recipe.views }}</span>
+            <i class="material-icons ml-1">visibility</i>
+        </div>
+        {% if "favorite" in recipe and recipe.favorite > 0 %}
+        <div class="rcpcard-hrate valign-wrapper">
+            <span>{{ recipe.favorite }}</span>
+            <i class="material-icons ml-1">favorite</i>
+        </div>
+        {% endif %}
 	</header>
 	<section class="rcpcard-body">
 		<h4 class="pb-2 mb-1 border-b"><a href="{{ url_for('get_recipe', recipe_id=recipe._id) }}">{{ recipe.name }}</a></h4>
@@ -35,7 +37,6 @@
 			<span class="rcpcard-sumup">{{ recipe.difficulty }}</span>
 
 		</ul>
-		<!-- <p>Short description paragraph</p> -->
 	</section>
 	<footer class="row pb-2 pr-2 rcpcard-footer valign-wrapper">
 		<span class="rcpcard-upd detail mr-2">{{ recipe.updated }}</span>
