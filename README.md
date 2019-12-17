@@ -161,7 +161,7 @@ Half its space for the dish photograph and other half for main details that the 
 
 ### Back-end
 
-- [Python 3.5](https://docs.python.org/3/whatsnew/3.5.html)
+- [Python 3.6](https://docs.python.org/3.6/whatsnew/3.6.html)
 - [Flask](https://flask.palletsprojects.com/en/1.1.x/quickstart/) framework.
 - [MongoDB](http://mongodb.org)
     - I use MongoDB Atlas to host recipes and users data.

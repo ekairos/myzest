@@ -221,7 +221,5 @@ class TestMainFunctions(unittest.TestCase):
         self.assertEqual(sushis['views'], 2)
 
 
-
-
 if __name__ == '__main__':
     unittest.main()
