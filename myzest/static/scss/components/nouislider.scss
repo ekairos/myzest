@@ -3,36 +3,32 @@
 */
 .noUi-horizontal {
 
-	height: 3px;
-	background-origin: unset;
-	border: none;
+    height: 3px;
+    background-origin: unset;
+    border: none;
 
-	.noUi-handle {
-		width: 20px;
-		height: 20px;
-		border-radius: 50%;
-		top: -8px;
+    .noUi-handle {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        top: -8px;
 
-		&::before,
-		&::after {
-			content: none;
-			display: none;
-		}
-	}
+        &::before,
+        &::after {
+            content: none;
+            display: none;
+        }
+    }
 }
+
 .noUi-touch-area {
-	position: relative;
-	top: -10px;
-	left: -10px;
-	height: 200%;
-	width: 200%;
+    position: relative;
+    top: -10px;
+    left: -10px;
+    height: 200%;
+    width: 200%;
 }
-input[type="range"]::-moz-range-thumb {
-  background: $mz-orange;
-}
-input[type=range]+.thumb {
-  background-color: $mz-orange;
-}
+
 .noUi-connect {
-  background: $mz-orange;
+    background: $mz-orange;
 }

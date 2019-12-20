@@ -1,77 +1,95 @@
 .rcp-header {
-	position: relative;
-	width: 100%;
+    position: relative;
+    width: 100%;
 }
+
 .rcp-img {
-	width: 100%;
-	max-height: 340px;
-	object-fit: cover;
-	cursor: pointer;
-  @include thinshw(outset);
+    width: 100%;
+    max-height: 340px;
+    object-fit: cover;
+    cursor: pointer;
+    @include thinshw(outset);
 }
+
 .rcp-section {
     position: relative;
-	padding-bottom: 1em;
-	padding-top: 1em;
+    padding-bottom: 1em;
+    padding-top: 1em;
+
     .listing li:nth-child(even) {
         background-color: $mz-brightorange;
     }
 }
+
 .rcp-author-tbn {
-	display: block;
-	border-radius: 50%;
-	width: 50px;
-	height: 50px;
-	object-fit: cover;
+    display: block;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
     @include thinshw(outset)
 }
+
 .rcp-author {
     color: $mz-orange;
+
     &:hover {
         color: $mz-darkorange;
     }
 }
+
 /*
 		--- Popup image viewer ---
 */
 .viewer-window {
-  display: none;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 500;
-  padding-top: 80px;
-  background-color: white;
-  background-color: rgba(255,255,255,0.6);
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 500;
+    padding-top: 80px;
+    background-color: white;
+    background-color: rgba(255, 255, 255, 0.6);
 }
+
 .viewer-content {
-  display: block;
-  position: relative;
-  margin: auto;
-  animation: zoomIn 0.2s ease-out;
+    display: block;
+    position: relative;
+    margin: auto;
+    animation: zoomIn 0.2s ease-out;
 }
+
 .viewer-img {
-  width: 100%;
-  object-fit: contain;
+    width: 100%;
+    object-fit: contain;
 }
+
 .viewer-btns {
-  cursor: pointer;
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-  font-size: 2rem;
-  line-height: 1rem;
-  color: white;
-  text-shadow: 0px 0px 5px black;
-  a {
+    cursor: pointer;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 2rem;
+    line-height: 1rem;
     color: white;
-  }
+    text-shadow: 0px 0px 5px black;
+
+    a {
+        color: white;
+    }
 }
+
 /*    - Popup image viewer animation -
 */
 @keyframes zoomIn {
-  from {transform: scale(0.2); opacity: 0}
-  to {transform: scale(1); opacity: 1}
+    from {
+        transform: scale(0.2);
+        opacity: 0
+    }
+    to {
+        transform: scale(1);
+        opacity: 1
+    }
 }

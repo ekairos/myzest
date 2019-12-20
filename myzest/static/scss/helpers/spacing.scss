@@ -1,16 +1,25 @@
 // check $spacing and $sides in variables.scss
 @each $key, $value in $sides {
-	@each $space, $size in $spacing {
-	    .m#{$key}-#{$space} {
-	    	margin-#{$value}: $size;
-	    }
-	}
+    @each $space, $size in $spacing {
+        .m#{$key}-#{$space} {
+            margin-#{$value}: $size;
+        }
+    }
 }
 
 @each $key, $value in $sides {
-	@each $space, $size in $spacing {
-	    .p#{$key}-#{$space} {
-	    	padding-#{$value}: $size;
-	    }
-	}
+    @each $space, $size in $spacing {
+        .p#{$key}-#{$space} {
+            padding-#{$value}: $size;
+        }
+    }
+}
+
+// manually add margin auto rules
+.mr-auto {
+    margin-right: auto;
+}
+
+.ml-auto {
+    margin-left: auto;
 }
