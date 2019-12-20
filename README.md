@@ -11,6 +11,7 @@ Table Of Content
         - [Persona](#persona)
         - [User Stories](#user-stories)
     - [Visual](#visual)
+        - [Wireframes](#wireframes)
 - [Tech used](#main-tech-used)
 - [Running MyZest](#running-myzest)
 - [Tests](#tests)
@@ -130,6 +131,14 @@ MyZest is inspired by “material design”. With a mobile first approach, I’v
 I’ve been challenging myself choosing blue and orange tones. As complementary colors, they can be difficult to put together.
 With enough white space to allow them to breath they provide contrast, clear and quick guidance through the layout between interaction elements and static content.
 
+| Primary  | Secondary |
+| ------------- | ------------- |
+| ![#57BA98](https://placehold.it/60x30/E86900/E86900) `#E86900` main  | ![#57BA98](https://placehold.it/60x30/616b80/616b80) `#616b80` main |
+| ![#57BA98](https://placehold.it/60x30/F5B458/F5B458) `#F5B458` light  | ![#57BA98](https://placehold.it/60x30/2A3038/2A3038) `#2A3038` dark |
+| ![#57BA98](https://placehold.it/60x30/F9EECB/F9EECB) `#F9EECB` bright |  |
+| ![#57BA98](https://placehold.it/60x30/993918/993918) `#993918` dark |  |
+
+
 The validation elements (as form inputs) keep the ‘standard’ red and green colors not to overload the first-time learning experience of the users.
 
 **Icons**  
@@ -156,6 +165,14 @@ Vision is human beings dominant sens, our perception relies at 80% on sight. Pho
 It helps them identify almost instantly what they are after. That is why a recipe image is compulsory to add a recipe. 
 This is reflected in my recipe cards design. 
 Half its space for the dish photograph and other half for main details that the photograph may not visually provides (such as cooking duration, difficulty, serving ...).
+
+#### Wireframes
+
+For the wireframes I've used [wireframe|cc](https://wireframe.cc/), an online solution to quickly build simple wireframes.
+They are in the wireframes directory, each device size in its sub-directory in .pdf and .png formats.  
+- [mobile](./wireframes/mobile)
+- [tablet](./wireframes/tablet)
+- [desktop](./wireframes/desktop)
 
 ## Main Tech Used
 
