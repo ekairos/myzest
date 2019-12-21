@@ -221,11 +221,15 @@ They are in the wireframes directory, each device size in its sub-directory in .
 
 
 ### Tests
+  
+![cssvalidation](https://img.shields.io/badge/W3C%20CSS%20Validation-%20no%20errors-green)
+![htmlvalidation](https://img.shields.io/badge/W3C%20HTML%20Validation-%20no%20errors-green)
 
 ***IMPORTANT !  
 Make sure to run your tests using a different database***. As well educated tests they clean up after themselves !  
 _It also makes some tests and assertions easier to write.
-You need to set a different URI in the `config.py` file ( as `test_mongo_uri = <uri> ` )_
+You need to set a different URI in the `config.py` file ( as `test_mongo_uri = <uri> ` )_  
+
 **Running Unit tests**
 
 Simply run unittest with ` TEST ` environment variable :
@@ -246,6 +250,23 @@ Make sure Selenium and the correct browsers [driver](https://selenium.dev/seleni
     TEST=true python -m unittest discover -s tests/e2e/
     ```
 
+**W3C Validations**
+
+I used the W3C [HTML](https://validator.w3.org/) and [CSS](https://jigsaw.w3.org/css-validator/) validators.
+
+- 2 CSS warnings:  
+I'm using experimental vendor extensions and extended pseudo-element selectors, which are not standardized yet:
+
+    - `-moz-appearance` & `-webkit-appearance`  
+I use `appearance` on numbers input to remove the redundant incrementation buttons. The slider
+beneath is preferred as it provides better user interaction experience.  
+_Chrome requires the additional pseudo-element selector : `-webkit-outer-spin-button` and `-webkit-inner-spin-button`._  
+    - `input[type=range]::-moz-range-thumb` & `::-webkit-slider-thumb`  
+They are used to override the color of the range sliders handles.
+
+- HTML warnings :
+
+    - The warnings and errors concern the Jinja's templating syntax, which is not recognized.
 
 ### Deployment
 
