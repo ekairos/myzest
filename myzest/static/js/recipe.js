@@ -20,9 +20,9 @@ $(document).ready(function() {
                             <span class="helper-text" data-error="Specify valid amount or delete"></span>\
                         </div>\
                         <i class="material-icons cancel col s1" onclick="removeIngredient(this)">cancel</i>\
-                    </li>'
+                    </li>';
         $('#ingredient-list').append(ingredient);
-    }
+    };
 
     // When an ingredient is removed, it resets the counter
     // to update remaining ingredients names and ids
@@ -48,7 +48,7 @@ $(document).ready(function() {
     window.removeIngredient = function(e) {
         $(e).parent().remove();
         resetIng();
-    }
+    };
 
 /*
                 Steps
@@ -65,9 +65,9 @@ $(document).ready(function() {
                     <span class="helper-text" data-error="This field is required"></span>\
                     </div class="col s1">\
                     <i class="material-icons cancel col s1" onclick="removeStep(this)">cancel</i>\
-                    </li>'
+                    </li>';
         $('#step-list').append(step);
-    }
+    };
 
     // When a step is removed, it reset the step counter
     // and updates remaining steps name and id
@@ -88,7 +88,7 @@ $(document).ready(function() {
     window.removeStep = function(e) {
         $(e).parent().remove();
         resetStep();
-    }
+    };
 
 /*
                 Custom Validation
@@ -97,7 +97,7 @@ $(document).ready(function() {
     var picExtensions = ["jpeg", "jpg", "png", "gif"];
     $("#img-btn").on("blur", function() {
         var ext = $(this).val().split('.').pop();
-        if (picExtensions.indexOf(ext) == -1) {
+        if (picExtensions.indexOf(ext) === -1) {
             $("#img-path").next(".helper-text").attr("data-error", "A valid file is required (jpeg, jpg, png or gif)");
             $("#img-path").removeClass("valid").addClass("invalid");
             document.getElementById("img-btn").setCustomValidity("Invalid file format");
@@ -106,12 +106,12 @@ $(document).ready(function() {
             $("#img-path").removeClass("invalid").addClass("valid");
             document.getElementById("img-btn").setCustomValidity("");
         }
-    })
+    });
 
     $("#difficulty").closest(".select-wrapper").on("change", function() {
         $(this).removeClass("invalid");
         $(this).addClass("valid");
-    })
+    });
 
     window.validateForm = function() {
         // reset error messages
@@ -121,25 +121,25 @@ $(document).ready(function() {
 
         // Check materialize select input for required recipe's difficulty
         var diffvalid = document.getElementById("difficulty").checkValidity();
-        if (diffvalid == false) {
+        if (diffvalid === false) {
             $("#difficulty").closest(".select-wrapper").addClass("invalid");
-            let diffError = '<div class="mb-4 field-error">Please select Difficulty</div>'
+            let diffError = '<div class="mb-4 field-error">Please select Difficulty</div>';
             $("#submit-btn").append(diffError);
         }
 
         // Check file type inserted
         var imgvalid = document.getElementById("img-btn").checkValidity();
-        if (imgvalid == false && $("form").attr("id") == "newRecipeForm") {
-            let imgError = '<div class="mb-4 field-error">Please insert valid image file</div>'
+        if (imgvalid === false && $("form").attr("id") === "newRecipeForm") {
+            let imgError = '<div class="mb-4 field-error">Please insert valid image file</div>';
             $("#submit-btn").append(imgError);
         } else {
             document.getElementById("img-btn").setCustomValidity("");
         }
 
         var formValid = document.getElementsByTagName("form")[0].checkValidity();
-        if (formValid == false) {
-            let formError = '<div class="mb-4 field-error">Some details are missing or not valid</div>'
+        if (formValid === false) {
+            let formError = '<div class="mb-4 field-error">Some details are missing or not valid</div>';
             $("#submit-btn").append(formError);
         }
-    }
+    };
 });

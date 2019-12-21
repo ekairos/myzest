@@ -122,6 +122,17 @@
         // Init Materializecss sidenav for main navbar
         $("#side-menu").sidenav();
 
+        // navbar active page
+        var currentPath = location.pathname;
+        $("#myzest-nav ul [href], .sidenav [href]").each(function () {
+            if ($(this).attr("href") === currentPath) {
+                $(this).parent("li").addClass("active");
+            }
+            if (currentPath === "/") {
+                $("[href='/home']").parent("li").addClass("active");
+            }
+        });
+
         // Init Materializecss form select
         $("select").formSelect();
 
@@ -134,17 +145,6 @@
 
         // Init Materializecss Tabs
         $('.tabs').tabs();
-
-        // navbar active page
-        var currentPath = location.pathname;
-        $("#myzest-nav ul [href], .sidenav [href]").each(function () {
-            if ($(this).attr("href") == currentPath) {
-                $(this).parent("li").addClass("active");
-            }
-            if (currentPath == "/") {
-                $("[href='/home']").parent("li").addClass("active");
-            }
-        });
 
         // Init Materializecss tooltips
         $('.tooltipped').tooltip();
