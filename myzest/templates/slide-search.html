@@ -1,4 +1,4 @@
-<ul id="slide-search" class="sidenav txt-ctr">
+<div id="slide-search" class="sidenav txt-ctr">
 	<form class="mt-6" action="{{ url_for('search_recipes') }}" method="POST" enctype="multipart/form-data">
 
 		<p>Looking for</p>
@@ -20,16 +20,16 @@
 		<!-- Food type -->
 		<div id="food-field" class="input-field pb-2">
 			<select class="custom-select mr-sm-2" name="foodType">
-				<option selected value="any">Any</option>
-            {% if 'rcp' in session %}
-				{% for food in session.rcp.foodType %}
-					{% if query and query.foodType == food %}
-					<option selected value="{{ food }}">{{ food|title }}</option>
-					{% else %}
-					<option value="{{ food }}">{{ food|title }}</option>
-					{% endif %}
-				{% endfor %}
-            {% endif %}
+				<option value="any">Any</option>
+                {% if 'rcp' in session %}
+                    {% for food in session.rcp.foodType %}
+                        {% if query and query.foodType == food %}
+                        <option selected value="{{ food }}">{{ food|title }}</option>
+                        {% else %}
+                        <option value="{{ food }}">{{ food|title }}</option>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
 			</select>
 			<label>Food Type</label>
 		</div>
@@ -37,7 +37,7 @@
 		<!-- difficulty -->
 		<div id="diff-field" class="input-field">
 			<select class="custom-select mr-sm-2" name="difficulty">
-				<option selected value="any">Any</option>
+				<option value="any">Any</option>
             {% if 'rcp' in session %}
 				{% for diff in session.rcp.difficulty %}
 					{% if query and query.difficulty == diff %}
@@ -106,20 +106,20 @@
 		<small id="recipe-count">-- recipes matching</small>
 		<div>
 			<button class="btn mt-4 mb-4" type="submit">
-				<div class="valign-wrapper">
+				<span class="valign-wrapper">
 					<i class="material-icons">search</i><span class="ml-3">Get Recipes</span>
-				</div>
+				</span>
 			</button>
 		</div>
 	</form>
-</ul>
+</div>
 
 {% block script %}
 
 <!-- Materialize noUI Slider plugin -->
-<script type="text/javascript" src="{{ url_for('static', filename='vendor/nouislider/distribute/nouislider.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/nouislider/distribute/nouislider.min.js') }}"></script>
 
-<script type="text/javascript">
+<script>
 
 	// Linking time search sliders
 	var searchTimer = document.getElementById('search-timer');
