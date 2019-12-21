@@ -22,11 +22,13 @@
             <div class="input-field col s12 l6">
                 <label for="username">Username if registered</label>
                 {% if user %}
-                    <input id="username" type="text" class="validate" value="{{ user.username }}">
+                    <input id="username" type="text" class="validate" value="{{ user.username }}" minlength="3" maxlength="30"
+                   pattern="[A-Za-z]{2,15}\s?[A-Za-z]{1,15}">
                 {% else %}
-                    <input id="username" type="text" class="validate" value="">
+                    <input id="username" type="text" class="validate" value="" minlength="3" maxlength="30"
+                   pattern="[A-Za-z]{2,15}\s?[A-Za-z]{1,15}">
                 {% endif %}
-                <span id="username_help" class="helper-text" data-error=""></span>
+                <span id="username_help" class="helper-text" data-error="Please insert valid name"></span>
             </div>
         </div>
         <div class="row">
