@@ -7,8 +7,8 @@
 		<div class="mt-4 mb-4 pr-4">
 			<div class="row">
 				<div class="input-field">
-					{% if query and '$text' in query %}
-					<input id="text-search" name="textSearch" type="text" class="validate" value="{{ query['$text']['$search'] }}">
+					{% if '$text' in search %}
+					<input id="text-search" name="textSearch" type="text" class="validate" value="{{ search['$text']['$search'] }}">
 					{% else %}
 					<input id="text-search" name="textSearch" type="text" class="validate">
 					{% endif %}
@@ -23,7 +23,7 @@
 				<option value="any">Any</option>
                 {% if 'rcp' in session %}
                     {% for food in session.rcp.foodType %}
-                        {% if query and query.foodType == food %}
+                        {% if 'foodType' in search and search.foodType == food %}
                         <option selected value="{{ food }}">{{ food|title }}</option>
                         {% else %}
                         <option value="{{ food }}">{{ food|title }}</option>
@@ -40,7 +40,7 @@
 				<option value="any">Any</option>
             {% if 'rcp' in session %}
 				{% for diff in session.rcp.difficulty %}
-					{% if query and query.difficulty == diff %}
+					{% if 'difficulty' in search and search.difficulty == diff %}
 					<option selected value="{{ diff }}">{{ diff|title }}</option>
 					{% else %}
 					<option value="{{ diff }}">{{ diff|title }}</option>
@@ -56,10 +56,12 @@
 			<div class="row">
 				<div class="input-field col s6">
 					<label>Total duration :</label>
-					<input id="timer-start" type="number" name="timer.start" placeholder="From..." step="5" min="5" max="240">
+					<input id="timer-start" type="number" name="timer.start" placeholder="From..." step="5" min="5" max="235"
+                           data-timer-start="{{ search['time.total']['$gte'] }}">
 				</div>
 				<div class="input-field col s6">
-					<input id="timer-stop" type="number" name="timer.stop" placeholder="To..." step="5" min="5" max="240">
+					<input id="timer-stop" type="number" name="timer.stop" placeholder="To..." step="5" min="10" max="240"
+                           data-timer-stop="{{ search['time.total']['$lte'] }}">
 				</div>
 			</div>
 			<div id="search-timer"></div>
@@ -70,10 +72,12 @@
 			<div class="row">
 				<div class="input-field col s6">
 					<label>Serves :</label>
-					<input id="serve-start" type="number" name="serve.start" placeholder="From..." min="1" max="20">
+					<input id="serve-start" type="number" name="serve.start" placeholder="From..." min="1" max="19"
+						   data-serve-start="{{ search['serves']['$gte'] }}">
 				</div>
 				<div class="input-field col s6">
-					<input id="serve-stop" type="number" name="serve.stop" placeholder="To..." min="1" max="20">
+					<input id="serve-stop" type="number" name="serve.stop" placeholder="To..." min="2" max="20"
+						   data-serve-stop="{{ search['serves']['$lte'] }}">
 				</div>
 			</div>
 			<div id="serving"></div>
@@ -90,7 +94,7 @@
 					<select class="custom-select mr-sm-2" name="sort">
                     {% if 'rcp' in session %}
 						{% for sorting in session.rcp.sortings %}
-							{% if sort and sort == sorting[0] %}
+							{% if search['sort'] and search['sort'][0] == sorting[0] %}
 							<option selected value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
 							{% else %}
 							<option value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
@@ -118,66 +122,6 @@
 
 <!-- Materialize noUI Slider plugin -->
 <script src="{{ url_for('static', filename='vendor/nouislider/distribute/nouislider.min.js') }}"></script>
-
-<script>
-
-	// Linking time search sliders
-	var searchTimer = document.getElementById('search-timer');
-
-	{% if query %}
-		var timeRange = [ {{ query['time.total']['$gte'] }}, {{ query['time.total']['$lte'] }} ];
-	{% else %}
-		var timeRange = [5, 240];
-	{% endif %}
-
-	noUiSlider.create(searchTimer, {
-		start: timeRange,
-		connect: true,
-		step: 5,
-		orientation: 'horizontal',
-		range: {
-			'min': 5,
-			'max': 240
-		},
-		format: {
-			from: function (value) {
-				return Number(value.replace(',', ''));
-			},
-			to: function (value) {
-				return Math.round(value);
-			}
-		}
-	});
-
-	// Linking serves search sliders
-	var servings = document.getElementById('serving');
-
-	{% if query %}
-		var serveRange = [ {{ query.serves['$gte'] }}, {{ query.serves['$lte'] }} ];
-	{% else %}
-		var serveRange = [1, 20];
-	{% endif %}
-
-	noUiSlider.create(servings, {
-		start: serveRange,
-		connect: true,
-		step: 1,
-		orientation: 'horizontal',
-		range: {
-			'min': 1,
-			'max': 20
-		},
-		format: {
-			from: function (value) {
-				return Number(value.replace(',', ''));
-			},
-			to: function (value) {
-				return Math.round(value);
-			}
-		}
-	});
-
-</script>
 
 <script src="{{ url_for('static', filename='js/search.js') }}"></script>
 

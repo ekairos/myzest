@@ -8,7 +8,7 @@
 <main class="container">
 
     <div class="rcp-section">
-        <h1 class="title">{{ recipe.name }}</h1>
+        <h1 id="rcp-name" class="title" data-recipe-id="{{ recipe._id }}">{{ recipe.name }}</h1>
         <p>{{ recipe.description }}</p>
         <div class="detail valign-wrapper">
             <span class="material-icons">access_time</span>
@@ -45,7 +45,7 @@
         <a href="{{ url_for('profile', profile_id=recipe.author_id) }}">
             <img class="rcp-author-tbn" src="{{ url_for('static', filename='img/users/' + author.avatar) }}" width="50" height="50" alt="">
         </a>
-        <a class="rcp-author ml-3" href="{{ url_for('profile', profile_id=recipe.author_id) }}">
+        <a id="rcp-author" class="rcp-author ml-3" href="{{ url_for('profile', profile_id=recipe.author_id) }}" data-author-name="{{ author['username'] }}">
             <div>{{ author.username }}</div>
             <div>
                 <small>Edited : {{ recipe.updated }}</small>
@@ -103,20 +103,11 @@
         <button class="btn btn-small modal-close">Cancel</button>
     </div>
 </div>
+
+<span id="sessionUserData" data-user-id="{{ user }}" hidden></span>
 {% endblock %}
 
 {% block script %}
-    
-<script>
-    {% if 'user' in session %}
-        var sessionUser = {{ session['user']|tojson }};
-    {% else %}
-        var sessionUser = "";
-    {% endif %}
-
-    var authorname = {{ author['username']|tojson }};
-    var recipe_id = "{{ recipe._id }}";
-</script>
 
 <script src="{{ url_for('static', filename='js/image-viewer.js') }}"></script>
 

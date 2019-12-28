@@ -17,7 +17,25 @@ rcp = {
 rcp['foodType'].sort()
 rcp['foodCategory'].sort()
 
+# Set defaults criteria values
+default_search_criteria = {
+    'time.total': {'$gte': 5,
+                   '$lte': 240},
+    'serves': {'$gte': 1,
+              '$lte': 20}
+}
+
 pic_extensions = ("jpg", "jpeg", "png", "gif")
+
+
+@app.context_processor
+def context_processor():
+    search_criteria = session['search_criteria'] \
+        if 'search_criteria' \
+           in session \
+        else default_search_criteria
+    user = session['user'] if 'user' in session else ""
+    return dict(search=search_criteria, user=json.dumps(user))
 
 
 # Override to serialize ObjectIds data from DB
@@ -99,11 +117,12 @@ def make_query(requested_data):
 
     data = requested_data
 
-    sort = {data.pop("sort"): -1} if data['sort'] in ['favorite', 'views', 'updated'] else {data.pop("sort"): 1}
+    sort = (data.pop("sort"), -1) if data['sort'] in ['favorite', 'views', 'updated'] else (data.pop("sort"), 1)
 
     query = formdata_to_query(data)
+    query['sort'] = sort
 
-    return query, sort
+    return query
 
 
 class Paginate:
@@ -111,14 +130,16 @@ class Paginate:
 
     per_page = 6
 
-    def __init__(self, query, sort, target_page=1):
+    def __init__(self, search_criteria, target_page=1):
         self.current = target_page
+        self.sort = search_criteria["sort"]
+        self.query = {k:search_criteria[k] for k in search_criteria if k!="sort"}
         self.to_skip = self.per_page * (self.current - 1)
-        self.total_recipes = mongo.db.recipes.count_documents(query)
+        self.total_recipes = mongo.db.recipes.count_documents(self.query)
         self.total_pages = math.ceil(self.total_recipes / self.per_page)
         self.recipes = mongo.db.recipes.aggregate([
-            {'$match': query},
-            {'$sort': sort},
+            {'$match': self.query},
+            {'$sort': {self.sort[0]: self.sort[1]}},
             {'$skip': self.to_skip},
             {'$limit': self.per_page},
             {'$lookup': {
@@ -257,11 +278,7 @@ def home():
         {'$limit': 5}
     ])
 
-    query = session['search']['query'] if 'search' in session else {}
-    sort = session['search']['sort'] if 'search' in session else session['rcp']['sortings']
-
-    return render_template('home.html', latests=latests, top_faved=top_faved,
-                           query=query, sort=sort)
+    return render_template('home.html', latests=latests, top_faved=top_faved)
 
 
 @app.route('/register')
@@ -505,27 +522,22 @@ def favme():
 @app.route('/searchrecipes', methods=['GET', 'POST'])
 def search_recipes():
     """ Queries DB and paginate results;
-     End point is first accessed with POST request which stores query and sort in session object """
+     End point is first accessed with POST request which stores query and
+     sort in session object """
 
     if request.method == "POST":
 
-        query, sort = make_query(request.form.to_dict())
-        paginate = Paginate(query, sort)
+        session['search_criteria'] = make_query(request.form.to_dict())
 
-        session['search'] = {'query': query,
-                             'sort': sort}
+        paginate = Paginate(session['search_criteria'])
 
     elif request.method == 'GET':
-        query = session['search']['query']
-        sort = session['search']['sort']
 
-        paginate = Paginate(query, sort, int(request.args['target_page']))
+        paginate = Paginate(session['search_criteria'], int(request.args['target_page']))
 
     results = paginate.get_page()
 
     return render_template('results.html',
-                           query=query,
-                           sort=sort,
                            results=results,
                            paginate=paginate)
 

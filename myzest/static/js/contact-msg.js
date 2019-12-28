@@ -9,7 +9,7 @@ $(document).ready(function () {
     $(".modal").modal();
     var modal = M.Modal.getInstance($("#confirmation"));
 
-    window.fakesend = function() {
+    var fakesend = function() {
 
         // reset error messages
         if ($(".field-error").length) {
