@@ -1,79 +1,92 @@
 html, body {
-	font-size: 14px;
-	height: 100%;
-	font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    height: 100%;
+    font-family: 'Lato', sans-serif;
 }
+
 #myzest-nav {
     background-color: $mz-darkblue;
     @include thinshw(outset);
-	a {
-		color: white;
-		&:hover {
-			color: $bright-gray;
-		}
-	}
-	li.active a {
-		color: $mz-lightorange;
-	}
+
+    a {
+        color: white;
+
+        &:hover {
+            color: $bright-gray;
+        }
+    }
+
+    li.active a {
+        color: $mz-lightorange;
+    }
 }
+
 .brand-title {
-	font-family: 'Sahitya', serif;
+    font-family: 'Sahitya', serif;
 }
+
 .sidenav {
-	@include thinshw(outset);
+    @include thinshw(outset);
 }
+
 .main-wrapper {
-	min-height: calc(100% - 165px);
+    min-height: calc(100% - 165px);
 }
+
 #main-footer {
-	height: 165px;
-	padding-top: 20px;
-	background-color: $mz-darkblue;
-	color: white;
-	@include thinshw(inset);
+    height: 165px;
+    padding-top: 20px;
+    background-color: $mz-darkblue;
+    color: white;
+    @include thinshw(inset);
 
-	.container .row section.col {
-		padding-left: 0;
-		padding-right: 0;
-	}
+    .container .row section.col {
+        padding-left: 0;
+        padding-right: 0;
+    }
 
-	a {
-		text-decoration: none;
-		color: white;
+    a {
+        text-decoration: none;
+        color: white;
 
-		&:hover {
-			color: $light-gray;
-		}
-	}
+        &:hover {
+            color: $light-gray;
+        }
+    }
 }
+
 .copyright {
-	text-align: center;
-	font-size: .8rem;
+    text-align: center;
+    font-size: .8rem;
 }
+
 /*
 		Alerts - flash messages
 */
 section.card-panel {
-	position: absolute;
-	z-index: 100;
-	top: 45px;
-	width: 100%;
-	border-radius: 0;
-	background: linear-gradient(rgba(255,255,255,0.8) 15%, rgba(255,255,255,0));
-	box-shadow: unset;
+    position: absolute;
+    z-index: 100;
+    top: 45px;
+    width: 100%;
+    border-radius: 0;
+    background: linear-gradient(rgba(255, 255, 255, 0.8) 15%, rgba(255, 255, 255, 0));
+    box-shadow: unset;
 }
+
 .flash-warning {
     @include flash-message;
     color: #a0101c;
     background-color: #fadadf;
     border-color: #faced0;
 }
+
 .flash-success {
     @include flash-message;
     color: #14752a;
     background-color: #d4ede0;
     border-color: #c2e2c8;
 }
+
 .flash-info {
     @include flash-message;
     color: $mz-darkorange;

@@ -21,15 +21,26 @@
         <div class="row">
             <div class="input-field col s12 l6">
                 <label for="username">Username if registered</label>
-                <input id="username" type="text" class="validate" {% if user %}value="{{ user.username }}"{% endif %}>
-                <span id="username_help" class="helper-text" data-error=""></span>
+                {% if user %}
+                    <input id="username" type="text" class="validate" value="{{ user.username }}" minlength="3" maxlength="30"
+                   pattern="[A-Za-z]{2,15}\s?[A-Za-z]{1,15}">
+                {% else %}
+                    <input id="username" type="text" class="validate" value="" minlength="3" maxlength="30"
+                   pattern="[A-Za-z]{2,15}\s?[A-Za-z]{1,15}">
+                {% endif %}
+                <span id="username_help" class="helper-text" data-error="Please insert valid name"></span>
             </div>
         </div>
         <div class="row">
             <div class="input-field col s12">
                 <label for="email">Email</label>
-                <input id="email" class="validate" {% if user %}value="{{ email }}"{% endif %} name="email" type="email"
-                       pattern="[A-Za-z0-9._-]{2,30}[A-Za-z0-9]@[A-Za-z0-9-._]+\.[A-Za-z]{2,11}" required>
+                {% if user %}
+                    <input id="email" class="validate" value="{{ email }}" name="email" type="email"
+                           pattern="[A-Za-z0-9._-]{2,30}[A-Za-z0-9]@[A-Za-z0-9-._]+\.[A-Za-z]{2,11}" required>
+                {% else %}
+                    <input id="email" class="validate" value="" name="email" type="email"
+                           pattern="[A-Za-z0-9._-]{2,30}[A-Za-z0-9]@[A-Za-z0-9-._]+\.[A-Za-z]{2,11}" required>
+                {% endif %}
                 <span id="email_help" class="helper-text" data-error="" data-success=""><em>Required</em></span>
             </div>
         </div>
@@ -62,45 +73,8 @@
 
 {% block script %}
 
-<script type="text/javascript" src="{{ url_for('static', filename='js/form_helper.js') }}"></script>
+<script src="{{ url_for('static', filename='js/form-helper.js') }}"></script>
 
-<script>
-    $(document).ready(function () {
-
-        $("form").submit(function(e){
-            e.preventDefault();
-        });
-
-        $("textarea#message").characterCounter();
-
-        // Init materializecss modal
-        $(".modal").modal();
-        var modal = M.Modal.getInstance($("#confirmation"));
-
-        window.fakesend = function() {
-
-            // reset error messages
-            if ($(".field-error").length) {
-                $(".field-error").remove();
-            }
-
-            var emailValid = document.getElementById("email").checkValidity();
-            var messageValid = document.getElementById("message").checkValidity();
-            var nameValid = $("#username").hasClass("invalid");
-            if (emailValid == false || messageValid == false || nameValid == true) {
-                let formError = '<div class="mb-4 field-error">Some details are missing or not valid</div>'
-                $("#submit-btn").after(formError);
-            } else {
-                modal.open();
-            }
-        };
-
-        $("button").on("click", function () {
-            // awaits ajax '/check_usr'
-            setTimeout(fakesend, 250);
-        })
-
-    });
-</script>
+<script src="{{ url_for('static', filename='js/contact-msg.js') }}"></script>
 
 {% endblock %}

@@ -1,4 +1,5 @@
-from flask import render_template, request, jsonify, redirect, flash, session, url_for
+from flask import render_template, request, jsonify, redirect, flash, \
+    session, url_for
 from myzest import app, mongo, bcrypt
 from bson.objectid import ObjectId
 import re
@@ -9,7 +10,8 @@ from os import path, remove as os_remove
 
 rcp = {
         'difficulty': mongo.db.difficulty.distinct("name"),
-        'sortings': (("name", "Name"), ("updated", "Date"), ("favorite", "Popularity"), ("views", "Viewed"),
+        'sortings': (("name", "Name"), ("updated", "Date"),
+                     ("favorite", "Popularity"), ("views", "Viewed"),
                      ("time.total", "Time"), ("serves", "Servings")),
         'foodType': mongo.db.foodtype.distinct("name"),
         'foodCategory': mongo.db.category.distinct("name")
@@ -17,12 +19,36 @@ rcp = {
 rcp['foodType'].sort()
 rcp['foodCategory'].sort()
 
+# Set defaults criteria values
+default_search_criteria = {
+    'time.total': {'$gte': 5,
+                   '$lte': 240},
+    'serves': {'$gte': 1,
+              '$lte': 20}
+}
+
 pic_extensions = ("jpg", "jpeg", "png", "gif")
 
 
-# Override to serialize ObjectIds data from DB
-# into str for user's session object
+@app.context_processor
+def context_processor():
+    """Returns variables to be accessible in any templates."""
+
+    search_criteria = session['search_criteria'] \
+        if 'search_criteria' \
+           in session \
+        else default_search_criteria
+
+    user = session['user'] if 'user' in session else ""
+
+    return dict(search=search_criteria, user=json.dumps(user), rcp=rcp)
+
+
 class JSONEncoder(json.JSONEncoder):
+    """Serialize ObjectIds data from DB into
+    str for user's session object.
+    """
+
     def default(self, o):
         if isinstance(o, ObjectId):
             return str(o)
@@ -31,6 +57,8 @@ class JSONEncoder(json.JSONEncoder):
 
 @app.template_filter()
 def min_to_hour(time):
+    """Formats cooking duration."""
+
     try:
         if type(time) not in [int, float]:
             raise TypeError
@@ -47,11 +75,17 @@ def min_to_hour(time):
 
 @app.template_filter()
 def oid_date(oid):
+    """Returns time creation of a given ObjectId."""
+
     return oid.generation_time.date()
 
 
 def formdata_to_query(data):
-    """ Processes data from the search form to build query with relevant fields only"""
+    """Processes data from the search form to build query with
+    relevant fields only.
+    :return: MongoDB Atlas query string
+    """
+
     # time and serves
     try:
         time = {
@@ -83,7 +117,8 @@ def formdata_to_query(data):
             words = {'$search': data.pop('textSearch')}
     except KeyError:
         text_search = False
-    query = {k: v for (k, v) in data.items() if data[k] not in ["any", ""] and data[k] in rcp[k]}
+    query = {k: v for (k, v) in data.items() if data[k] not in ["any", ""]
+             and data[k] in rcp[k]}
     query['serves'] = serves
     query['time.total'] = time
 
@@ -94,31 +129,40 @@ def formdata_to_query(data):
 
 
 def make_query(requested_data):
-    """ Builds mongoDB query from form data posted to search_recipes
-    and stores into session 'search' dict """
+    """Builds mongoDB query from search form data posted to search_recipes
+    and stores into session 'search' dict.
+    """
 
     data = requested_data
 
-    sort = {data.pop("sort"): -1} if data['sort'] in ['favorite', 'views', 'updated'] else {data.pop("sort"): 1}
+    sort = (data.pop("sort"), -1) if data['sort'] \
+                                     in ['favorite', 'views', 'updated'] \
+        else (data.pop("sort"), 1)
 
     query = formdata_to_query(data)
+    query['sort'] = sort
 
-    return query, sort
+    return query
 
 
 class Paginate:
-    """ Queries MongoDB for recipes and builds pagination """
+    """Queries MongoDB for recipes and builds pagination.
+    :param search_criteria: query string and sorting built from the search form
+    :param target_page: aggregation's result cursor position by `per_page`
+    """
 
     per_page = 6
 
-    def __init__(self, query, sort, target_page=1):
+    def __init__(self, search_criteria, target_page=1):
         self.current = target_page
-        self.to_skip = self.per_page * (self.current - 1)
-        self.total_recipes = mongo.db.recipes.count_documents(query)
+        self.sort = search_criteria["sort"]
+        self.query = {k:search_criteria[k] for k in search_criteria if k!="sort"}
+        self.to_skip = self.per_page * (target_page - 1)
+        self.total_recipes = mongo.db.recipes.count_documents(self.query)
         self.total_pages = math.ceil(self.total_recipes / self.per_page)
         self.recipes = mongo.db.recipes.aggregate([
-            {'$match': query},
-            {'$sort': sort},
+            {'$match': self.query},
+            {'$sort': {self.sort[0]: self.sort[1]}},
             {'$skip': self.to_skip},
             {'$limit': self.per_page},
             {'$lookup': {
@@ -138,16 +182,22 @@ class Paginate:
 
 
 def hash_password(password):
+    """bcrypt hashing password."""
+
     return bcrypt.generate_password_hash(password).decode('utf-8')
 
 
 def check_file_ext(filename, extensions):
-    """Returns if a given filename is of expected file extension"""
+    """Returns if a given filename is of expected file extension."""
+
     return filename.endswith(extensions)
 
 
 def build_recipe(author_id, data):
-    """Builds the recipe dictionary from add or edit recipe form data and user's id"""
+    """Builds the recipe in MongoDB document format from add or edit
+    recipe form data and user's id.
+    """
+
     recipe = dict()
     # Main required recipe details
     recipe['author_id'] = ObjectId(author_id)
@@ -186,17 +236,28 @@ def build_recipe(author_id, data):
 
 
 def recipe_to_db(author_id, recipe):
-    """Upload recipe to DB, adds its id to author's recipes then return its id"""
+    """Upload recipe to DB, adds its id to author's recipes then
+    return its id.
+    """
+
     inserted_recipe = mongo.db.recipes.insert_one(recipe)
 
     # Add recipe's id to user's recipe list
-    mongo.db.users.update_one({'_id': author_id}, {'$push': {'recipes': inserted_recipe.inserted_id}})
+    mongo.db.users.update_one({'_id': author_id},
+                              {'$push':
+                                   {'recipes': inserted_recipe.inserted_id}
+                               })
 
     return inserted_recipe.inserted_id
 
 
 def save_recipe_pic(image_file, recipe_id):
-    """Renames image using recipe's id and updates recipe in DB, then save file"""
+    """Renames image using recipe's id and updates recipe in DB,
+    then save file.
+    :param image_file: The file uploaded in the add or edit recipe form
+    :param recipe_id: The returned _id of inserted recipe into MongoDB
+    :return: None
+    """
 
     file_ext = image_file.filename.rsplit('.', 1)[-1].lower()
     filename = str(recipe_id) + '.' + file_ext
@@ -209,12 +270,18 @@ def save_recipe_pic(image_file, recipe_id):
 
 def update_recipe_views(recipe_id, increment):
     """Increment or decrement a recipe's 'views' field.
-    Function is called when a user visits a recipe page and by decrement_session_views function"""
+    Function is called when a user visits a recipe page and
+    by decrement_session_views function.
+    """
+
     mongo.db.recipes.update_one({'_id': ObjectId(recipe_id)}, {'$inc': {'views': increment}})
 
 
 def decrement_session_views(recipe_list, viewed_list):
-    """Decrement each recipe's 'views' field count that is common to both recipes lists provided"""
+    """Decrement each recipe's 'views' field count that is common to
+    both recipes lists provided.
+    """
+
     for user_recipe in recipe_list:
         for viewed in viewed_list:
             if str(viewed) == str(user_recipe):
@@ -224,8 +291,10 @@ def decrement_session_views(recipe_list, viewed_list):
 @app.route('/')
 @app.route('/home')
 def home():
-    # store recipe criterias
-    session['rcp'] = rcp
+    """Landing page. Creates 'views' in session object to store ids of
+    visited recipe pages.
+    Retrieve 5 most recent and 5 most faved recipes.
+    """
 
     if 'views' not in session:
         session['views'] = []
@@ -257,11 +326,7 @@ def home():
         {'$limit': 5}
     ])
 
-    query = session['search']['query'] if 'search' in session else {}
-    sort = session['search']['sort'] if 'search' in session else session['rcp']['sortings']
-
-    return render_template('home.html', latests=latests, top_faved=top_faved,
-                           query=query, sort=sort)
+    return render_template('home.html', latests=latests, top_faved=top_faved)
 
 
 @app.route('/register')
@@ -270,6 +335,7 @@ def register():
     if 'user' in session:
         flash('{}, you are already logged in'.format(session['user']['username']), 'info')
         return redirect('home')
+
     return render_template('register.html', next_loc=next_loc)
 
 
@@ -284,6 +350,7 @@ def add_user():
     if data['password'] != data['passwConfirm']:
         flash("Password confirmation do not match", 'warning')
         return redirect('register')
+
     new_user = {
         'username': data['username'].title(),
         'email': data['email'].lower(),
@@ -291,7 +358,11 @@ def add_user():
         'favorites': [],
         'avatar': "default.png"
     }
-    user_in_db = mongo.db.users.find_one({"$or": [{"username": new_user["username"]}, {"email": new_user["email"]}]})
+
+    user_in_db = mongo.db.users.find_one(
+        {"$or": [{"username": new_user["username"]},
+                 {"email": new_user["email"]}]})
+
     if user_in_db:
         flash('This user already exists', 'warning')
         return redirect('register')
@@ -305,11 +376,16 @@ def add_user():
         }
         flash('Welcome {} ! Your account was created with {}'
               .format(new_user['username'], new_user['email']), 'success')
+
     return redirect('home') if next_loc is None else redirect(next_loc)
 
 
 @app.route('/check_user', methods=['POST'])
 def check_user():
+    """Queries DB if a given username or email exists in DB,
+    Returns a success or error value depending on the form triggering request.
+    """
+
     data = request.get_json()
 
     value = data['value'].title() if data['field'] == "username" else data['value'].lower()
@@ -331,6 +407,7 @@ def login():
     if 'user' in session:
         flash('{}, you are already logged in'.format(session['user']['username']), 'info')
         return redirect('home')
+
     return render_template('login.html', next_loc=next_loc)
 
 
@@ -367,12 +444,15 @@ def log_user():
 
 @app.route('/logout')
 def logout():
+    """Logs user out of session but keeps session['views']."""
+
     if 'user' in session:
         username = session['user']['username']
         session.pop('user')
         flash('We hope to see you soon {}'.format(username), 'info')
     else:
         flash('You are not logged in', 'warning')
+
     return redirect('home')
 
 
@@ -385,6 +465,7 @@ def get_recipe(recipe_id):
         session.modified = True
         if 'user' not in session or session['user']['_id'] != str(author['_id']):
             update_recipe_views(recipe_id, 1)
+
     return render_template('recipe.html', recipe=recipe, author=author)
 
 
@@ -399,6 +480,8 @@ def add_recipe():
 
 @app.route('/insertrecipe', methods=['GET', 'POST'])
 def insert_recipe():
+    """Process the add recipe form data and insert into MongoDB Atlas."""
+
     # Keep checking for active valid connection
     if 'user' not in session:
         flash('You are currently not logged in', 'warning')
@@ -426,7 +509,10 @@ def insert_recipe():
 @app.route('/editrecipe/<recipe_id>', methods=['GET', 'POST'])
 def edit_recipe(recipe_id):
     """Edit recipe form and submission to DB
-    Update recipe's content before image validation to save refilling form"""
+    Update recipe's content before image validation to save refilling form
+    if errors occurs.
+    """
+
     this_recipe = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})
     author = mongo.db.users.find_one({'_id': ObjectId(this_recipe['author_id'])}, {'username': 1})
 
@@ -459,18 +545,33 @@ def edit_recipe(recipe_id):
 
 @app.route('/deleterecipe/<recipe_id>')
 def delete_recipe(recipe_id):
-    recipe_id = recipe_id
-    mongo.db.users.update({"_id": ObjectId(session['user']['_id'])}, {'$pull': {'recipes': ObjectId(recipe_id)}})
-    os_remove(path.join(app.config['RECIPE_PIC_DIR'], mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})['image']))
+    """Delete a recipe from the MongoDB recipe collection,
+    removes from the author's recipes list and from any user's favorite list,
+    finally removes file from server's recipe directory.
+    """
+
+    recipe_img = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})['image']
+    mongo.db.users.update({"_id": ObjectId(session['user']['_id'])},
+                          {'$pull': {'recipes': ObjectId(recipe_id)}})
+
     mongo.db.recipes.remove({"_id": ObjectId(recipe_id)})
+
     mongo.db.users.update_many(
         {'favorites': {'$elemMatch': {'$eq': ObjectId(recipe_id)}}},
         {'$pull': {'favorites': ObjectId(recipe_id)}})
+
+    os_remove(path.join(app.config['RECIPE_PIC_DIR'], recipe_img))
+
     return redirect('/home')
 
 
 @app.route('/favme', methods=['POST'])
 def favme():
+    """Adds or removes a recipe's id in user's fav list whether. Updates
+    the recipe's fav count and the user's fav list in DB and
+    session object accordingly.
+    """
+
     data = request.get_json()
 
     faved = session['user']['favorites']
@@ -478,25 +579,25 @@ def favme():
     if data['recipe_id'] in faved:
         mongo.db.users.update({'_id': ObjectId(data['user_id'])},
                               {'$pull': {'favorites': ObjectId(data['recipe_id'])}})
+
         mongo.db.recipes.update({'_id': ObjectId(data['recipe_id'])},
                                 {'$inc': {'favorite': -1}})
 
         faved.remove(data['recipe_id'])
         session['user']['favorites'] = faved
-        # apply modification to session object
-        session.modified = True
+        session.modified = True  # apply modification to session object
         return jsonify({"message": "removed"})
 
     elif data['recipe_id'] not in faved:
         mongo.db.users.update({'_id': ObjectId(data['user_id'])},
                               {'$push': {'favorites': ObjectId(data['recipe_id'])}})
+
         mongo.db.recipes.update({'_id': ObjectId(data['recipe_id'])},
                                 {'$inc': {'favorite': 1}})
 
         faved.append(data['recipe_id'])
         session['user']['favorites'] = faved
-        # apply modification to session object
-        session.modified = True
+        session.modified = True  # apply modification to session object
         return jsonify({"message": "added"})
     else:
         return jsonify({"message": "Operation error"})
@@ -504,34 +605,31 @@ def favme():
 
 @app.route('/searchrecipes', methods=['GET', 'POST'])
 def search_recipes():
-    """ Queries DB and paginate results;
-     End point is first accessed with POST request which stores query and sort in session object """
+    """Queries DB and paginate results;
+     End point is first accessed with POST request which stores query and
+     sort in session object."""
 
     if request.method == "POST":
 
-        query, sort = make_query(request.form.to_dict())
-        paginate = Paginate(query, sort)
+        session['search_criteria'] = make_query(request.form.to_dict())
 
-        session['search'] = {'query': query,
-                             'sort': sort}
+        paginate = Paginate(session['search_criteria'])
 
     elif request.method == 'GET':
-        query = session['search']['query']
-        sort = session['search']['sort']
 
-        paginate = Paginate(query, sort, int(request.args['target_page']))
+        paginate = Paginate(session['search_criteria'], int(request.args['target_page']))
 
     results = paginate.get_page()
 
     return render_template('results.html',
-                           query=query,
-                           sort=sort,
                            results=results,
                            paginate=paginate)
 
 
 @app.route('/searchcount', methods=['POST'])
 def searchcount():
+    """Returns from DB numbers of recipes matching searching criteria."""
+
     data = request.get_json()
     query = formdata_to_query(data)
     nbr_recipes = mongo.db.recipes.find(query).count()
@@ -587,7 +685,7 @@ def profile(profile_id):
         {'$replaceRoot': {'newRoot': {'$mergeObjects': [{'$arrayElemAt': ['$recipefaved', 0]}, '$$ROOT']}}},
         {'$project': {'recipefaved': 0}}
     ])
-    profile = list(full_profile)[0]  # converts aggregation result
+    profile = list(full_profile)[0]  # converts aggregation result's type
 
     from_favorite = [
         mongo.db.recipes.aggregate([
@@ -604,6 +702,7 @@ def profile(profile_id):
         ]) for recipe in profile['favorites']
     ]
     faved = [recipe for cursor in from_favorite for recipe in cursor]
+
     return render_template('profile.html', profile=profile, recipes=recipes, faved=faved)
 
 
@@ -707,4 +806,5 @@ def error_page():
 @app.errorhandler(500)
 @app.errorhandler(404)
 def page_error(error):
+    """Simply redirects to error page on 404 and 500 errors."""
     return redirect('/error')

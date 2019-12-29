@@ -1,5 +1,71 @@
 $(document).ready(function(){
 
+    // Get time search values from template variables
+    var timeMin = $("#timer-start").attr("data-timer-start");
+    var timeMax = $("#timer-stop").attr("data-timer-stop");
+    var timeRange;
+
+    if (timeMin !== "" && timeMax !== "") {
+        timeRange = [timeMin, timeMax];
+    } else {
+        timeRange = [$("#timer-start").attr("min"), $("#timer-stop").attr("max")];
+    }
+
+    var searchTimer = document.getElementById('search-timer');
+
+    // Create slider for time criteria search
+    noUiSlider.create(searchTimer, {
+		start: timeRange,
+		connect: true,
+		step: 5,
+		orientation: 'horizontal',
+		range: {
+			'min': 5,
+			'max': 240
+		},
+		format: {
+			from: function (value) {
+				return Number(value.replace(',', ''));
+			},
+			to: function (value) {
+				return Math.round(value);
+			}
+		}
+	});
+
+    // Get serve search values from template variables
+    var serveMin = $("#serve-start").attr("data-serve-start");
+    var serveMax = $("#serve-stop").attr("data-serve-stop");
+    var serveRange;
+
+    if (serveMin !== "" && serveMax !== "") {
+        serveRange = [serveMin, serveMax];
+    } else {
+        serveRange = [$("#serve-start").attr("min"), $("#serve-stop").attr("max")];
+    }
+
+    var servings = document.getElementById('serving');
+
+    // Create slider for serve criteria
+    noUiSlider.create(servings, {
+		start: serveRange,
+		connect: true,
+		step: 1,
+		orientation: 'horizontal',
+		range: {
+			'min': 1,
+			'max': 20
+		},
+		format: {
+			from: function (value) {
+				return Number(value.replace(',', ''));
+			},
+			to: function (value) {
+				return Math.round(value);
+			}
+		}
+	});
+
     // Init search sidenav and prevent swipe sliders interactions
     $('#slide-search').sidenav({"draggable": false});
 

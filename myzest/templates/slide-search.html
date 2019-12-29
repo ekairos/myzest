@@ -1,4 +1,4 @@
-<ul id="slide-search" class="sidenav txt-ctr">
+<div id="slide-search" class="sidenav txt-ctr">
 	<form class="mt-6" action="{{ url_for('search_recipes') }}" method="POST" enctype="multipart/form-data">
 
 		<p>Looking for</p>
@@ -7,8 +7,8 @@
 		<div class="mt-4 mb-4 pr-4">
 			<div class="row">
 				<div class="input-field">
-					{% if query and '$text' in query %}
-					<input id="text-search" name="textSearch" type="text" class="validate" value="{{ query['$text']['$search'] }}">
+					{% if '$text' in search %}
+					<input id="text-search" name="textSearch" type="text" class="validate" value="{{ search['$text']['$search'] }}">
 					{% else %}
 					<input id="text-search" name="textSearch" type="text" class="validate">
 					{% endif %}
@@ -20,16 +20,14 @@
 		<!-- Food type -->
 		<div id="food-field" class="input-field pb-2">
 			<select class="custom-select mr-sm-2" name="foodType">
-				<option selected value="any">Any</option>
-            {% if 'rcp' in session %}
-				{% for food in session.rcp.foodType %}
-					{% if query and query.foodType == food %}
+				<option value="any">Any</option>
+				{% for food in rcp.foodType %}
+					{% if 'foodType' in search and search.foodType == food %}
 					<option selected value="{{ food }}">{{ food|title }}</option>
 					{% else %}
 					<option value="{{ food }}">{{ food|title }}</option>
 					{% endif %}
 				{% endfor %}
-            {% endif %}
 			</select>
 			<label>Food Type</label>
 		</div>
@@ -37,16 +35,14 @@
 		<!-- difficulty -->
 		<div id="diff-field" class="input-field">
 			<select class="custom-select mr-sm-2" name="difficulty">
-				<option selected value="any">Any</option>
-            {% if 'rcp' in session %}
-				{% for diff in session.rcp.difficulty %}
-					{% if query and query.difficulty == diff %}
+				<option value="any">Any</option>
+				{% for diff in rcp.difficulty %}
+					{% if 'difficulty' in search and search.difficulty == diff %}
 					<option selected value="{{ diff }}">{{ diff|title }}</option>
 					{% else %}
 					<option value="{{ diff }}">{{ diff|title }}</option>
 					{% endif %}
 				{% endfor %}
-            {% endif %}
 			</select>
 			<label>Difficulty</label>
 		</div>
@@ -56,10 +52,12 @@
 			<div class="row">
 				<div class="input-field col s6">
 					<label>Total duration :</label>
-					<input id="timer-start" type="number" name="timer.start" placeholder="From..." step="5" min="5" max="240">
+					<input id="timer-start" type="number" name="timer.start" placeholder="From..." step="5" min="5" max="235"
+                           data-timer-start="{{ search['time.total']['$gte'] }}">
 				</div>
 				<div class="input-field col s6">
-					<input id="timer-stop" type="number" name="timer.stop" placeholder="To..." step="5" min="5" max="240">
+					<input id="timer-stop" type="number" name="timer.stop" placeholder="To..." step="5" min="10" max="240"
+                           data-timer-stop="{{ search['time.total']['$lte'] }}">
 				</div>
 			</div>
 			<div id="search-timer"></div>
@@ -70,10 +68,12 @@
 			<div class="row">
 				<div class="input-field col s6">
 					<label>Serves :</label>
-					<input id="serve-start" type="number" name="serve.start" placeholder="From..." min="1" max="20">
+					<input id="serve-start" type="number" name="serve.start" placeholder="From..." min="1" max="19"
+						   data-serve-start="{{ search['serves']['$gte'] }}">
 				</div>
 				<div class="input-field col s6">
-					<input id="serve-stop" type="number" name="serve.stop" placeholder="To..." min="1" max="20">
+					<input id="serve-stop" type="number" name="serve.stop" placeholder="To..." min="2" max="20"
+						   data-serve-stop="{{ search['serves']['$lte'] }}">
 				</div>
 			</div>
 			<div id="serving"></div>
@@ -88,15 +88,13 @@
 			<div class="row">
 				<div class="input-field col s12">
 					<select class="custom-select mr-sm-2" name="sort">
-                    {% if 'rcp' in session %}
-						{% for sorting in session.rcp.sortings %}
-							{% if sort and sort == sorting[0] %}
-							<option selected value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
-							{% else %}
-							<option value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
-							{% endif %}
-						{% endfor %}
-                    {% endif %}
+					{% for sorting in rcp.sortings %}
+						{% if search['sort'] and search['sort'][0] == sorting[0] %}
+						<option selected value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
+						{% else %}
+						<option value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
+						{% endif %}
+					{% endfor %}
 					</select>
 				</div>
 			</div>
@@ -106,78 +104,18 @@
 		<small id="recipe-count">-- recipes matching</small>
 		<div>
 			<button class="btn mt-4 mb-4" type="submit">
-				<div class="valign-wrapper">
+				<span class="valign-wrapper">
 					<i class="material-icons">search</i><span class="ml-3">Get Recipes</span>
-				</div>
+				</span>
 			</button>
 		</div>
 	</form>
-</ul>
+</div>
 
 {% block script %}
 
 <!-- Materialize noUI Slider plugin -->
-<script type="text/javascript" src="{{ url_for('static', filename='vendor/nouislider/distribute/nouislider.min.js') }}"></script>
-
-<script type="text/javascript">
-
-	// Linking time search sliders
-	var searchTimer = document.getElementById('search-timer');
-
-	{% if query %}
-		var timeRange = [ {{ query['time.total']['$gte'] }}, {{ query['time.total']['$lte'] }} ];
-	{% else %}
-		var timeRange = [5, 240];
-	{% endif %}
-
-	noUiSlider.create(searchTimer, {
-		start: timeRange,
-		connect: true,
-		step: 5,
-		orientation: 'horizontal',
-		range: {
-			'min': 5,
-			'max': 240
-		},
-		format: {
-			from: function (value) {
-				return Number(value.replace(',', ''));
-			},
-			to: function (value) {
-				return Math.round(value);
-			}
-		}
-	});
-
-	// Linking serves search sliders
-	var servings = document.getElementById('serving');
-
-	{% if query %}
-		var serveRange = [ {{ query.serves['$gte'] }}, {{ query.serves['$lte'] }} ];
-	{% else %}
-		var serveRange = [1, 20];
-	{% endif %}
-
-	noUiSlider.create(servings, {
-		start: serveRange,
-		connect: true,
-		step: 1,
-		orientation: 'horizontal',
-		range: {
-			'min': 1,
-			'max': 20
-		},
-		format: {
-			from: function (value) {
-				return Number(value.replace(',', ''));
-			},
-			to: function (value) {
-				return Math.round(value);
-			}
-		}
-	});
-
-</script>
+<script src="{{ url_for('static', filename='vendor/nouislider/distribute/nouislider.min.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/search.js') }}"></script>
 

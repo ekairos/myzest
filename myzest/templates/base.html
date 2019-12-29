@@ -17,7 +17,9 @@
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='vendor/nouislider/distribute/nouislider.min.css')}}">
     <!-- Custom Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Donegal+One|Lato|Sahitya:700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Sahitya:700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Donegal+One&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/myzest.css') }}">
 
@@ -72,9 +74,9 @@
     {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
             {% for category, message in messages %}
-            <section class="card-panel">
+            <div class="card-panel">
                 <div class="flash-{{ category }} txt-ctr mr-auto ml-auto">{{ message }}</div>
-            </section>
+            </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
@@ -85,26 +87,26 @@
 <footer id="main-footer">
     <div class="container">
         <div class="row">
-            <section class="col s3 offset-s2 offset-m3">
+            <div class="col s3 offset-s2 offset-m3">
                 <!-- support -->
                 <ul class="footer-links">
                     <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
                 </ul>
-            </section>
+            </div>
             <!-- follow Us -->
-            <section class="col s3 offset-s3 offset-m2">
+            <div class="col s3 offset-s3 offset-m2">
                 <ul class="footer-social">
                     <li><a class="tooltipped" data-position="left" data-tooltip="Not connected yet" href="#">Twitter</a></li>
                     <li><a class="tooltipped" data-position="right" data-tooltip="Not connected yet" href="#">Facebook</a></li>
                 </ul>
-            </section>
+            </div>
             <!-- Subscription -->
         </div>
         <!-- app navigation links & copyrights -->
         <div class="row">
             <!-- Legal Info -->
             <ul class="col s12 copyright">
-                <li>Copyright &copy 2019 MyZest. All Rights Reserved</li>
+                <li>Copyright &copy; 2019 MyZest. All Rights Reserved</li>
                 <li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li>
                 <li><a href="{{ url_for('terms') }}">Terms Of Use</a></li>
             </ul>
@@ -120,6 +122,17 @@
         // Init Materializecss sidenav for main navbar
         $("#side-menu").sidenav();
 
+        // navbar active page
+        var currentPath = location.pathname;
+        $("#myzest-nav ul [href], .sidenav [href]").each(function () {
+            if ($(this).attr("href") === currentPath) {
+                $(this).parent("li").addClass("active");
+            }
+            if (currentPath === "/") {
+                $("[href='/home']").parent("li").addClass("active");
+            }
+        });
+
         // Init Materializecss form select
         $("select").formSelect();
 
@@ -132,17 +145,6 @@
 
         // Init Materializecss Tabs
         $('.tabs').tabs();
-
-        // navbar active page
-        var currentPath = location.pathname;
-        $("#myzest-nav ul [href], .sidenav [href]").each(function () {
-            if ($(this).attr("href") == currentPath) {
-                $(this).parent("li").addClass("active");
-            }
-            if (currentPath == "/") {
-                $("[href='/home']").parent("li").addClass("active");
-            }
-        });
 
         // Init Materializecss tooltips
         $('.tooltipped').tooltip();

@@ -8,13 +8,13 @@
 	<form id="newRecipeForm" action="{{ url_for('insert_recipe') }}" method="POST" enctype="multipart/form-data">
 
 		<div class="input-field mb-2">
-			<label for="rcpname">Recipe Name</label>
+			<label>Recipe Name</label>
 			<input class="validate" name="name" type="text" maxlength="50" required>
 			<span class="helper-text" data-error="This field is required"></span>
 		</div>
 
 		<div class="input-field mt-2">
-			<label for="description">Description</label>
+			<label>Description</label>
 			<textarea class="validate materialize-textarea" name="description" required maxlength="180"></textarea>
 			<span class="helper-text" data-error="This field is required"></span>
 		</div>
@@ -22,8 +22,8 @@
 		<!-- Difficulty -->
 		<div class="input-field mb-3 col s12">
 			<select id="difficulty" name="difficulty" class="validate" required>
-				<option selected disabled>Difficulty...</option>
-				{% for diff in session.rcp.difficulty %}
+				<option selected disabled value="">Difficulty...</option>
+				{% for diff in rcp.difficulty %}
 				<option value="{{ diff }}">{{ diff|title }}</option>
 				{% endfor %}
 			</select>
@@ -77,13 +77,13 @@
 			<ul id="step-list">
 				<li class="row step-item">
 					<div class="input-field col s12 mb-2 mt-2">
-						<label for="step-1">Step 1</label>
+						<label>Step 1</label>
 						<textarea class="validate materialize-textarea" name="step-1" required maxlength="350"></textarea>
 						<span class="helper-text" data-error="This field is required"></span>
 					</div>
 				</li>
 			</ul>
-			<span id="add-step-btn" class="btn btn-small" onclick="addStep()">add step</span>
+			<a id="add-step-btn" class="btn btn-small" onclick="addStep()">add step</a>
 		</div>
 
 		<div class="border-b mb-5"></div>
@@ -114,7 +114,7 @@
 					<div class="input-field mb-3">
 						<select class="custom-select mr-sm-2" id="newRcpFType" name="foodType">
 							<option selected value="">select...</option>
-							{% for food in session.rcp.foodType %}
+							{% for food in rcp.foodType %}
 								<option value="{{ food }}">{{ food|title }}</option>
 							{% endfor %}
 						</select>
@@ -130,7 +130,7 @@
 		<!-- Submission -->
     <footer class="mb-4">
         <button class="btn btn-small" type="submit" onclick="validateForm()">Add Recipe</button>
-        <button class="btn btn-small ml-4" type="button"><a href="{{ url_for('home') }}">Cancel</a></button>
+        <div class="btn btn-small ml-4"><a href="{{ url_for('home') }}">Cancel</a></div>
     </footer>
 	</form>
 </main>
@@ -142,5 +142,5 @@
 	    $('.collapsible').collapsible({accordion: false});
 	});
 </script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/recipe.js') }}"></script>
+<script src="{{ url_for('static', filename='js/recipe.js') }}"></script>
 {% endblock %}

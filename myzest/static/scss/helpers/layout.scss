@@ -4,55 +4,67 @@
 strong {
     font-weight: bold;
 }
+
 a {
-	transition: color 0.2s ease-out;
+    transition: color 0.2s ease-out;
     color: $mz-orange;
-	&:hover {
-		color: $mz-darkorange;
-	}
-	&:visited {
-		color: $mz-darkorange;
-		border-color: $mz-darkorange;
-		&:hover {
-			border-color: $mz-orange;
-		}
-	}
+
+    &:hover {
+        color: $mz-darkorange;
+    }
+
+    &:visited {
+        color: $mz-darkorange;
+        border-color: $mz-darkorange;
+
+        &:hover {
+            border-color: $mz-orange;
+        }
+    }
 }
+
 .txt-ctr {
     text-align: center;
 }
+
 .detail {
-	color: $mz-coolgray;
+    color: $mz-coolgray;
 }
+
 .cancel {
-  color: $mz-red;
-  cursor: pointer;
-	transition: color 0.2s ease-out;
-	&:hover {
-		color: $mz-darkred;
-	}
+    color: $mz-red;
+    cursor: pointer;
+    transition: color 0.2s ease-out;
+
+    &:hover {
+        color: $mz-darkred;
+    }
 }
+
 .title {
-	font-family: "Donegal One", serif;
+    font-family: "Donegal One", serif;
 }
 
 /*
         ___ Lists elements ___
 */
 .sidenav li {
-	&:hover {
-		background-color: $mz-lightcoolgray;
-	}
-	&.active {
-		color: $mz-darkorange;
-		background-color: $mz-darkblue;
-		&:hover a {
-			color: $mz-darkorange;
-		}
-		a {
-			color: $mz-lightorange;
-		}
-	}
+    &:hover {
+        background-color: $mz-lightcoolgray;
+    }
+
+    &.active {
+        color: $mz-darkorange;
+        background-color: $mz-darkblue;
+
+        &:hover a {
+            color: $mz-darkorange;
+        }
+
+        a {
+            color: $mz-lightorange;
+        }
+    }
 }
 
 /*
@@ -68,8 +80,8 @@ a {
         ___ Forms ___
 */
 .field-error {
-	color: #F44336;
-	font-size: 12px;
+    color: #F44336;
+    font-size: 12px;
 }
 
 /*
@@ -79,9 +91,11 @@ a {
 .row {
     margin-bottom: 0;
 }
+
 .collapsible {
     border: none;
     box-shadow: none;
+
     .collapsible-header {
         padding: 0;
     }
@@ -90,29 +104,35 @@ a {
 //		Buttons
 
 .btn {
-	color: $mz-orange;
-	background-color: unset;
-	border: 1px solid $mz-orange;
-	&:hover, &:focus {
-		color: $mz-darkblue;
-		background-color: $mz-orange;
-		a {
-			color: $mz-darkblue;
-			background-color: unset;
-		}
-	}
-  &.btn-cancel {
-    color: $mz-darkred;
-    background-color: $mz-red;
-  }
+    color: $mz-orange;
+    background-color: unset;
+    border: 1px solid $mz-orange;
+
+    &:hover, &:focus {
+        color: $mz-darkblue;
+        background-color: $mz-orange;
+
+        a {
+            color: $mz-darkblue;
+            background-color: unset;
+        }
+    }
+
+    &.btn-cancel {
+        color: $mz-darkred;
+        background-color: $mz-red;
+    }
 }
+
 .btn-floating {
-	background-color: $mz-orange;
-	&:hover, &:focus {
-		color: $mz-darkblue;
-		background-color: $mz-lightorange;
-	}
+    background-color: $mz-orange;
+
+    &:hover, &:focus {
+        color: $mz-darkblue;
+        background-color: $mz-lightorange;
+    }
 }
+
 .floating-edit-btn {
     position: absolute;
     bottom: -2em;
@@ -122,158 +142,176 @@ a {
 //		Tabs
 
 .tabs li {
-	&.indicator {
-		background-color: $mz-lightorange;
-	}
-	&.tab a {
-		color: $mz-orange;
-		&.active {
-			background-color: $mz-brightorange;
-			color: $mz-darkblue;
-		}
+    &.indicator {
+        background-color: $mz-lightorange;
+    }
 
-		&:hover,
-		&.active:focus {
-			background-color: $mz-brightorange;
-			color: $mz-darkblue;
-		}
-	}
+    &.tab a {
+        color: $mz-orange;
+
+        &.active {
+            background-color: $mz-brightorange;
+            color: $mz-darkblue;
+        }
+
+        &:hover,
+        &.active:focus {
+            background-color: $mz-brightorange;
+            color: $mz-darkblue;
+        }
+    }
 }
 
 //		Modals
 
 .modal {
-	max-width: 600px;
+    max-width: 600px;
 }
+
 .modal .modal-content {
-	background-color: white;
-	border-bottom: 1px solid $bright-gray;
+    background-color: white;
+    border-bottom: 1px solid $bright-gray;
 }
+
 .modal .modal-footer {
-	height: unset;
-	.btn, .btn-large, .btn-small {
-		margin: 1em;
-	}
+    height: unset;
+
+    .btn, .btn-large, .btn-small {
+        margin: 1em;
+    }
 }
+
 @media (max-width: 576px) {
-	.modal .modal-content {
-		padding: 15px 10px 10px;
-	}
-	.modal .modal-footer {
-		height: auto;
-		padding: 0 1em 1em 0;
-	}
+    .modal .modal-content {
+        padding: 15px 10px 10px;
+    }
+    .modal .modal-footer {
+        height: auto;
+        padding: 0 1em 1em 0;
+    }
 }
 
 //		Pagination
 
 .pagination li {
-	&.active {
-		background-color: $mz-orange;
-	}
-	&:not(.disabled):not(.active) {
-		a:hover {
-			color: $mz-orange;
-		}
-	}
+    &.active {
+        background-color: $mz-orange;
+    }
+
+    &:not(.disabled):not(.active) {
+        a:hover {
+            color: $mz-orange;
+        }
+    }
 }
 
 //    Forms
 
 .input-field > label {
-	color: $mz-coolgray;
-	font-style: italic;
+    color: $mz-coolgray;
+    font-style: italic;
 }
+
 .dropdown-content li span {
-	color: $mz-orange;
+    color: $mz-orange;
 }
 
 /*
 		___ Recipes on home and profile pages ___
 */
 .rcp-sel {
-	margin-top: 20px;
-	margin-bottom: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
+
 .rcp-sel-title {
-	color: $mz-darkblue;
-	font: {
-		family: 'Donegal One', serif;
+    color: $mz-darkblue;
+    font: {
+        family: 'Donegal One', serif;
 
-	}
-	padding-top: 0.5em;
-	margin-left: 1em;
+    }
+    padding-top: 0.5em;
+    margin-left: 1em;
 }
+
 .rcp-sel-short {
-	overflow-x: scroll;
-	white-space: nowrap;
-	display: flex;
-	padding: 10px;
+    overflow-x: scroll;
+    white-space: nowrap;
+    display: flex;
+    padding: 10px;
 
-	// override rcpcard rules on home short selections
-	.rcpcard {
-		width: 220px;
-	}
-	.rcpcard-header {
-		width: 220px;
-	}
+    // override rcpcard rules on home short selections
+    .rcpcard {
+        width: 220px;
+    }
+
+    .rcpcard-header {
+        width: 220px;
+    }
 }
+
 @media (min-width: 768px) {
-	.rcp-sel {
-		width: 80%;
-		max-width: 960px;
-		margin-right: auto;
-		margin-left: auto;
-	}
-	.rcp-sel-short {
-		overflow-x: unset;
-		flex-wrap: wrap;
-		justify-content: flex-start;
-		align-items: stretch;
-		margin-left: 10px;
-		.rcpcard {
-			flex-grow: 1;
-			flex-basis: 240px;
-		}
-		.rcpcard-header {
-			width: unset;
-		}
-	}
+    .rcp-sel {
+        width: 80%;
+        max-width: 960px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+    .rcp-sel-short {
+        overflow-x: unset;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: stretch;
+        margin-left: 10px;
+
+        .rcpcard {
+            flex-grow: 1;
+            flex-basis: 240px;
+        }
+
+        .rcpcard-header {
+            width: unset;
+        }
+    }
 }
+
 /*
 		___ Recipes on results and profile page ___
 */
 .rcp-results {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	// scroll handle correction
-	margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    // scroll handle correction
+    margin-right: 10px;
 
-	// override rcpcard rules on recipes result page
-	.rcpcard {
-		width: 100%;
-	}
+    // override rcpcard rules on recipes result page
+    .rcpcard {
+        width: 100%;
+    }
 }
+
 @media (min-width: 500px) {
-	.rcp-results {
-		flex-direction: row;
-		flex-wrap: wrap;
-		justify-content: flex-start;
-		align-items: stretch;
-		margin-left: 10px;
+    .rcp-results {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: stretch;
+        margin-left: 10px;
 
-		.rcpcard {
-			flex-grow: 1;
-			flex-basis: 220px;
-		}
-	}
+        .rcpcard {
+            flex-grow: 1;
+            flex-basis: 220px;
+        }
+    }
 }
+
 @media (min-width: 1326px) {
-	.rcp-results {
-		max-width: 1200px;
-		.rcpcard {
-			flex-basis: 240px;
-		}
-	}
+    .rcp-results {
+        max-width: 1200px;
+
+        .rcpcard {
+            flex-basis: 240px;
+        }
+    }
 }

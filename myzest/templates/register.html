@@ -7,9 +7,9 @@
             <h1 class="title">Join the community</h1>
         </header>
 
-        <section class="mb-6">
+        <div class="mb-6">
             {{ register(next_loc) }}
-        </section>
+        </div>
 
         <footer class="mb-4">
             {% if next_loc != None %}
@@ -22,5 +22,5 @@
     </div>
 {% endblock %}
 {% block script %}
-    <script type="text/javascript" src="{{ url_for('static', filename='js/form_helper.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/form-helper.js') }}"></script>
 {% endblock %}
