@@ -550,7 +550,7 @@ def delete_recipe(recipe_id):
     finally removes file from server's recipe directory.
     """
 
-    recipe_id = recipe_id
+    recipe_img = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})['image']
     mongo.db.users.update({"_id": ObjectId(session['user']['_id'])},
                           {'$pull': {'recipes': ObjectId(recipe_id)}})
 
@@ -560,9 +560,7 @@ def delete_recipe(recipe_id):
         {'favorites': {'$elemMatch': {'$eq': ObjectId(recipe_id)}}},
         {'$pull': {'favorites': ObjectId(recipe_id)}})
 
-    os_remove(path.join(
-        app.config['RECIPE_PIC_DIR'],
-        mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})['image']))
+    os_remove(path.join(app.config['RECIPE_PIC_DIR'], recipe_img))
 
     return redirect('/home')
 
