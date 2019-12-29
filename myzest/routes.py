@@ -40,8 +40,8 @@ def context_processor():
         else default_search_criteria
 
     user = session['user'] if 'user' in session else ""
-    return dict(search=search_criteria, user=json.dumps(user))
 
+    return dict(search=search_criteria, user=json.dumps(user), rcp=rcp)
 
 
 class JSONEncoder(json.JSONEncoder):

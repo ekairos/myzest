@@ -21,15 +21,13 @@
 		<div id="food-field" class="input-field pb-2">
 			<select class="custom-select mr-sm-2" name="foodType">
 				<option value="any">Any</option>
-                {% if 'rcp' in session %}
-                    {% for food in session.rcp.foodType %}
-                        {% if 'foodType' in search and search.foodType == food %}
-                        <option selected value="{{ food }}">{{ food|title }}</option>
-                        {% else %}
-                        <option value="{{ food }}">{{ food|title }}</option>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
+				{% for food in rcp.foodType %}
+					{% if 'foodType' in search and search.foodType == food %}
+					<option selected value="{{ food }}">{{ food|title }}</option>
+					{% else %}
+					<option value="{{ food }}">{{ food|title }}</option>
+					{% endif %}
+				{% endfor %}
 			</select>
 			<label>Food Type</label>
 		</div>
@@ -38,15 +36,13 @@
 		<div id="diff-field" class="input-field">
 			<select class="custom-select mr-sm-2" name="difficulty">
 				<option value="any">Any</option>
-            {% if 'rcp' in session %}
-				{% for diff in session.rcp.difficulty %}
+				{% for diff in rcp.difficulty %}
 					{% if 'difficulty' in search and search.difficulty == diff %}
 					<option selected value="{{ diff }}">{{ diff|title }}</option>
 					{% else %}
 					<option value="{{ diff }}">{{ diff|title }}</option>
 					{% endif %}
 				{% endfor %}
-            {% endif %}
 			</select>
 			<label>Difficulty</label>
 		</div>
@@ -92,15 +88,13 @@
 			<div class="row">
 				<div class="input-field col s12">
 					<select class="custom-select mr-sm-2" name="sort">
-                    {% if 'rcp' in session %}
-						{% for sorting in session.rcp.sortings %}
-							{% if search['sort'] and search['sort'][0] == sorting[0] %}
-							<option selected value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
-							{% else %}
-							<option value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
-							{% endif %}
-						{% endfor %}
-                    {% endif %}
+					{% for sorting in rcp.sortings %}
+						{% if search['sort'] and search['sort'][0] == sorting[0] %}
+						<option selected value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
+						{% else %}
+						<option value="{{ sorting[0] }}">{{ sorting[1]|title }}</option>
+						{% endif %}
+					{% endfor %}
 					</select>
 				</div>
 			</div>
