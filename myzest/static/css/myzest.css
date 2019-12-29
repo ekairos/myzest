@@ -633,7 +633,7 @@ html, body {
 /*
 		Alerts - flash messages
 */
-section.card-panel {
+div.card-panel {
   position: absolute;
   z-index: 100;
   top: 45px;
