@@ -66,6 +66,23 @@ input[type=range] + .thumb {
   background-color: #E86900;
 }
 
+/*
+        ___ Materializecss Form input color override ___
+*/
+input:not([type]):focus:not([readonly]), input[type=text]:not(.browser-default):focus:not([readonly]), input[type=password]:not(.browser-default):focus:not([readonly]), input[type=email]:not(.browser-default):focus:not([readonly]), input[type=url]:not(.browser-default):focus:not([readonly]), input[type=time]:not(.browser-default):focus:not([readonly]), input[type=date]:not(.browser-default):focus:not([readonly]), input[type=datetime]:not(.browser-default):focus:not([readonly]), input[type=datetime-local]:not(.browser-default):focus:not([readonly]), input[type=tel]:not(.browser-default):focus:not([readonly]), input[type=number]:not(.browser-default):focus:not([readonly]), input[type=search]:not(.browser-default):focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]) {
+  border-bottom-color: #E86900 !important;
+  box-shadow: 0 1px 0 0 #E86900 !important;
+}
+
+.select-wrapper input.select-dropdown:focus {
+  border-bottom-color: #E86900 !important;
+  box-shadow: 0 1px 0 0 #E86900 !important;
+}
+
+.input-field .material-icons.prefix.active {
+  color: #E86900;
+}
+
 .mt-0 {
   margin-top: 0;
 }
@@ -325,7 +342,7 @@ a:visited:hover {
 }
 
 .detail {
-  color: #616b80;
+  color: #52607b;
 }
 
 .cancel {
@@ -481,7 +498,7 @@ a:visited:hover {
 }
 
 .input-field > label {
-  color: #616b80;
+  color: #52607b;
   font-style: italic;
 }
 
@@ -613,7 +630,7 @@ html, body {
   color: white;
   box-shadow: inset 0px 3px 4px rgba(0, 0, 0, 0.5);
 }
-#main-footer .container .row section.col {
+#main-footer .container .row div.col {
   padding-left: 0;
   padding-right: 0;
 }
@@ -696,10 +713,14 @@ div.card-panel {
   margin-right: auto;
   width: 300px;
   font-style: italic;
+  color: black;
 }
 #home-search::placeholder {
   color: black;
   opacity: 1;
+}
+#home-search:hover::placeholder, #home-search:focus::placeholder {
+  color: #52607b;
 }
 
 .rcpcard {

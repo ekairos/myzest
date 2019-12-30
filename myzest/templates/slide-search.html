@@ -7,12 +7,12 @@
 		<div class="mt-4 mb-4 pr-4">
 			<div class="row">
 				<div class="input-field">
+					<label for="text-search">Ingredient, recipe name</label>
 					{% if '$text' in search %}
 					<input id="text-search" name="textSearch" type="text" class="validate" value="{{ search['$text']['$search'] }}">
 					{% else %}
 					<input id="text-search" name="textSearch" type="text" class="validate">
 					{% endif %}
-					<label for="text-search">Ingredient, recipe name</label>
 				</div>
 			</div>
 		</div>

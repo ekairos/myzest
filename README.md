@@ -133,9 +133,9 @@ With enough white space to allow them to breath they provide contrast, clear and
 
 | Primary  | Secondary |
 | ------------- | ------------- |
-| ![#57BA98](https://placehold.it/60x30/E86900/E86900) `#E86900` main  | ![#57BA98](https://placehold.it/60x30/616b80/616b80) `#616b80` main |
-| ![#57BA98](https://placehold.it/60x30/F5B458/F5B458) `#F5B458` light  | ![#57BA98](https://placehold.it/60x30/2A3038/2A3038) `#2A3038` dark |
-| ![#57BA98](https://placehold.it/60x30/F9EECB/F9EECB) `#F9EECB` bright |  |
+| ![#57BA98](https://placehold.it/60x30/E86900/E86900) `#E86900` main  | ![#57BA98](https://placehold.it/60x30/616b80/616b80) `#52607b` main |
+| ![#57BA98](https://placehold.it/60x30/F5B458/F5B458) `#F5B458` light  | ![#57BA98](https://placehold.it/60x30/b4c4da/b4c4da) `#b4c4da` light |
+| ![#57BA98](https://placehold.it/60x30/F9EECB/F9EECB) `#F9EECB` bright | ![#57BA98](https://placehold.it/60x30/2A3038/2A3038) `#2A3038` dark |
 | ![#57BA98](https://placehold.it/60x30/993918/993918) `#993918` dark |  |
 
 
