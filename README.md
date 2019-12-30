@@ -252,6 +252,7 @@ Make sure Selenium and the correct browsers [driver](https://selenium.dev/seleni
 ![cssvalidation](https://img.shields.io/badge/W3C%20CSS%20Validation-%20no%20errors-green)
 ![htmlvalidation](https://img.shields.io/badge/W3C%20HTML%20Validation-%20no%20errors-green)
 ![JSvalidation](https://img.shields.io/badge/JSHint%20Validation-%20Ok-green)
+![Python](https://img.shields.io/badge/PEP8%20-few%20errors-yellow)
 
 **HTML**  
 
@@ -280,6 +281,12 @@ I've used [JSHint](https://jshint.com/) to check JavaScript coding.
     - `$` : jQuery.
     - `M` : Materialize framework.
     - `noUislider` : noUiSlider. Loaded separately.
+
+**Python PEP8**
+
+I have used [pep8online](http://pep8online.com/) to check my Python code.
+- `E501: line too long` : I'm personally ok with lines a few characters over 79.
+- `E402: module level import not at top of file ` : Voluntary Python cyclic import `__init__.py` & `routes.py`.
 
 ### Deployment
 

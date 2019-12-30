@@ -24,7 +24,7 @@ default_search_criteria = {
     'time.total': {'$gte': 5,
                    '$lte': 240},
     'serves': {'$gte': 1,
-              '$lte': 20}
+               '$lte': 20}
 }
 
 pic_extensions = ("jpg", "jpeg", "png", "gif")
@@ -117,8 +117,7 @@ def formdata_to_query(data):
             words = {'$search': data.pop('textSearch')}
     except KeyError:
         text_search = False
-    query = {k: v for (k, v) in data.items() if data[k] not in ["any", ""]
-             and data[k] in rcp[k]}
+    query = {k: v for (k, v) in data.items() if data[k] not in ["any", ""] and data[k] in rcp[k]}
     query['serves'] = serves
     query['time.total'] = time
 
@@ -135,9 +134,7 @@ def make_query(requested_data):
 
     data = requested_data
 
-    sort = (data.pop("sort"), -1) if data['sort'] \
-                                     in ['favorite', 'views', 'updated'] \
-        else (data.pop("sort"), 1)
+    sort = (data.pop("sort"), -1) if data['sort'] in ['favorite', 'views', 'updated'] else (data.pop("sort"), 1)
 
     query = formdata_to_query(data)
     query['sort'] = sort
@@ -156,7 +153,7 @@ class Paginate:
     def __init__(self, search_criteria, target_page=1):
         self.current = target_page
         self.sort = search_criteria["sort"]
-        self.query = {k:search_criteria[k] for k in search_criteria if k!="sort"}
+        self.query = {k: search_criteria[k] for k in search_criteria if k != "sort"}
         self.to_skip = self.per_page * (target_page - 1)
         self.total_recipes = mongo.db.recipes.count_documents(self.query)
         self.total_pages = math.ceil(self.total_recipes / self.per_page)
@@ -243,10 +240,10 @@ def recipe_to_db(author_id, recipe):
     inserted_recipe = mongo.db.recipes.insert_one(recipe)
 
     # Add recipe's id to user's recipe list
-    mongo.db.users.update_one({'_id': author_id},
-                              {'$push':
-                                   {'recipes': inserted_recipe.inserted_id}
-                               })
+    mongo.db.users.update_one(
+        {'_id': author_id},
+        {'$push': {'recipes': inserted_recipe.inserted_id}}
+    )
 
     return inserted_recipe.inserted_id
 
