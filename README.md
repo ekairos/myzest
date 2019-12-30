@@ -228,7 +228,8 @@ They are retrieved by the app for the user when searching, adding or editing a r
     - URI to your database ( I’m using Atlas )
     - Secret key for Flask secure cookies  
     
-    These are imported in `myzest/__init__.py`
+    These are imported in `myzest/__init__.py`.  
+    _Use `rename_as_config.py` in deployment branch._
 5. Run the app  
     ```bash  
     python run.py  
