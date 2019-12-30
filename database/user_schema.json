@@ -1,0 +1,10 @@
+{
+	"_id": "ObjectId",
+	"username": "string",
+	"email": "string",
+	"password": "string",
+	"bio": "string",
+	"recipes": ["ObjectId", "ObjectId"],
+	"favorites": ["ObjectId", "ObjectId"],
+	"avatar": "string"
+}
