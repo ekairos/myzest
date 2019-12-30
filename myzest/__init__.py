@@ -14,7 +14,7 @@ app.config['USER_PIC_DIR'] = path.join(path.dirname(path.realpath(__file__)), 's
 bcrypt = Bcrypt(app)
 
 """
-Set MongoDB URI for Testing and Dev ENV 
+Set MongoDB URI for Testing and Dev ENV
 for testing ENV run 'TEST_FLAG=true python -m unittest'
 """
 

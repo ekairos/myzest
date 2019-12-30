@@ -134,9 +134,9 @@ With enough white space to allow them to breath they provide contrast, clear and
 
 | Primary  | Secondary |
 | ------------- | ------------- |
-| ![#57BA98](https://placehold.it/60x30/E86900/E86900) `#E86900` main  | ![#57BA98](https://placehold.it/60x30/616b80/616b80) `#616b80` main |
-| ![#57BA98](https://placehold.it/60x30/F5B458/F5B458) `#F5B458` light  | ![#57BA98](https://placehold.it/60x30/2A3038/2A3038) `#2A3038` dark |
-| ![#57BA98](https://placehold.it/60x30/F9EECB/F9EECB) `#F9EECB` bright |  |
+| ![#57BA98](https://placehold.it/60x30/E86900/E86900) `#E86900` main  | ![#57BA98](https://placehold.it/60x30/616b80/616b80) `#52607b` main |
+| ![#57BA98](https://placehold.it/60x30/F5B458/F5B458) `#F5B458` light  | ![#57BA98](https://placehold.it/60x30/b4c4da/b4c4da) `#b4c4da` light |
+| ![#57BA98](https://placehold.it/60x30/F9EECB/F9EECB) `#F9EECB` bright | ![#57BA98](https://placehold.it/60x30/2A3038/2A3038) `#2A3038` dark |
 | ![#57BA98](https://placehold.it/60x30/993918/993918) `#993918` dark |  |
 
 
@@ -267,6 +267,7 @@ Make sure Selenium and the correct browsers [driver](https://selenium.dev/seleni
 ![cssvalidation](https://img.shields.io/badge/W3C%20CSS%20Validation-%20no%20errors-green)
 ![htmlvalidation](https://img.shields.io/badge/W3C%20HTML%20Validation-%20no%20errors-green)
 ![JSvalidation](https://img.shields.io/badge/JSHint%20Validation-%20Ok-green)
+![Python](https://img.shields.io/badge/PEP8%20-few%20errors-yellow)
 
 **HTML**  
 
@@ -295,6 +296,12 @@ I've used [JSHint](https://jshint.com/) to check JavaScript coding.
     - `$` : jQuery.
     - `M` : Materialize framework.
     - `noUislider` : noUiSlider. Loaded separately.
+
+**Python PEP8**
+
+I have used [pep8online](http://pep8online.com/) to check my Python code.
+- `E501: line too long` : I'm personally ok with lines a few characters over 79.
+- `E402: module level import not at top of file ` : Voluntary Python cyclic import `__init__.py` & `routes.py`.
 
 ### Deployment
 

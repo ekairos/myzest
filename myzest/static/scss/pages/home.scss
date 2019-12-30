@@ -15,8 +15,13 @@
     margin-right: auto;
     width: 300px;
     font-style: italic;
+    color: black;
     &::placeholder {
         color: black;
         opacity: 1;
+    }
+    &:hover::placeholder,
+    &:focus::placeholder {
+        color: $mz-coolgray;
     }
 }
