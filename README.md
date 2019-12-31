@@ -1,5 +1,7 @@
 # MyZest
 
+![overview](overview_comp.jpg)
+
 **_Live preview_** [on Heroku](https://myzest.herokuapp.com/)       
 
 Table Of Content
