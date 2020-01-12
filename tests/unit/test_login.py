@@ -38,6 +38,7 @@ class TestLogin(unittest.TestCase):
     @staticmethod
     def user_to_db(user):
         """To insert a fake user into DB prior tests."""
+
         return mongo.db.users.insert_one({
             'username': user['username'].title(),
             'email': user['email'].lower(),
@@ -46,6 +47,7 @@ class TestLogin(unittest.TestCase):
 
     def test_failed_login(self):
         """ Login with unregistered email should fail and redirect to login """
+
         with self.client:
             response = self.client.post('/log_user',
                                         data={'email': self.fake_user['email'],
@@ -61,6 +63,7 @@ class TestLogin(unittest.TestCase):
         Login with registered user data should redirect to home page by default and store user's id,
         username and favorites recipe list in session object;
         """
+
         user_in_db = self.user_to_db(self.fake_user)
 
         with self.client:
@@ -78,7 +81,10 @@ class TestLogin(unittest.TestCase):
             self.assertEqual(session['user']['_id'], str(user_in_db.inserted_id))
 
     def test_wrong_email(self):
-        """ On wrong email submission app should redirect to login page with error message about email"""
+        """ On wrong email submission app should redirect to login page with
+        error message about email
+        """
+
         with self.client:
             response = self.client.post('/log_user',
                                         data={'password': self.fake_user['password'],
@@ -88,7 +94,10 @@ class TestLogin(unittest.TestCase):
             self.assertIn('Login unsuccessful. Please check email', str(response.data))
 
     def test_wrong_password(self):
-        """ On wrong password submission app should redirect to login page with error message about credentials"""
+        """ On wrong password submission app should redirect to login page with
+        error message about credentials
+        """
+
         self.user_to_db(self.fake_user)
         with self.client:
             response = self.client.post('/log_user',
@@ -100,23 +109,27 @@ class TestLogin(unittest.TestCase):
                           str(response.data))
 
     def test_missing_email(self):
-        """ Without an email provided, app should redirect to login with error message."""
+        """Without an email provided, app should redirect to login with
+        error message.
+        """
+
         self.user_to_db(self.fake_user)
         with self.client:
             response = self.client.post('/log_user',
                                         data={'password': self.fake_user['password']},
                                         follow_redirects=True)
             self.assertEqual(str(request.url), "http://localhost/login")
-            self.assertIn('Login unsuccessful. Please check email and password provided',
+            self.assertIn('Login unsuccessful. Please provide both email and password',
                           str(response.data))
 
     def test_missing_password(self):
         """ App should redirect to login by default if password if missing."""
+
         self.user_to_db(self.fake_user)
         with self.client:
             response = self.client.post('/log_user',
                                         data={'email': self.fake_user['email']},
                                         follow_redirects=True)
             self.assertEqual(str(request.url), "http://localhost/login")
-            self.assertIn('Login unsuccessful. Please check email and password provided',
+            self.assertIn('Login unsuccessful. Please provide both email and password',
                           str(response.data))

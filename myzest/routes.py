@@ -336,6 +336,11 @@ def register():
 
 @app.route('/add_user', methods=['POST'])
 def add_user():
+    """Inserts new user into DB if email and passwords are not registered and
+    if password and password's confirmation match. Then logs the new user and
+    proceed routing to home or next_loc url.
+    """
+
     next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
     for i in ['username', 'email', 'password', 'passwConfirm']:
@@ -388,10 +393,10 @@ def check_user():
     document = bool(mongo.db.users.find_one({data['field']: value}))
 
     if data['form'] == "registration":
-        return jsonify({'error': "This {} is already taken".format(data['field'])}) if document else "success"
+        return jsonify({'error': "Please try a different {}".format(data['field'])}) if document else "success"
     elif data['form'] == 'editprofile':
         session_user = mongo.db.users.find_one({'username': session['user']['username']})
-        return jsonify({'error': "This {} is already used by someone else".format(data['field'])}) if document and session_user[data['field']] != value else "success"
+        return jsonify({'error': "Please try a different {}".format(data['field'])}) if document and session_user[data['field']] != value else "success"
     else:
         return "success" if document else jsonify({'error': "This {} is not registered".format(data['field'])})
 
@@ -412,12 +417,15 @@ def log_user():
     data = request.form.to_dict()
 
     if 'email' not in data or 'password' not in data:
-        flash('Login unsuccessful. Please check email and password provided', 'warning')
+        flash('Login unsuccessful. Please provide both email and password', 'warning')
         return redirect('login')
 
     user_in_db = mongo.db.users.find_one({'email': data['email'].lower()})
 
-    if user_in_db and bcrypt.check_password_hash(user_in_db['password'], data['password']):
+    if not user_in_db or not bcrypt.check_password_hash(user_in_db['password'], data['password']):
+        flash('Login unsuccessful. Please check email and password provided', 'warning')
+
+    elif user_in_db and bcrypt.check_password_hash(user_in_db['password'], data['password']):
         user = mongo.db.users.find_one({'_id': user_in_db['_id']}, {'username': 1, 'favorites': 1})
         user = JSONEncoder().encode(user)
         session['user'] = json.loads(user)
@@ -427,12 +435,6 @@ def log_user():
 
         flash('Welcome back {} !'.format(user_in_db['username']), 'success')
         return redirect('home') if next_loc is None else redirect(next_loc)
-
-    elif user_in_db and not bcrypt.check_password_hash(user_in_db['password'], data['password']):
-        flash('Login unsuccessful. Please check email and password provided', 'warning')
-
-    elif not user_in_db:
-        flash('Login unsuccessful. Please check email', 'warning')
 
     return redirect('login') if next_loc is None else redirect(next_loc)
 

@@ -10,8 +10,8 @@
             <!-- user name -->
             <div class="row mb-2">
                 <div class="col s12 input-field">
-                    <label for="username">Your username</label>
-                    <input id="username" class="validate" name="username" type="text" minlength="3" maxlength="31" pattern="[A-Za-z]{2,15}\s?[A-Za-z]{1,15}" required value="{{ profile.username }}">
+                    <label for="profile-username">Your username</label>
+                    <input id="profile-username" class="validate" name="username" type="text" minlength="3" maxlength="31" pattern="[A-Za-z]{2,15}\s?[A-Za-z]{1,15}" required value="{{ profile.username }}">
                     <span class="helper-text" data-error="A valid name is requested"></span>
                 </div>
             </div>
@@ -49,8 +49,8 @@
             <!-- user email -->
             <div class="row">
                 <div class="col s12 input-field">
-                    <label for="email">Your Email</label>
-                    <input id="email" class="validate" name="email" type="email" pattern="[A-Za-z0-9._-]{2,30}[A-Za-z0-9]@[A-Za-z0-9-._]+\.[A-Za-z]{2,11}" required value="{{ profile.email }}">
+                    <label for="profile-email">Your Email</label>
+                    <input id="profile-email" class="validate" name="email" type="email" pattern="[A-Za-z0-9._-]{2,30}[A-Za-z0-9]@[A-Za-z0-9-._]+\.[A-Za-z]{2,11}" required value="{{ profile.email }}">
                     <span id="email_help" class="helper-text" data-error=""></span>
                 </div>
             </div>
