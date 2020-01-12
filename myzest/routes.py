@@ -83,7 +83,7 @@ def oid_date(oid):
 def formdata_to_query(data):
     """Processes data from the search form to build query with
     relevant fields only.
-    :return: MongoDB Atlas query string
+    :return: dictionary to query MongoDB Atlas
     """
 
     # time and serves
@@ -128,9 +128,7 @@ def formdata_to_query(data):
 
 
 def make_query(requested_data):
-    """Builds mongoDB query from search form data posted to search_recipes
-    and stores into session 'search' dict.
-    """
+    """Builds mongoDB query from search form data posted to search_recipes."""
 
     data = requested_data
 
