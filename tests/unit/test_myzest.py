@@ -62,6 +62,7 @@ class TestMainFunctions(unittest.TestCase):
 
     def test_time_filter(self):
         """Tests time filter for recipe duration on recipe and rcp_card templates"""
+
         self.assertEqual(min_to_hour(45), "45m")
         self.assertEqual(min_to_hour(60), "1h")
         self.assertEqual(min_to_hour(70), "1h10")
@@ -73,13 +74,18 @@ class TestMainFunctions(unittest.TestCase):
         self.assertEqual(min_to_hour(True), "error")
 
     def test_oid_date_filter(self):
-        """Tests the time stamp from ObjectId is converted into date format - profile template"""
+        """Tests the time stamp from ObjectId is converted into date
+        format - profile template
+        """
+
         mongo.db.users.insert_one({'username': 'fake'})
         user_document = mongo.db.users.find_one({'username': 'fake'})
         self.assertEqual(oid_date(user_document['_id']), datetime.date.today())
 
     def test_formdata_to_query(self):
-        """The data from the search form should be cleaned and builds a proper query string for mongoDB"""
+        """The data from the search form should be cleaned and builds a proper
+        query string for mongoDB
+        """
 
         default_query_output = {'serves': {'$gte': 1, '$lte': 20}, 'time.total': {'$gte': 5, '$lte': 240}}
 
@@ -127,26 +133,46 @@ class TestMainFunctions(unittest.TestCase):
         self.assertRegex(str(query), "'serves': {'\$gte': 5, '\$lte': 10}")
 
     def test_make_query(self):
-        """Should return string to query mongoDB and sorting criteria as tuple"""
-        default_query_output = {'serves': {'$gte': 1, '$lte': 20}, 'time.total': {'$gte': 5, '$lte': 240}}
-        # with no query given
-        self.assertEqual(make_query({'sort': "favorite"}), (default_query_output, {'favorite': -1}))
-        self.assertEqual(make_query({'sort': "views"}), (default_query_output, {'views': -1}))
-        self.assertEqual(make_query({'sort': "updated"}), (default_query_output, {'updated': -1}))
-        self.assertEqual(make_query({'sort': "time.total"}), (default_query_output, {'time.total': 1}))
-        self.assertEqual(make_query({'sort': "serves"}), (default_query_output, {'serves': 1}))
-        self.assertEqual(make_query({'sort': "name"}), (default_query_output, {'name': 1}))
+        """Should return dictionary to query mongoDB.
+        make_query is called with default form values if none provided by the user
+        """
+
+        default_query_output = {'serves': {'$gte': 1, '$lte': 20}, 'time.total': {'$gte': 5, '$lte': 240}, 'sort': ("name", 1)}
+
+        # with no query given but sorting
+        default_query_output.update({'sort': ("favorite", -1)})
+        self.assertEqual(make_query({'sort': "favorite"}), default_query_output)
+        del default_query_output['sort']
+        default_query_output.update({'sort' : ("views", -1)})
+        self.assertEqual(make_query({'sort': "views"}), default_query_output)
+        del default_query_output['sort']
+        default_query_output.update({'sort': ("updated", -1)})
+        self.assertEqual(make_query({'sort': "updated"}), default_query_output)
+        del default_query_output['sort']
+        default_query_output.update({'sort': ("time.total", 1)})
+        self.assertEqual(make_query({'sort': "time.total"}), default_query_output)
+        del default_query_output['sort']
+        default_query_output.update({'sort': ("serves", 1)})
+        self.assertEqual(make_query({'sort': "serves"}), default_query_output)
+        del default_query_output['sort']
+        default_query_output.update({'sort': ("name", 1)})
+        self.assertEqual(make_query({'sort': "name"}), default_query_output)
+        del default_query_output['sort']
+
         # Given filter criteria
-        new_query = make_query({"difficulty": "easy", "foodType": "dessert", 'timer.start': 50,
-                                'timer.stop': 100, 'serve.start': '5', 'serve.stop': '10', 'sort': "name"})
-        self.assertTrue(type(new_query), tuple)
+        new_query = make_query({"difficulty": "easy", "foodType": "dessert",
+                                'timer.start': 50,
+                                'timer.stop': 100, 'serve.start': '5',
+                                'serve.stop': '10', 'sort': "name"})
         self.assertEqual(new_query,
-                         ({"difficulty": "easy", "foodType": "dessert",
-                           'serves': {'$gte': 5, '$lte': 10}, 'time.total': {'$gte': 50, '$lte': 100}},
-                          {'name': 1}))
+                         {"difficulty": "easy", "foodType": "dessert",
+                          'serves': {'$gte': 5, '$lte': 10},
+                          'time.total': {'$gte': 50, '$lte': 100},
+                          'sort': ("name", 1)})
 
     def test_check_file_ext(self):
         """Should return False if no file or wrong file extension"""
+
         self.assertTrue(check_file_ext("correctfile.gif", pic_extensions))
         self.assertTrue(check_file_ext("correctfile.jpeg", pic_extensions))
         self.assertTrue(check_file_ext("correctfile.jpg", pic_extensions))
@@ -161,11 +187,12 @@ class TestMainFunctions(unittest.TestCase):
         self.assertFalse(check_file_ext("", pic_extensions))
 
     def test_upload_recipe(self):
-        """User adding and editing recipe main functions: build_recipe and recipe_to_db
-        check_file_extension is tested separately above.
+        """User adding and editing recipe main functions: build_recipe and
+        recipe_to_db check_file_extension is tested separately above.
         1. build recipe dictionary from form data
         2. insert recipe into database and update author's recipe's list
         """
+
         with self.client:
             mongo.db.users.insert_one(fake_author)
             mongo.db.users.insert_one(fake_user)
@@ -184,8 +211,11 @@ class TestMainFunctions(unittest.TestCase):
             self.assertIn(recipe_inserted, george['recipes'])
 
     def test_update_view(self):
-        """DB recipe with given _id should have its 'views' field incremented or decremented by one
-        update_view is called when user visits a recipe's page and by decrement_session_views function"""
+        """DB recipe with given _id should have its 'views' field incremented
+        or decremented by one update_view is called when user visits a
+        recipe's page and by decrement_session_views function
+        """
+
         mongo.db.recipes.insert_one(fake_recipe)
         sushis = mongo.db.recipes.find_one({})
         self.assertEqual(sushis['views'], 1)
@@ -199,7 +229,10 @@ class TestMainFunctions(unittest.TestCase):
         self.assertEqual(sushis['views'], 1)
 
     def test_decrement_session_views(self):
-        """Tests a recipe's 'views' field is decremented if the author logs in after viewing the recipe page"""
+        """Tests a recipe's 'views' field is decremented if the author
+        logs in after viewing the recipe page
+        """
+
         mongo.db.recipes.insert_one(fake_recipe)
         sushis = mongo.db.recipes.find_one({})
         self.assertEqual(sushis['views'], 1)
@@ -209,8 +242,9 @@ class TestMainFunctions(unittest.TestCase):
         self.assertEqual(sushis['views'], 0)
 
     def test_no_decrement_views(self):
-        """Tests the recipe's views is not decremented when another user than recipe's author logs in
-        after viewing the recipe"""
+        """Tests the recipe's views is not decremented when another user than
+        recipe's author logs in after viewing the recipe
+        """
         mongo.db.recipes.insert_one(fake_recipe)
         sushis = mongo.db.recipes.find_one({})
         self.assertEqual(sushis['views'], 1)
