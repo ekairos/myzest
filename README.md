@@ -1,5 +1,7 @@
 # MyZest
 
+![overview](overview_comp.jpg)
+
 **_Live preview_** [on Heroku](https://myzest.herokuapp.com/)       
 
 Table Of Content
@@ -12,6 +14,7 @@ Table Of Content
         - [User Stories](#user-stories)
     - [Visual](#visual)
         - [Wireframes](#wireframes)
+    - [Database](#database)
 - [Tech used](#main-tech-used)
 - [Running MyZest](#running-myzest)
 - [Tests](#tests)
@@ -174,6 +177,20 @@ They are in the wireframes directory, each device size in its sub-directory in .
 - [tablet](./wireframes/tablet)
 - [desktop](./wireframes/desktop)
 
+### Database
+
+I’ve chosen to use MongoDB Atlas as database for its document orientated storage.
+
+I wanted the forms interactions to be as simple and fast as possible. New documents are created with a number of fields as little as possible. 
+Same goes with registering a user (not prompted to fill in a bio or avatar picture on first connection).
+
+The [recipe](./database/recipe_schema.json) and [user](./database/user_schema.json) files show how a fully detailed document looks like or will look like after further improvements.
+
+Each recipe criteria has its own collection for maintenance reason.
+Further development will add image to each foodType, category and region criteria to be presented in cards for the users to browse.
+They are retrieved by the app for the user when searching, adding or editing a recipe.
+[db_relation](./database/db_diagram.png) shows the very few relations between collections.
+
 ## Main Tech Used
 
 ### Back-end
@@ -213,7 +230,8 @@ They are in the wireframes directory, each device size in its sub-directory in .
     - URI to your database ( I’m using Atlas )
     - Secret key for Flask secure cookies  
     
-    These are imported in `myzest/__init__.py`
+    These are imported in `myzest/__init__.py`.  
+    _Use `rename_as_config.py` in deployment branch._
 5. Run the app  
     ```bash  
     python run.py  
