@@ -88,7 +88,7 @@ class TestUpdateUser(unittest.TestCase):
         WebDriverWait(self.driver, 2).until(EC.url_changes)
         self.assertRegex(self.driver.current_url, "^http://localhost:5000/edit-profile/")
         # 2. Form cancel btn back to profile
-        self.driver.find_element_by_css_selector("#editprofile footer button a").click()
+        self.driver.find_element_by_css_selector("#editprofile footer div a").click()
         WebDriverWait(self.driver, 2).until(EC.url_changes)
         self.assertRegex(self.driver.current_url, "^http://localhost:5000/profile/")
         # 3. Browser's back and forward navigation
@@ -111,7 +111,7 @@ class TestUpdateUser(unittest.TestCase):
         self.assertRegex(self.driver.current_url, "^http://localhost:5000/profile/")
         self.assertEqual(self.driver.find_element_by_css_selector("#profile p").text, "Billy's test bio")
 
-    def test_user_delete(self):
+    def test_user_update(self):
         # 1. to profile
         self.nav_to_login()
         self.login_user()

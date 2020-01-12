@@ -7,8 +7,8 @@
 
 <main class="container">
 
-    <section class="rcp-section">
-        <h1 class="title">{{ recipe.name }}</h1>
+    <div class="rcp-section">
+        <h1 id="rcp-name" class="title" data-recipe-id="{{ recipe._id }}">{{ recipe.name }}</h1>
         <p>{{ recipe.description }}</p>
         <div class="detail valign-wrapper">
             <span class="material-icons">access_time</span>
@@ -40,26 +40,26 @@
                 <i class="material-icons">mode_edit</i>
             </a>
         {% endif %}
-    </section>
+    </div>
 
     <div class="divider"></div>
 
     <!-- author -->
-    <section class="rcp-section valign-wrapper">
+    <div class="rcp-section valign-wrapper">
         <a href="{{ url_for('profile', profile_id=recipe.author_id) }}">
-            <img class="rcp-author-tbn" src="{{ url_for('static', filename='img/users/' + author.avatar) }}" width="50" height="50">
+            <img class="rcp-author-tbn" src="{{ url_for('static', filename='img/users/' + author.avatar) }}" width="50" height="50" alt="">
         </a>
-        <a class="rcp-author ml-3" href="{{ url_for('profile', profile_id=recipe.author_id) }}">
+        <a id="rcp-author" class="rcp-author ml-3" href="{{ url_for('profile', profile_id=recipe.author_id) }}" data-author-name="{{ author['username'] }}">
             <div>{{ author.username }}</div>
             <div>
                 <small>Edited : {{ recipe.updated }}</small>
             </div>
         </a>
-    </section>
+    </div>
 
     <div class="divider"></div>
 
-    <section class="rcp-section">
+    <div class="rcp-section">
         <h2>Ingredients</h2>
         <ul class="listing">
             {% for food in recipe.ingredients %}
@@ -69,17 +69,17 @@
                 </li>
             {% endfor %}
         </ul>
-    </section>
+    </div>
 
     <div class="divider"></div>
 
-    <section class="rcp-section">
+    <div class="rcp-section">
         <h2>Instructions</h2>
         {% for step in recipe.steps %}
             <p>{{ loop.index }}. {{ step.description }}</p>
             {# add step image if provided #}
         {% endfor %}
-    </section>
+    </div>
 </main>
 
 <!-- Recipe image modal -->
@@ -107,53 +107,13 @@
         <button class="btn btn-small modal-close">Cancel</button>
     </div>
 </div>
+
+<span id="sessionUserData" data-user-id="{{ user }}" hidden></span>
 {% endblock %}
 
 {% block script %}
-    
-<script type="text/javascript">
-    {% if 'user' in session %}
-        var sessionUser = {{ session['user']|tojson }};
-    {% else %}
-        var sessionUser = "";
-    {% endif %}
 
-    var authorname = {{ author['username']|tojson }};
-    var recipe_id = "{{ recipe._id }}";
-</script>
-
-<script>
-    $(document).ready(function() {
-        let rcpImg = $("#rcp-img").get(0);
-        let picRatio = rcpImg.naturalWidth / rcpImg.naturalHeight;
-        let viewer = $("#viewer-img").get(0);
-
-        function resizeViewer() {
-            $("#viewer-img").css("maxHeight", window.innerHeight - 100 + "px");
-            $(".viewer-content").css("maxWidth", parseInt($("#viewer-img").css("maxHeight")) * picRatio + "px");
-        }
-
-        $("#rcp-img").click(function() {
-            resizeViewer();
-            $(window).on("resize", resizeViewer);
-            $("#recipe-viewer").css("display", "block");
-        });
-
-        $("#viewer-close").click(function() {
-            $(window).off("resize");
-            $("#recipe-viewer").css("display", "none");
-        });
-
-        window.toggleFullScreen = function() {
-            if (!document.fullscreenElement) {
-                viewer.requestFullscreen();
-            } else if (document.fullscreenElement) {
-                document.exitFullscreen();
-                $("#recipe-viewer").css("display", "none");
-            }
-        }
-    });
-</script>
+<script src="{{ url_for('static', filename='js/image-viewer.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/session.js') }}"></script>
 

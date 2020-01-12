@@ -1,15 +1,16 @@
 @mixin thinshw($direction) {
-	@if $direction == inset {
-		box-shadow: $direction 0px 3px 4px rgba(0,0,0,0.5);		
-	} @else {
-		box-shadow: 0px 3px 4px rgba(0,0,0,0.5)
-	}
+    @if $direction == inset {
+        box-shadow: $direction 0px 3px 4px rgba(0, 0, 0, 0.5);
+    } @else {
+        box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.5)
+    }
 }
+
 @mixin flash-message {
-	@include thinshw(outset);
+    @include thinshw(outset);
     border: 1px solid;
-	border-radius: 5px;
+    border-radius: 5px;
     padding: 0.5em;
     width: 60%;
-	max-width: 500px;
+    max-width: 500px;
 }

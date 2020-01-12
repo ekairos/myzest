@@ -31,7 +31,7 @@ $(document).ready(function(){
 
 	$("[required]").on("focusout", function() {
         if ($(this).val() === '') {
-            $(this).next("span").attr("data-error", "This field is required")
+            $(this).next("span").attr("data-error", "This field is required");
         }
     });
 

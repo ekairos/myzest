@@ -48,9 +48,39 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: textfield;
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #E86900;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #E86900;
+  margin-top: -6px;
+}
+
+input[type=range] + .thumb {
+  background-color: #E86900;
+}
+
+/*
+        ___ Materializecss Form input color override ___
+*/
+input:not([type]):focus:not([readonly]), input[type=text]:not(.browser-default):focus:not([readonly]), input[type=password]:not(.browser-default):focus:not([readonly]), input[type=email]:not(.browser-default):focus:not([readonly]), input[type=url]:not(.browser-default):focus:not([readonly]), input[type=time]:not(.browser-default):focus:not([readonly]), input[type=date]:not(.browser-default):focus:not([readonly]), input[type=datetime]:not(.browser-default):focus:not([readonly]), input[type=datetime-local]:not(.browser-default):focus:not([readonly]), input[type=tel]:not(.browser-default):focus:not([readonly]), input[type=number]:not(.browser-default):focus:not([readonly]), input[type=search]:not(.browser-default):focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]) {
+  border-bottom-color: #E86900 !important;
+  box-shadow: 0 1px 0 0 #E86900 !important;
+}
+
+.select-wrapper input.select-dropdown:focus {
+  border-bottom-color: #E86900 !important;
+  box-shadow: 0 1px 0 0 #E86900 !important;
+}
+
+.input-field .material-icons.prefix.active {
+  color: #E86900;
 }
 
 .mt-0 {
@@ -81,10 +111,6 @@ input::-webkit-inner-spin-button {
   margin-top: 3em;
 }
 
-.mt-auto {
-  margin-top: auto;
-}
-
 .mr-0 {
   margin-right: 0;
 }
@@ -111,10 +137,6 @@ input::-webkit-inner-spin-button {
 
 .mr-6 {
   margin-right: 3em;
-}
-
-.mr-auto {
-  margin-right: auto;
 }
 
 .mb-0 {
@@ -145,10 +167,6 @@ input::-webkit-inner-spin-button {
   margin-bottom: 3em;
 }
 
-.mb-auto {
-  margin-bottom: auto;
-}
-
 .ml-0 {
   margin-left: 0;
 }
@@ -175,10 +193,6 @@ input::-webkit-inner-spin-button {
 
 .ml-6 {
   margin-left: 3em;
-}
-
-.ml-auto {
-  margin-left: auto;
 }
 
 .pt-0 {
@@ -209,10 +223,6 @@ input::-webkit-inner-spin-button {
   padding-top: 3em;
 }
 
-.pt-auto {
-  padding-top: auto;
-}
-
 .pr-0 {
   padding-right: 0;
 }
@@ -239,10 +249,6 @@ input::-webkit-inner-spin-button {
 
 .pr-6 {
   padding-right: 3em;
-}
-
-.pr-auto {
-  padding-right: auto;
 }
 
 .pb-0 {
@@ -273,10 +279,6 @@ input::-webkit-inner-spin-button {
   padding-bottom: 3em;
 }
 
-.pb-auto {
-  padding-bottom: auto;
-}
-
 .pl-0 {
   padding-left: 0;
 }
@@ -305,8 +307,12 @@ input::-webkit-inner-spin-button {
   padding-left: 3em;
 }
 
-.pl-auto {
-  padding-left: auto;
+.mr-auto {
+  margin-right: auto;
+}
+
+.ml-auto {
+  margin-left: auto;
 }
 
 /*
@@ -336,7 +342,7 @@ a:visited:hover {
 }
 
 .detail {
-  color: #616b80;
+  color: #52607b;
 }
 
 .cancel {
@@ -492,7 +498,7 @@ a:visited:hover {
 }
 
 .input-field > label {
-  color: #616b80;
+  color: #52607b;
   font-style: italic;
 }
 
@@ -624,7 +630,7 @@ html, body {
   color: white;
   box-shadow: inset 0px 3px 4px rgba(0, 0, 0, 0.5);
 }
-#main-footer .container .row section.col {
+#main-footer .container .row div.col {
   padding-left: 0;
   padding-right: 0;
 }
@@ -644,7 +650,7 @@ html, body {
 /*
 		Alerts - flash messages
 */
-section.card-panel {
+div.card-panel {
   position: absolute;
   z-index: 100;
   top: 45px;
@@ -691,7 +697,11 @@ section.card-panel {
 }
 
 .landing {
-  min-height: 200px;
+  min-height: 300px;
+  background-image: url("../img/landing-img.jpg");
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.5);
 }
 
 #landing-title {
@@ -703,6 +713,14 @@ section.card-panel {
   margin-right: auto;
   width: 300px;
   font-style: italic;
+  color: black;
+}
+#home-search::placeholder {
+  color: black;
+  opacity: 1;
+}
+#home-search:hover::placeholder, #home-search:focus::placeholder {
+  color: #52607b;
 }
 
 .rcpcard {
@@ -804,6 +822,7 @@ section.card-panel {
   max-height: 340px;
   object-fit: cover;
   cursor: pointer;
+  box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.5);
 }
 
 .rcp-section {
@@ -888,7 +907,6 @@ section.card-panel {
 .profile-title {
   font-family: "Donegal One", serif;
   font-size: 2em;
-  word-break: break-word;
 }
 
 #profile {
@@ -956,14 +974,6 @@ section.card-panel {
   left: -10px;
   height: 200%;
   width: 200%;
-}
-
-input[type=range]::-moz-range-thumb {
-  background: #E86900;
-}
-
-input[type=range] + .thumb {
-  background-color: #E86900;
 }
 
 .noUi-connect {

@@ -5,7 +5,7 @@
 	<h1 class="title pt-3 pb-3">Edit your recipe</h1>
 </header>
 <main class="container border-b pb-3">
-	<form id="updRecipeForm" action="" method="POST" enctype="multipart/form-data">
+	<form id="updRecipeForm" method="POST" enctype="multipart/form-data">
 
 		<div class="input-field mb-2">
 			<label for="rcpname">Recipe Name</label>
@@ -22,7 +22,8 @@
 		<!-- Difficulty -->
 		<div class="input-field mb-3 col s12">
 			<select id="difficulty" name="difficulty" class="validate" required>
-				{% for diff in session.rcp.difficulty %}
+                <option value="" disabled>Difficulty...</option>
+				{% for diff in rcp.difficulty %}
 				{% if diff == recipe.difficulty %}
 				<option selected value="{{ diff }}">{{ diff|title }}</option>
 				{% else %}
@@ -144,7 +145,7 @@
 					<div class="input-field mb-3">
 						<select class="custom-select" id="newRcpFType" name="foodType">
 							<option selected value="none">None</option>
-							{% for foodtype in session.rcp.foodType %}
+							{% for foodtype in rcp.foodType %}
 							{% if foodtype == recipe.foodType %}
 							<option selected value="{{ foodtype }}">{{ foodtype|title }}</option>
 							{% else %}
@@ -165,7 +166,7 @@
         <footer class="mb-4">
             {% if 'user' in session and session['user']['username'] == author.username %}
                 <button class="btn btn-small" type="submit" onclick="validateForm()">Save Changes</button>
-                <button class="btn btn-small ml-4" type="button"><a href="{{ url_for('get_recipe', recipe_id=recipe._id) }}">Cancel</a></button>
+                <div class="btn btn-small ml-4"><a href="{{ url_for('get_recipe', recipe_id=recipe._id) }}">Cancel</a></div>
             {% endif %}
         </footer>
 	</form>
@@ -197,5 +198,5 @@
 	    $('.collapsible').collapsible({accordion: false});
 	});
 </script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/recipe.js') }}"></script>
+<script src="{{ url_for('static', filename='js/recipe.js') }}"></script>
 {% endblock %}
