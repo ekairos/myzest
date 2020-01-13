@@ -665,6 +665,7 @@ def profile(profile_id):
         {'$addFields': {'avatar': '$author.avatar'}},
         {'$project': {'author': 0}}
     ])
+    recipes = list(recipes)
 
     full_profile = mongo.db.users.aggregate([
         {'$match': {'_id': ObjectId(profile_id)}},
@@ -680,7 +681,7 @@ def profile(profile_id):
                      }
          },
         {'$replaceRoot': {'newRoot': {'$mergeObjects': [{'$arrayElemAt': ['$recipefaved', 0]}, '$$ROOT']}}},
-        {'$project': {'recipefaved': 0}}
+        {'$project': {'recipefaved': 0, 'password': 0}}
     ])
     profile = list(full_profile)[0]  # converts aggregation result's type
 
