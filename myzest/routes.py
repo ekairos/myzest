@@ -239,7 +239,7 @@ def recipe_to_db(author_id, recipe):
 
     # Add recipe's id to user's recipe list
     mongo.db.users.update_one(
-        {'_id': author_id},
+        {'_id': ObjectId(author_id)},
         {'$push': {'recipes': inserted_recipe.inserted_id}}
     )
 
