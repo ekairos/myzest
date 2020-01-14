@@ -283,6 +283,13 @@ def decrement_session_views(recipe_list, viewed_list):
                 update_recipe_views(viewed, -1)
 
 
+def check_session_views():
+    """Creates views list is in the active session if missing."""
+
+    if 'views' not in session:
+        session['views'] = []
+
+
 @app.route('/')
 @app.route('/home')
 def home():
@@ -291,8 +298,7 @@ def home():
     Retrieve 5 most recent and 5 most faved recipes.
     """
 
-    if 'views' not in session:
-        session['views'] = []
+    check_session_views()
 
     top_faved = mongo.db.recipes.aggregate([
         {'$lookup': {
@@ -429,6 +435,7 @@ def log_user():
         user = mongo.db.users.find_one({'_id': user_in_db['_id']}, {'username': 1, 'favorites': 1})
         user = JSONEncoder().encode(user)
         session['user'] = json.loads(user)
+        check_session_views()
 
         if 'recipes' in user_in_db:
             decrement_session_views(user_in_db['recipes'], session['views'])
@@ -441,11 +448,14 @@ def log_user():
 
 @app.route('/logout')
 def logout():
-    """Logs user out of session but keeps session['views']."""
+    """Logs user out of session and clear session's views list."""
+
+    check_session_views()
 
     if 'user' in session:
         username = session['user']['username']
-        session.pop('user')
+        del session['user']
+        session['views'] = []
         flash('We hope to see you soon {}'.format(username), 'info')
     else:
         flash('You are not logged in', 'warning')
@@ -457,6 +467,9 @@ def logout():
 def get_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})
     author = mongo.db.users.find_one({'_id': ObjectId(recipe['author_id'])})
+
+    check_session_views()
+
     if recipe_id not in session['views']:
         session['views'].append(recipe_id)
         session.modified = True
