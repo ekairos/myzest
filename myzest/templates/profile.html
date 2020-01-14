@@ -8,15 +8,15 @@
             <div class="ml-5">
                 <h1 class="mb-2 profile-title">{{ profile.username }}</h1>
                 <div class="valign-wrapper">
-                    <span>{{ profile.recipes|count }}</span>
+                    <span>{{ recipes|count }}</span>
                     <span class="pl-1 material-icons">local_dining</span>
                     {% if 'faved' in profile and profile.faved > 0 %}
-                        <span class="border-l pl-2 ml-2 ">{{ profile.faved if profile.faved else 0 }}</span>
-                        <span class="pl-1 material-icons">favorite</span>
+                    <span class="border-l pl-2 ml-2 ">{{ profile.faved if profile.faved else 0 }}</span>
+                    <span class="pl-1 material-icons">grade</span>
                     {% endif %}
                     {% if 'favorites' in profile %}
-                    <span class="border-l pl-2 ml-2 ">{{ profile.favorites | count }}</span>
-                    <span class="pl-1 material-icons">loyalty</span>
+                    <span class="border-l pl-2 ml-2">{{ profile.favorites | count }}</span>
+                    <span class="pl-1 material-icons">bookmarks</span>
                     {% endif %}
                 </div>
                 <small class="detail">since {{ profile._id|oid_date }}</small>
@@ -51,7 +51,7 @@
         <h4 class="ml-3 rcp-sel-title">{{ profile.username }}'s recipes</h4>
     {% endif %}
 
-    {% if profile.recipes %}
+    {% if recipes != [] %}
         <!-- recipe cards -->
         <ul class="rcp-results">
             {% for recipe in recipes %}

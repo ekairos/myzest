@@ -239,7 +239,7 @@ def recipe_to_db(author_id, recipe):
 
     # Add recipe's id to user's recipe list
     mongo.db.users.update_one(
-        {'_id': author_id},
+        {'_id': ObjectId(author_id)},
         {'$push': {'recipes': inserted_recipe.inserted_id}}
     )
 
@@ -283,6 +283,13 @@ def decrement_session_views(recipe_list, viewed_list):
                 update_recipe_views(viewed, -1)
 
 
+def check_session_views():
+    """Creates views list is in the active session if missing."""
+
+    if 'views' not in session:
+        session['views'] = []
+
+
 @app.route('/')
 @app.route('/home')
 def home():
@@ -291,8 +298,7 @@ def home():
     Retrieve 5 most recent and 5 most faved recipes.
     """
 
-    if 'views' not in session:
-        session['views'] = []
+    check_session_views()
 
     top_faved = mongo.db.recipes.aggregate([
         {'$lookup': {
@@ -336,6 +342,11 @@ def register():
 
 @app.route('/add_user', methods=['POST'])
 def add_user():
+    """Inserts new user into DB if email and passwords are not registered and
+    if password and password's confirmation match. Then logs the new user and
+    proceed routing to home or next_loc url.
+    """
+
     next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
     for i in ['username', 'email', 'password', 'passwConfirm']:
@@ -388,10 +399,10 @@ def check_user():
     document = bool(mongo.db.users.find_one({data['field']: value}))
 
     if data['form'] == "registration":
-        return jsonify({'error': "This {} is already taken".format(data['field'])}) if document else "success"
+        return jsonify({'error': "Please try a different {}".format(data['field'])}) if document else "success"
     elif data['form'] == 'editprofile':
         session_user = mongo.db.users.find_one({'username': session['user']['username']})
-        return jsonify({'error': "This {} is already used by someone else".format(data['field'])}) if document and session_user[data['field']] != value else "success"
+        return jsonify({'error': "Please try a different {}".format(data['field'])}) if document and session_user[data['field']] != value else "success"
     else:
         return "success" if document else jsonify({'error': "This {} is not registered".format(data['field'])})
 
@@ -412,15 +423,19 @@ def log_user():
     data = request.form.to_dict()
 
     if 'email' not in data or 'password' not in data:
-        flash('Login unsuccessful. Please check email and password provided', 'warning')
+        flash('Login unsuccessful. Please provide both email and password', 'warning')
         return redirect('login')
 
     user_in_db = mongo.db.users.find_one({'email': data['email'].lower()})
 
-    if user_in_db and bcrypt.check_password_hash(user_in_db['password'], data['password']):
+    if not user_in_db or not bcrypt.check_password_hash(user_in_db['password'], data['password']):
+        flash('Login unsuccessful. Please check email and password provided', 'warning')
+
+    elif user_in_db and bcrypt.check_password_hash(user_in_db['password'], data['password']):
         user = mongo.db.users.find_one({'_id': user_in_db['_id']}, {'username': 1, 'favorites': 1})
         user = JSONEncoder().encode(user)
         session['user'] = json.loads(user)
+        check_session_views()
 
         if 'recipes' in user_in_db:
             decrement_session_views(user_in_db['recipes'], session['views'])
@@ -428,22 +443,19 @@ def log_user():
         flash('Welcome back {} !'.format(user_in_db['username']), 'success')
         return redirect('home') if next_loc is None else redirect(next_loc)
 
-    elif user_in_db and not bcrypt.check_password_hash(user_in_db['password'], data['password']):
-        flash('Login unsuccessful. Please check email and password provided', 'warning')
-
-    elif not user_in_db:
-        flash('Login unsuccessful. Please check email', 'warning')
-
     return redirect('login') if next_loc is None else redirect(next_loc)
 
 
 @app.route('/logout')
 def logout():
-    """Logs user out of session but keeps session['views']."""
+    """Logs user out of session and clear session's views list."""
+
+    check_session_views()
 
     if 'user' in session:
         username = session['user']['username']
-        session.pop('user')
+        del session['user']
+        session['views'] = []
         flash('We hope to see you soon {}'.format(username), 'info')
     else:
         flash('You are not logged in', 'warning')
@@ -455,6 +467,9 @@ def logout():
 def get_recipe(recipe_id):
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})
     author = mongo.db.users.find_one({'_id': ObjectId(recipe['author_id'])})
+
+    check_session_views()
+
     if recipe_id not in session['views']:
         session['views'].append(recipe_id)
         session.modified = True
@@ -663,6 +678,7 @@ def profile(profile_id):
         {'$addFields': {'avatar': '$author.avatar'}},
         {'$project': {'author': 0}}
     ])
+    recipes = list(recipes)
 
     full_profile = mongo.db.users.aggregate([
         {'$match': {'_id': ObjectId(profile_id)}},
@@ -678,7 +694,7 @@ def profile(profile_id):
                      }
          },
         {'$replaceRoot': {'newRoot': {'$mergeObjects': [{'$arrayElemAt': ['$recipefaved', 0]}, '$$ROOT']}}},
-        {'$project': {'recipefaved': 0}}
+        {'$project': {'recipefaved': 0, 'password': 0}}
     ])
     profile = list(full_profile)[0]  # converts aggregation result's type
 
