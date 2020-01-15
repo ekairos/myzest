@@ -317,12 +317,12 @@ Deployment on Heroku requires :
 - Procfile  
 Generated as `echo "web: python run.py > Procfile"`
 - Requirements to be up to date
-```bash
-pip freeze --local > requirements.txt
-```
+    ```bash
+    pip freeze --local > requirements.txt
+    ```
 - Set the app to run out of debug mode and match Heroku requirements
     - run.py in root directory:  
-    - ```bash  
+    - ```python  
       app.run(host=os.getenv('IP'),  
       port=int(os.getenv('PORT')),  
       debug=False)  
@@ -337,6 +337,8 @@ pip freeze --local > requirements.txt
 heroku ps:scale web=1
 ```
 
+Once this is correctly setup, you can commit push from deployment branch to heroku's master:
+`git push <remote> deployment:master`
 
 ## Credits
 

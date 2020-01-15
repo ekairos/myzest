@@ -14,7 +14,7 @@ or all unit tests :
 
 import unittest
 from myzest import mongo, app
-from myzest.routes import min_to_hour, oid_date, formdata_to_query, make_query, build_recipe, recipe_to_db,\
+from myzest.main import min_to_hour, oid_date, formdata_to_query, make_query, build_recipe, recipe_to_db,\
     check_file_ext, pic_extensions, update_recipe_views, decrement_session_views
 import datetime
 from tests.testing_data import fake_author, chocolate_recipe_entry, fake_user, fake_recipe
