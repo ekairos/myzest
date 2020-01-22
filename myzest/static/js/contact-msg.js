@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $("form").submit(function(e){
+    $("#contact-form").submit(function(e){
         e.preventDefault();
     });
 
@@ -18,8 +18,8 @@ $(document).ready(function () {
 
         var emailValid = document.getElementById("email").checkValidity();
         var messageValid = document.getElementById("message").checkValidity();
-        var nameValid = $("#username").hasClass("invalid");
-        if (emailValid === false || messageValid === false || nameValid === true) {
+        var nameInvalid = $("#username").hasClass("invalid");
+        if (emailValid === false || messageValid === false || nameInvalid === true) {
             let formError = '<div class="mb-4 field-error">Some details are missing or not valid</div>';
             $("#submit-btn").after(formError);
         } else {
