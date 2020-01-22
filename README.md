@@ -1,5 +1,13 @@
 # MyZest
 
+![cssvalidation](https://img.shields.io/badge/W3C%20CSS%20Validation-%20no%20errors-sucess)
+![htmlvalidation](https://img.shields.io/badge/W3C%20HTML%20Validation-%20no%20errors-sucess)
+![JSvalidation](https://img.shields.io/badge/JSHint%20Validation-%20Ok-green)
+![Python](https://img.shields.io/badge/PEP8%20-few%20errors-yellowgreen)
+![Coverage](https://img.shields.io/badge/unit%20tests-Pass-sucess)
+![Coverage](https://img.shields.io/badge/e2e%20tests-Pass-sucess)
+![Coverage](https://img.shields.io/badge/tests%20coverage-55%25-green)
+
 ![overview](overview_comp.jpg)
 
 **_Live preview_** [on Heroku](https://myzest.herokuapp.com/)       
@@ -267,11 +275,6 @@ Make sure Selenium and the correct browsers [driver](https://selenium.dev/seleni
 
 #### Validations
 
-![cssvalidation](https://img.shields.io/badge/W3C%20CSS%20Validation-%20no%20errors-green)
-![htmlvalidation](https://img.shields.io/badge/W3C%20HTML%20Validation-%20no%20errors-green)
-![JSvalidation](https://img.shields.io/badge/JSHint%20Validation-%20Ok-green)
-![Python](https://img.shields.io/badge/PEP8%20-few%20errors-yellow)
-
 **HTML**  
 
 [W3C HTML Validator](https://validator.w3.org/) raises errors that concern the Jinja's templating syntax, which is not recognized.
@@ -314,12 +317,12 @@ Deployment on Heroku requires :
 - Procfile  
 Generated as `echo "web: python run.py > Procfile"`
 - Requirements to be up to date
-```bash
-pip freeze --local > requirements.txt
-```
+    ```bash
+    pip freeze --local > requirements.txt
+    ```
 - Set the app to run out of debug mode and match Heroku requirements
     - run.py in root directory:  
-    - ```bash  
+    - ```python  
       app.run(host=os.getenv('IP'),  
       port=int(os.getenv('PORT')),  
       debug=False)  
@@ -334,6 +337,8 @@ pip freeze --local > requirements.txt
 heroku ps:scale web=1
 ```
 
+Once this is correctly setup, you can commit push from deployment branch to heroku's master:
+`git push <remote> deployment:master`
 
 ## Credits
 
