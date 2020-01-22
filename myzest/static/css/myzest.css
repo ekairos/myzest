@@ -463,17 +463,17 @@ input[type=tel]:not(.browser-default):focus:not([readonly]),
 input[type=number]:not(.browser-default):focus:not([readonly]),
 input[type=search]:not(.browser-default):focus:not([readonly]),
 textarea.materialize-textarea:focus:not([readonly]) {
-  border-bottom-color: #E86900 !important;
-  box-shadow: 0 1px 0 0 #E86900 !important;
+  border-bottom-color: #F5B458 !important;
+  box-shadow: 0 1px 0 0 #F5B458 !important;
 }
 
 .select-wrapper input.select-dropdown:focus {
-  border-bottom-color: #E86900 !important;
-  box-shadow: 0 1px 0 0 #E86900 !important;
+  border-bottom-color: #F5B458 !important;
+  box-shadow: 0 1px 0 0 #F5B458 !important;
 }
 
 .input-field .material-icons.prefix.active {
-  color: #E86900;
+  color: #F5B458;
 }
 
 /*      Buttons

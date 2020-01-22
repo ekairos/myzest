@@ -218,17 +218,17 @@ input[type="tel"]:not(.browser-default):focus:not([readonly]),
 input[type="number"]:not(.browser-default):focus:not([readonly]),
 input[type="search"]:not(.browser-default):focus:not([readonly]),
 textarea.materialize-textarea:focus:not([readonly]) {
-    border-bottom-color: $mz-orange !important;
-    box-shadow: 0 1px 0 0 $mz-orange !important;
+    border-bottom-color: $mz-lightorange !important;
+    box-shadow: 0 1px 0 0 $mz-lightorange !important;
 }
 
 .select-wrapper input.select-dropdown:focus {
-    border-bottom-color: $mz-orange !important;
-    box-shadow: 0 1px 0 0 $mz-orange !important;
+    border-bottom-color: $mz-lightorange !important;
+    box-shadow: 0 1px 0 0 $mz-lightorange !important;
 }
 
 .input-field .material-icons.prefix.active {
-    color: $mz-orange;
+    color: $mz-lightorange;
 }
 
 /*      Buttons
