@@ -1,3 +1,6 @@
+/*
+		___ Home Page __
+*/
 .landing {
     min-height: 300px;
     background-image: url("../img/landing-img.jpg");
@@ -8,6 +11,49 @@
 
 #landing-title {
     font-size: 6rem;
+}
+
+/*      Top 5 recipe selections on Home page
+*/
+.short-selection {
+    overflow-x: scroll;
+    white-space: nowrap;
+    display: flex;
+    padding: 10px;
+
+    // override rcpcard rules on home top recipes
+    .rcpcard {
+        width: 220px;
+    }
+
+    .rcpcard-header {
+        width: 220px;
+    }
+}
+
+@media (min-width: 768px) {
+    .top-recipes {
+        width: 80%;
+        max-width: 960px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+    .short-selection {
+        overflow-x: unset;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: stretch;
+        margin-left: 10px;
+
+        .rcpcard {
+            flex-grow: 1;
+            flex-basis: 240px;
+        }
+
+        .rcpcard-header {
+            width: unset;
+        }
+    }
 }
 
 #home-search {

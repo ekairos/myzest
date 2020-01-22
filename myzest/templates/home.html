@@ -16,10 +16,10 @@
 </header>
 
 <!-- Latest Recipes Section -->
-<section class="rcp-sel">
+<section class="top-recipes">
 	<h3 class="rcp-sel-title">Latest Recipes</h3>
 	<!-- recipe cards -->
-	<ul class="rcp-sel-short">
+	<ul class="short-selection">
 		{% for recipe in latests %}
 		{% include "rcpcard.html" %}
 		{% endfor %}
@@ -27,10 +27,10 @@
 </section>
 
 <!-- Top Recipes Section -->
-<section class="rcp-sel">
+<section class="top-recipes">
 	<h3 class="rcp-sel-title">Top Recipes</h3>
 	<!-- recipe cards -->
-	<ul class="rcp-sel-short">
+	<ul class="short-selection">
 		{% for recipe in top_faved %}
 		{% include "rcpcard.html" %}
 		{% endfor %}

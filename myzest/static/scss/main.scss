@@ -1,5 +1,4 @@
 @import "helpers/variables";
-@import "helpers/reset";
 @import "helpers/mixins";
 @import "helpers/spacing";
 @import "helpers/layout";
@@ -9,5 +8,5 @@
 @import "pages/recipe";
 @import "pages/profile-edit";
 @import "pages/error-page";
+@import "pages/results";
 @import "components/nouislider";
-@import "components/slide-search";
