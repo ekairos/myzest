@@ -208,6 +208,7 @@ They are retrieved by the app for the user when searching, adding or editing a r
 - [MongoDB](http://mongodb.org)
     - I use MongoDB Atlas to host recipes and users data.
     - [PyMongo](https://api.mongodb.com/python/current/) is used through the [Flask-PyMongo](https://flask-pymongo.readthedocs.io/) extension.
+- [Flask-Bcrypt](https://flask-bcrypt.readthedocs.io/en/latest/) to secure the user's password.
 
 ### Front-end
 
@@ -345,6 +346,29 @@ Once this is correctly setup, you can commit push from deployment branch to hero
 ### Author
 
 My Self: [Gareths3](https://github.com/gareths3)
+
+### Acknowledgments
+
+Thanks to my mentor [Antonija Šimić](https://github.com/tonkec), for being picky, challenging me and 
+pushing my boundaries through positive feedback !
+
+#### Code
+
+When working on a solution to serialize ObjectId into the session object
+I came into [this solution](https://stackoverflow.com/a/16586277) that works like a charm :
+```python
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self, o)
+```
+I learned couple more things about JSON along the way !
+
+#### Package structure
+
+Thanks to [Corey Schafer](https://github.com/CoreyMSchafer) for his inspiring Flask tutorial series 
+where the circular import problem in this architecture is well explained.
 
 ### Content
 
