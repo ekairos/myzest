@@ -1,5 +1,7 @@
-from flask import render_template, request, jsonify, redirect, flash, \
-    session, url_for
+"""This modules contains the logic and Flask routing to run MyZest"""
+
+from flask import render_template, request, jsonify, redirect, flash
+from flask import session, url_for
 from myzest import app, mongo, bcrypt
 from bson.objectid import ObjectId
 import re
@@ -45,8 +47,9 @@ def context_processor():
 
 
 class JSONEncoder(json.JSONEncoder):
-    """Serialize ObjectIds data from DB into
-    str for user's session object.
+    """Serialize ObjectIds data from DB into str for user's session object.
+
+    See: code chunk from https://stackoverflow.com/a/16586277.
     """
 
     def default(self, o):
@@ -332,9 +335,11 @@ def home():
 
 @app.route('/register')
 def register():
+    """Renders the register form page if user not logged in already."""
+
     next_loc = request.args.get('next_loc')
     if 'user' in session:
-        flash('{}, you are already logged in'.format(session['user']['username']), 'info')
+        flash(f"{session['user']['username']}, you are already logged in", 'info')
         return redirect('home')
 
     return render_template('register.html', next_loc=next_loc)
@@ -380,8 +385,9 @@ def add_user():
             '_id': str(registered_user.inserted_id),
             'favorites': new_user['favorites']
         }
-        flash('Welcome {} ! Your account was created with {}'
-              .format(new_user['username'], new_user['email']), 'success')
+        flash(f"Welcome {new_user['username']} ! "
+              f"Your account was created with {new_user['email']}",
+              'success')
 
     return redirect('home') if next_loc is None else redirect(next_loc)
 
@@ -399,19 +405,24 @@ def check_user():
     document = bool(mongo.db.users.find_one({data['field']: value}))
 
     if data['form'] == "registration":
-        return jsonify({'error': "Please try a different {}".format(data['field'])}) if document else "success"
+        return jsonify({'error': f"Please try a different {data['field']}"}) \
+            if document else "success"
     elif data['form'] == 'editprofile':
         session_user = mongo.db.users.find_one({'username': session['user']['username']})
-        return jsonify({'error': "Please try a different {}".format(data['field'])}) if document and session_user[data['field']] != value else "success"
+        return jsonify({'error': f"Please try a different {data['field']}"}) \
+            if document and session_user[data['field']] != value \
+            else "success"
     else:
-        return "success" if document else jsonify({'error': "This {} is not registered".format(data['field'])})
+        return "success" if document else jsonify({'error': f"This {data['field']} is not registered"})
 
 
 @app.route('/login')
 def login():
+    """Returns login page if user not currently logged."""
+
     next_loc = request.args.get('next_loc')
     if 'user' in session:
-        flash('{}, you are already logged in'.format(session['user']['username']), 'info')
+        flash(f"{session['user']['username']}, you are already logged in", 'info')
         return redirect('home')
 
     return render_template('login.html', next_loc=next_loc)
@@ -419,6 +430,9 @@ def login():
 
 @app.route('/log_user', methods=['POST'])
 def log_user():
+    """Logs the user by creating a user session object if user authentication
+    is successful."""
+
     next_loc = request.args.get('next_loc')
     data = request.form.to_dict()
 
@@ -440,7 +454,7 @@ def log_user():
         if 'recipes' in user_in_db:
             decrement_session_views(user_in_db['recipes'], session['views'])
 
-        flash('Welcome back {} !'.format(user_in_db['username']), 'success')
+        flash(f"Welcome back {user_in_db['username']} !", 'success')
         return redirect('home') if next_loc is None else redirect(next_loc)
 
     return redirect('login') if next_loc is None else redirect(next_loc)
@@ -456,7 +470,7 @@ def logout():
         username = session['user']['username']
         del session['user']
         session['views'] = []
-        flash('We hope to see you soon {}'.format(username), 'info')
+        flash(f"We hope to see you soon {username}", 'info')
     else:
         flash('You are not logged in', 'warning')
 
@@ -465,6 +479,10 @@ def logout():
 
 @app.route('/recipe/<recipe_id>')
 def get_recipe(recipe_id):
+    """Retrieves a recipe from DB by given recipe_id and populate recipe
+    template with its data.
+    Increments this recipe view count."""
+
     recipe = mongo.db.recipes.find_one({'_id': ObjectId(recipe_id)})
     author = mongo.db.users.find_one({'_id': ObjectId(recipe['author_id'])})
 
@@ -481,6 +499,8 @@ def get_recipe(recipe_id):
 
 @app.route('/addrecipe')
 def add_recipe():
+    """Returns recipe form template page if user is logged in."""
+
     if 'user' not in session:
         next_loc = request.args.get('next_loc')
         flash('To add recipes, you need to login first', 'warning')
@@ -513,7 +533,7 @@ def insert_recipe():
     # Save recipe image file
     save_recipe_pic(image_file=request.files['img'], recipe_id=recipe_id)
 
-    return redirect('/recipe/{}'.format(recipe_id))
+    return redirect(f"/recipe/{recipe_id}")
 
 
 @app.route('/editrecipe/<recipe_id>', methods=['GET', 'POST'])
@@ -544,11 +564,11 @@ def edit_recipe(recipe_id):
 
             if not check_file_ext(filename=request.files['img'].filename, extensions=pic_extensions):
                 flash('wrong file extension', 'warning')
-                return redirect('/editrecipe/{}'.format(recipe_id))
+                return redirect(f"/editrecipe/{recipe_id}")
 
             save_recipe_pic(request.files['img'], recipe_id)
 
-        return redirect('/recipe/{}'.format(recipe_id))
+        return redirect(f"/recipe/{recipe_id}")
 
     return render_template('editrecipe.html', recipe=this_recipe, author=author)
 
@@ -648,16 +668,22 @@ def searchcount():
 
 @app.route('/terms')
 def terms():
+    """Returns the Terms of Use page."""
+
     return render_template('terms.html')
 
 
 @app.route('/privacy')
 def privacy():
+    """Returns the Privacy Policy page."""
+
     return render_template('privacy.html')
 
 
 @app.route('/contact')
 def contact():
+    """Returns the Contact page and populates form if user logged in."""
+
     if 'user' in session:
         user_email = mongo.db.users.distinct('email', {'_id': ObjectId(session['user']['_id'])})[0]
         return render_template('contact.html', user=session['user'], email=user_email)
@@ -666,6 +692,10 @@ def contact():
 
 @app.route('/profile/<profile_id>')
 def profile(profile_id):
+    """Retrieves a user profile's recipes and favorite recipes lists. Then
+    populate the Profile template page with its data.
+    """
+
     recipes = mongo.db.recipes.aggregate([
         {'$match': {'author_id': ObjectId(profile_id)}},
         {'$lookup': {
@@ -719,6 +749,11 @@ def profile(profile_id):
 
 @app.route('/edit-profile/<profile_id>', methods=['GET', 'POST'])
 def edit_profile(profile_id):
+    """Retrieves profile data from DB to populate the edit profile form
+    template on 'GET' request.
+    Updates profile data in DB from form data on 'POST' request.
+    """
+
     if request.method == 'GET':
         profile = mongo.db.users.find_one({'_id': ObjectId(profile_id)})
         return render_template('editprofile.html', profile=profile)
@@ -742,7 +777,7 @@ def edit_profile(profile_id):
         if 'password' in update:
             if 'passwConfirm' not in update or update['passwConfirm'] != update['password']:
                 flash('Password confirmation does not match', 'warning')
-                return redirect('/edit-profile/{}'.format(profile_id))
+                return redirect(f"/edit-profile/{profile_id}")
             else:
                 update['password'] = hash_password(update['password'])
                 del update['passwConfirm']
@@ -755,7 +790,7 @@ def edit_profile(profile_id):
             # double check file extension
             if not filename.endswith(pic_extensions):
                 flash('wrong file extension', 'warning')
-                return redirect('/edit-profile/{}'.format(profile_id))
+                return redirect(f"/edit-profile/{profile_id}")
             else:
                 pic.save(path.join(app.config['USER_PIC_DIR'], filename))
 
@@ -767,19 +802,22 @@ def edit_profile(profile_id):
         )
 
         # update session user object
-        user = mongo.db.users.find_one({'_id': ObjectId(session['user']['_id'])}, {'username': 1, 'favorites': 1})
+        user = mongo.db.users.find_one({'_id': ObjectId(session['user']['_id'])},
+                                       {'username': 1, 'favorites': 1})
         user = JSONEncoder().encode(user)
         session['user'] = json.loads(user)
         session.modified = True
-        return redirect('/profile/{}'.format(profile_id))
+        return redirect(f"/profile/{profile_id}")
 
 
 @app.route('/deluser/<user_id>')
 def delete_user(user_id):
-    """ Deleting the user's accounts:
-    decrement fav_count for recipe in his favorite list,
-    removes his recipes from other users favorite list then remove them,
-    finally remove his account and logout from session.
+    """ Deleting the user's account:
+    Decrements fav_count for recipes in his favorite list,
+    removes his recipes from other users favorite list then removes them
+    from recipes collection,
+    Finally remove his account, avatar file on server if any and
+    logout from session.
     """
 
     user = mongo.db.users.find_one({'_id': ObjectId(user_id)})
@@ -796,21 +834,24 @@ def delete_user(user_id):
     if 'favorites' in user and len(user['favorites']) > 0:
         # for each faved recipe decrement favorite count on recipe
         for recipe in user['favorites']:
-            mongo.db.recipes.update_many({'_id': ObjectId(recipe)}, {'$inc': {'favorite': -1}})
+            mongo.db.recipes.update_many({'_id': ObjectId(recipe)},
+                                         {'$inc': {'favorite': -1}})
 
     # then delete user and avatar file
     if user['avatar'] != "default.png":
         os_remove(path.join(app.config['USER_PIC_DIR'], user['avatar']))
     mongo.db.users.remove({"_id": ObjectId(user_id)})
 
-    flash("We are sorry to see you leave {}. Feel free to come back anytime !".
-          format(session['user']['username']), "info")
+    flash(f"We are sorry to see you leave {session['user']['username']}. "
+          f"Feel free to come back anytime !", "info")
     session.pop('user')
     return redirect('/home')
 
 
 @app.route('/error')
 def error_page():
+    """Reroutes user to error page."""
+
     return render_template('error.html')
 
 
@@ -818,4 +859,5 @@ def error_page():
 @app.errorhandler(404)
 def page_error(error):
     """Simply redirects to error page on 404 and 500 errors."""
+
     return redirect('/error')

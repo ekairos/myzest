@@ -53,7 +53,7 @@
 
     {% if recipes != [] %}
         <!-- recipe cards -->
-        <ul class="rcp-results">
+        <ul class="recipes-section">
             {% for recipe in recipes %}
                 {% include "rcpcard.html" %}
             {% endfor %}
@@ -79,7 +79,7 @@
 
     {% if profile.favorites != [] %}
         <!-- recipe cards -->
-        <ul class="rcp-results">
+        <ul class="recipes-section">
             {% for recipe in faved %}
                 {% include "rcpcard.html" %}
             {% endfor %}

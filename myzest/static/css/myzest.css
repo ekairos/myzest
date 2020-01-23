@@ -1,88 +1,15 @@
 /*
-        ___ LISTS ___
+		___ Custom Variables ___
 */
-dl, ol, ul {
-  padding-left: 10px;
-}
-
-li {
-  list-style: none;
-}
-
+/*      Custom Colors
+*/
+/*      Custom Spacing
+*/
 /*
-        ___ HEADERS ___
+        ___ Builds Custom Classes For Spacing ___
 */
-h1, h2, h3,
-h3, h4, h5, h6 {
-  margin: 0;
-}
-
-h1 {
-  font-size: 3rem;
-}
-
-h2 {
-  font-size: 2rem;
-}
-
-h3 {
-  font-size: 1.75rem;
-}
-
-h4 {
-  font-size: 1.5rem;
-}
-
-h5 {
-  font-size: 1.25rem;
-}
-
-h6 {
-  font-size: 1rem;
-}
-
-/*
-        ___ Form Appearance ___
+/*      check $spacing and $sides in helpers/variables.scss
 */
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-}
-
-input[type=range]::-moz-range-thumb {
-  background: #E86900;
-}
-
-input[type=range]::-webkit-slider-thumb {
-  background: #E86900;
-  margin-top: -6px;
-}
-
-input[type=range] + .thumb {
-  background-color: #E86900;
-}
-
-/*
-        ___ Materializecss Form input color override ___
-*/
-input:not([type]):focus:not([readonly]), input[type=text]:not(.browser-default):focus:not([readonly]), input[type=password]:not(.browser-default):focus:not([readonly]), input[type=email]:not(.browser-default):focus:not([readonly]), input[type=url]:not(.browser-default):focus:not([readonly]), input[type=time]:not(.browser-default):focus:not([readonly]), input[type=date]:not(.browser-default):focus:not([readonly]), input[type=datetime]:not(.browser-default):focus:not([readonly]), input[type=datetime-local]:not(.browser-default):focus:not([readonly]), input[type=tel]:not(.browser-default):focus:not([readonly]), input[type=number]:not(.browser-default):focus:not([readonly]), input[type=search]:not(.browser-default):focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]) {
-  border-bottom-color: #E86900 !important;
-  box-shadow: 0 1px 0 0 #E86900 !important;
-}
-
-.select-wrapper input.select-dropdown:focus {
-  border-bottom-color: #E86900 !important;
-  box-shadow: 0 1px 0 0 #E86900 !important;
-}
-
-.input-field .material-icons.prefix.active {
-  color: #E86900;
-}
-
 .mt-0 {
   margin-top: 0;
 }
@@ -307,6 +234,8 @@ input:not([type]):focus:not([readonly]), input[type=text]:not(.browser-default):
   padding-left: 3em;
 }
 
+/*      manually add margin auto rules
+*/
 .mr-auto {
   margin-right: auto;
 }
@@ -316,8 +245,55 @@ input:not([type]):focus:not([readonly]), input[type=text]:not(.browser-default):
 }
 
 /*
-        ___ Text Formatting ___
+        ___ Common Layout Rules ___
 */
+html, body {
+  font-size: 14px;
+  height: 100%;
+  font-family: "Lato", sans-serif;
+}
+
+/*      Reset Lists
+*/
+dl, ol, ul {
+  padding-left: 10px;
+}
+
+li {
+  list-style: none;
+}
+
+/*      Text Formatting
+*/
+h1, h2, h3,
+h3, h4, h5, h6 {
+  margin: 0;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+h4 {
+  font-size: 1.5rem;
+}
+
+h5 {
+  font-size: 1.25rem;
+}
+
+h6 {
+  font-size: 1rem;
+}
+
 strong {
   font-weight: bold;
 }
@@ -337,6 +313,17 @@ a:visited:hover {
   border-color: #E86900;
 }
 
+.title {
+  font-family: "Donegal One", serif;
+}
+
+.rcp-sel-title {
+  color: #2A3038;
+  font-family: "Donegal One", serif;
+  padding-top: 0.5em;
+  margin-left: 1em;
+}
+
 .txt-ctr {
   text-align: center;
 }
@@ -345,6 +332,8 @@ a:visited:hover {
   color: #52607b;
 }
 
+/*      Icons
+*/
 .cancel {
   color: #e64539;
   cursor: pointer;
@@ -354,29 +343,7 @@ a:visited:hover {
   color: #590013;
 }
 
-.title {
-  font-family: "Donegal One", serif;
-}
-
-/*
-        ___ Lists elements ___
-*/
-.sidenav li:hover {
-  background-color: #b4c4da;
-}
-.sidenav li.active {
-  color: #993918;
-  background-color: #2A3038;
-}
-.sidenav li.active:hover a {
-  color: #993918;
-}
-.sidenav li.active a {
-  color: #F5B458;
-}
-
-/*
-        ___ Boxing ___
+/*      Borders
 */
 .border-t {
   border-top: 1px solid #E6E6E6;
@@ -395,15 +362,43 @@ a:visited:hover {
 }
 
 /*
-        ___ Forms ___
+		___ Recipes section in Results and Profile page ___
 */
-.field-error {
-  color: #F44336;
-  font-size: 12px;
+.recipes-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 10px;
+}
+.recipes-section .rcpcard {
+  width: 100%;
 }
 
+@media (min-width: 500px) {
+  .recipes-section {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin-left: 10px;
+  }
+  .recipes-section .rcpcard {
+    flex-grow: 1;
+    flex-basis: 220px;
+  }
+}
+@media (min-width: 1326px) {
+  .recipes-section {
+    max-width: 1200px;
+  }
+  .recipes-section .rcpcard {
+    flex-basis: 240px;
+  }
+}
 /*
-		___ Materializecss override ___
+		___ Materializecss Override ___
+*/
+/*      Layout Override
 */
 .row {
   margin-bottom: 0;
@@ -417,6 +412,72 @@ a:visited:hover {
   padding: 0;
 }
 
+/*      Forms Override
+*/
+.field-error {
+  color: #F44336;
+  font-size: 12px;
+}
+
+.input-field > label {
+  color: #52607b;
+  font-style: italic;
+}
+
+.dropdown-content li span {
+  color: #E86900;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #E86900;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #E86900;
+  margin-top: -6px;
+}
+
+input[type=range] + .thumb {
+  background-color: #E86900;
+}
+
+input:not([type]):focus:not([readonly]),
+input[type=text]:not(.browser-default):focus:not([readonly]),
+input[type=password]:not(.browser-default):focus:not([readonly]),
+input[type=email]:not(.browser-default):focus:not([readonly]),
+input[type=url]:not(.browser-default):focus:not([readonly]),
+input[type=time]:not(.browser-default):focus:not([readonly]),
+input[type=date]:not(.browser-default):focus:not([readonly]),
+input[type=datetime]:not(.browser-default):focus:not([readonly]),
+input[type=datetime-local]:not(.browser-default):focus:not([readonly]),
+input[type=tel]:not(.browser-default):focus:not([readonly]),
+input[type=number]:not(.browser-default):focus:not([readonly]),
+input[type=search]:not(.browser-default):focus:not([readonly]),
+textarea.materialize-textarea:focus:not([readonly]) {
+  border-bottom-color: #F5B458 !important;
+  box-shadow: 0 1px 0 0 #F5B458 !important;
+}
+
+.select-wrapper input.select-dropdown:focus {
+  border-bottom-color: #F5B458 !important;
+  box-shadow: 0 1px 0 0 #F5B458 !important;
+}
+
+.input-field .material-icons.prefix.active {
+  color: #F5B458;
+}
+
+/*      Buttons
+*/
 .btn {
   color: #E86900;
   background-color: unset;
@@ -449,6 +510,8 @@ a:visited:hover {
   right: 1em;
 }
 
+/*      Tabs
+*/
 .tabs li.indicator {
   background-color: #F5B458;
 }
@@ -464,6 +527,8 @@ a:visited:hover {
   color: #2A3038;
 }
 
+/*      Modals
+*/
 .modal {
   max-width: 600px;
 }
@@ -490,113 +555,15 @@ a:visited:hover {
     padding: 0 1em 1em 0;
   }
 }
-.pagination li.active {
-  background-color: #E86900;
-}
-.pagination li:not(.disabled):not(.active) a:hover {
-  color: #E86900;
-}
-
-.input-field > label {
-  color: #52607b;
-  font-style: italic;
-}
-
-.dropdown-content li span {
-  color: #E86900;
-}
-
 /*
-		___ Recipes on home and profile pages ___
+        ___ Base Page Rules ___
 */
-.rcp-sel {
-  margin-top: 20px;
-  margin-bottom: 20px;
+.main-wrapper {
+  min-height: calc(100% - 165px);
 }
 
-.rcp-sel-title {
-  color: #2A3038;
-  font-family: "Donegal One", serif;
-  padding-top: 0.5em;
-  margin-left: 1em;
-}
-
-.rcp-sel-short {
-  overflow-x: scroll;
-  white-space: nowrap;
-  display: flex;
-  padding: 10px;
-}
-.rcp-sel-short .rcpcard {
-  width: 220px;
-}
-.rcp-sel-short .rcpcard-header {
-  width: 220px;
-}
-
-@media (min-width: 768px) {
-  .rcp-sel {
-    width: 80%;
-    max-width: 960px;
-    margin-right: auto;
-    margin-left: auto;
-  }
-
-  .rcp-sel-short {
-    overflow-x: unset;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: stretch;
-    margin-left: 10px;
-  }
-  .rcp-sel-short .rcpcard {
-    flex-grow: 1;
-    flex-basis: 240px;
-  }
-  .rcp-sel-short .rcpcard-header {
-    width: unset;
-  }
-}
-/*
-		___ Recipes on results and profile page ___
+/*      Main Navigation
 */
-.rcp-results {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: 10px;
-}
-.rcp-results .rcpcard {
-  width: 100%;
-}
-
-@media (min-width: 500px) {
-  .rcp-results {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: stretch;
-    margin-left: 10px;
-  }
-  .rcp-results .rcpcard {
-    flex-grow: 1;
-    flex-basis: 220px;
-  }
-}
-@media (min-width: 1326px) {
-  .rcp-results {
-    max-width: 1200px;
-  }
-  .rcp-results .rcpcard {
-    flex-basis: 240px;
-  }
-}
-html, body {
-  font-size: 14px;
-  height: 100%;
-  font-family: "Lato", sans-serif;
-}
-
 #myzest-nav {
   background-color: #2A3038;
   box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.5);
@@ -618,11 +585,22 @@ html, body {
 .sidenav {
   box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.5);
 }
-
-.main-wrapper {
-  min-height: calc(100% - 165px);
+.sidenav li:hover {
+  background-color: #b4c4da;
+}
+.sidenav li.active {
+  color: #993918;
+  background-color: #2A3038;
+}
+.sidenav li.active:hover a {
+  color: #993918;
+}
+.sidenav li.active a {
+  color: #F5B458;
 }
 
+/*      Main Footer
+*/
 #main-footer {
   height: 165px;
   padding-top: 20px;
@@ -647,8 +625,7 @@ html, body {
   font-size: 0.8rem;
 }
 
-/*
-		Alerts - flash messages
+/*      Alerts - flash messages
 */
 div.card-panel {
   position: absolute;
@@ -696,6 +673,18 @@ div.card-panel {
   border-color: #F5B458;
 }
 
+/*      Slide Search Panel
+*/
+#slide-search {
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 100%;
+  box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.5);
+}
+
+/*
+		___ Home Page __
+*/
 .landing {
   min-height: 300px;
   background-image: url("../img/landing-img.jpg");
@@ -708,6 +697,44 @@ div.card-panel {
   font-size: 6rem;
 }
 
+/*      Top 5 recipe selections on Home page
+*/
+.short-selection {
+  overflow-x: scroll;
+  white-space: nowrap;
+  display: flex;
+  padding: 10px;
+}
+.short-selection .rcpcard {
+  width: 220px;
+}
+.short-selection .rcpcard-header {
+  width: 220px;
+}
+
+@media (min-width: 768px) {
+  .top-recipes {
+    width: 80%;
+    max-width: 960px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .short-selection {
+    overflow-x: unset;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin-left: 10px;
+  }
+  .short-selection .rcpcard {
+    flex-grow: 1;
+    flex-basis: 240px;
+  }
+  .short-selection .rcpcard-header {
+    width: unset;
+  }
+}
 #home-search {
   margin-left: auto;
   margin-right: auto;
@@ -723,6 +750,9 @@ div.card-panel {
   color: #52607b;
 }
 
+/*
+		___ Recipe Cards ___
+*/
 .rcpcard {
   display: inline-block;
   position: relative;
@@ -812,6 +842,9 @@ div.card-panel {
   object-fit: cover;
 }
 
+/*
+		___ Recipe Page ___
+*/
 .rcp-header {
   position: relative;
   width: 100%;
@@ -850,8 +883,7 @@ div.card-panel {
   color: #993918;
 }
 
-/*
-		--- Popup image viewer ---
+/*      Popup image viewer
 */
 .viewer-window {
   display: none;
@@ -892,11 +924,11 @@ div.card-panel {
   color: white;
 }
 
-/*    - Popup image viewer animation -
+/*      Popup image viewer animation
 */
 @keyframes zoomIn {
   from {
-    transform: scale(0.2);
+    transform: scale(0.4);
     opacity: 0;
   }
   to {
@@ -904,6 +936,9 @@ div.card-panel {
     opacity: 1;
   }
 }
+/*
+		___ Profile and Edit-Profile Page ___
+*/
 .profile-title {
   font-family: "Donegal One", serif;
   font-size: 2em;
@@ -920,6 +955,9 @@ div.card-panel {
   object-fit: cover;
 }
 
+/*
+		___ Error Page ___
+*/
 .error-page {
   width: 100%;
   min-height: calc(100vh - 229px);
@@ -950,7 +988,19 @@ div.card-panel {
 }
 
 /*
-		___ noUi-slider override ___
+        ___ Results Page Rules ___
+*/
+/*		Pagination
+*/
+.pagination li.active {
+  background-color: #E86900;
+}
+.pagination li:not(.disabled):not(.active) a:hover {
+  color: #E86900;
+}
+
+/*
+		___ noUi-slider Override ___
 */
 .noUi-horizontal {
   height: 3px;
@@ -978,13 +1028,6 @@ div.card-panel {
 
 .noUi-connect {
   background: #E86900;
-}
-
-#slide-search {
-  padding-left: 10px;
-  padding-right: 10px;
-  height: 100%;
-  box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.5);
 }
 
 /*# sourceMappingURL=myzest.css.map */
