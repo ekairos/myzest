@@ -1,0 +1,16 @@
+/*
+        ___ Results Page Rules ___
+*/
+/*		Pagination
+*/
+.pagination li {
+    &.active {
+        background-color: $mz-orange;
+    }
+
+    &:not(.disabled):not(.active) {
+        a:hover {
+            color: $mz-orange;
+        }
+    }
+}

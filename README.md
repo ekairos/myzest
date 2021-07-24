@@ -1,5 +1,13 @@
 # MyZest
 
+![cssvalidation](https://img.shields.io/badge/W3C%20CSS%20Validation-%20no%20errors-sucess)
+![htmlvalidation](https://img.shields.io/badge/W3C%20HTML%20Validation-%20no%20errors-sucess)
+![JSvalidation](https://img.shields.io/badge/JSHint%20Validation-%20Ok-green)
+![Python](https://img.shields.io/badge/PEP8%20-few%20errors-yellowgreen)
+![Coverage](https://img.shields.io/badge/unit%20tests-Pass-sucess)
+![Coverage](https://img.shields.io/badge/e2e%20tests-Pass-sucess)
+![Coverage](https://img.shields.io/badge/tests%20coverage-55%25-green)
+
 ![overview](overview_comp.jpg)
 
 **_Live preview_** [on Heroku](https://myzest.herokuapp.com/)       
@@ -200,6 +208,7 @@ They are retrieved by the app for the user when searching, adding or editing a r
 - [MongoDB](http://mongodb.org)
     - I use MongoDB Atlas to host recipes and users data.
     - [PyMongo](https://api.mongodb.com/python/current/) is used through the [Flask-PyMongo](https://flask-pymongo.readthedocs.io/) extension.
+- [Flask-Bcrypt](https://flask-bcrypt.readthedocs.io/en/latest/) to secure the user's password.
 
 ### Front-end
 
@@ -267,11 +276,6 @@ Make sure Selenium and the correct browsers [driver](https://selenium.dev/seleni
 
 #### Validations
 
-![cssvalidation](https://img.shields.io/badge/W3C%20CSS%20Validation-%20no%20errors-green)
-![htmlvalidation](https://img.shields.io/badge/W3C%20HTML%20Validation-%20no%20errors-green)
-![JSvalidation](https://img.shields.io/badge/JSHint%20Validation-%20Ok-green)
-![Python](https://img.shields.io/badge/PEP8%20-few%20errors-yellow)
-
 **HTML**  
 
 [W3C HTML Validator](https://validator.w3.org/) raises errors that concern the Jinja's templating syntax, which is not recognized.
@@ -314,12 +318,12 @@ Deployment on Heroku requires :
 - Procfile  
 Generated as `echo "web: python run.py > Procfile"`
 - Requirements to be up to date
-```bash
-pip freeze --local > requirements.txt
-```
+    ```bash
+    pip freeze --local > requirements.txt
+    ```
 - Set the app to run out of debug mode and match Heroku requirements
     - run.py in root directory:  
-    - ```bash  
+    - ```python  
       app.run(host=os.getenv('IP'),  
       port=int(os.getenv('PORT')),  
       debug=False)  
@@ -334,12 +338,37 @@ pip freeze --local > requirements.txt
 heroku ps:scale web=1
 ```
 
+Once this is correctly setup, you can commit push from deployment branch to heroku's master:
+`git push <remote> deployment:master`
 
 ## Credits
 
 ### Author
 
 My Self: [Gareths3](https://github.com/gareths3)
+
+### Acknowledgments
+
+Thanks to my mentor [Antonija Šimić](https://github.com/tonkec), for being picky, challenging me and 
+pushing my boundaries through positive feedback !
+
+#### Code
+
+When working on a solution to serialize ObjectId into the session object
+I came into [this solution](https://stackoverflow.com/a/16586277) that works like a charm :
+```python
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        return json.JSONEncoder.default(self, o)
+```
+I learned couple more things about JSON along the way !
+
+#### Package structure
+
+Thanks to [Corey Schafer](https://github.com/CoreyMSchafer) for his inspiring Flask tutorial series 
+where the circular import problem in this architecture is well explained.
 
 ### Content
 

@@ -134,7 +134,7 @@ class TestDeleteUser(unittest.TestCase):
         self.login_user()
         self.assertEqual(self.driver.current_url, "http://localhost:5000/login")
         self.assertEqual(self.driver.find_element_by_css_selector(".flash-warning").text,
-                         "Login unsuccessful. Please check email")
+                         "Login unsuccessful. Please check email and password provided")
         # 4. check username and email availability in db
         self.check_register()
 

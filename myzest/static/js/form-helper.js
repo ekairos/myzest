@@ -2,7 +2,6 @@ $(document).ready(function(){
 
     function checkInput(field, form) {
     	if (field.hasClass("valid")) {
-    		console.log(form);
 			$.ajax({
 				contentType: "application/json; charset=utf-8",
 				data : JSON.stringify({
@@ -35,7 +34,7 @@ $(document).ready(function(){
         }
     });
 
-	$("#log-email, #reg-email").on("blur", function() {
+	$("#log-email, #reg-email, #profile-email").on("blur", function() {
 		if ($(this).val() !== "" && $(this).hasClass("invalid")) {
 			$(this).next('.helper-text').attr("data-error", "Invalid email format");
 		} else if ($(this).val() !== "" && $(this).parents("form").attr("id") !== "contact-form") {
@@ -43,7 +42,7 @@ $(document).ready(function(){
 		}
 	});
 
-	$("#reg-username").on("blur", function() {
+	$("#reg-username, #profile-username").on("blur", function() {
 		checkInput($(this), $(this).parents("form").attr("id"));
 	});
 

@@ -1,4 +1,8 @@
-// check $spacing and $sides in variables.scss
+/*
+        ___ Builds Custom Classes For Spacing ___
+*/
+/*      check $spacing and $sides in helpers/variables.scss
+*/
 @each $key, $value in $sides {
     @each $space, $size in $spacing {
         .m#{$key}-#{$space} {
@@ -15,7 +19,8 @@
     }
 }
 
-// manually add margin auto rules
+/*      manually add margin auto rules
+*/
 .mr-auto {
     margin-right: auto;
 }

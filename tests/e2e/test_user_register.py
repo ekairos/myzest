@@ -98,7 +98,7 @@ class TestRegistration(unittest.TestCase):
         username_field.send_keys("John", Keys.TAB)
         sleep(1)
         self.assertEqual(username_field.get_attribute("class"), "validate invalid")
-        self.assertEqual(username_help.get_attribute("data-error"), "This username is already taken")
+        self.assertEqual(username_help.get_attribute("data-error"), "Please try a different username")
 
         # test empty username
         username_field.clear()
@@ -123,7 +123,7 @@ class TestRegistration(unittest.TestCase):
         username_field.send_keys(Keys.TAB)
         sleep(1)
         self.assertEqual(email_field.get_attribute("class"), "validate invalid")
-        self.assertEqual(email_help.get_attribute("data-error"), "This email is already taken")
+        self.assertEqual(email_help.get_attribute("data-error"), "Please try a different email")
 
         # test empty email
         email_field.clear()

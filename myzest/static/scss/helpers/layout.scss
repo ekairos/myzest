@@ -1,6 +1,52 @@
 /*
-        ___ Text Formatting ___
+        ___ Common Layout Rules ___
 */
+html, body {
+    font-size: 14px;
+    height: 100%;
+    font-family: 'Lato', sans-serif;
+}
+/*      Reset Lists
+*/
+dl, ol, ul {
+    padding-left: 10px;
+}
+
+li {
+    list-style: none;
+}
+
+/*      Text Formatting
+*/
+h1, h2, h3,
+h3, h4, h5, h6 {
+    margin: 0;
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.75rem;
+}
+
+h4 {
+    font-size: 1.5rem;
+}
+
+h5 {
+    font-size: 1.25rem;
+}
+
+h6 {
+    font-size: 1rem;
+}
+
 strong {
     font-weight: bold;
 }
@@ -23,6 +69,17 @@ a {
     }
 }
 
+.title {
+    font-family: "Donegal One", serif;
+}
+
+.rcp-sel-title {
+    color: $mz-darkblue;
+    font-family: 'Donegal One', serif;
+    padding-top: 0.5em;
+    margin-left: 1em;
+}
+
 .txt-ctr {
     text-align: center;
 }
@@ -31,6 +88,8 @@ a {
     color: $mz-coolgray;
 }
 
+/*      Icons
+*/
 .cancel {
     color: $mz-red;
     cursor: pointer;
@@ -41,34 +100,7 @@ a {
     }
 }
 
-.title {
-    font-family: "Donegal One", serif;
-}
-
-/*
-        ___ Lists elements ___
-*/
-.sidenav li {
-    &:hover {
-        background-color: $mz-lightcoolgray;
-    }
-
-    &.active {
-        color: $mz-darkorange;
-        background-color: $mz-darkblue;
-
-        &:hover a {
-            color: $mz-darkorange;
-        }
-
-        a {
-            color: $mz-lightorange;
-        }
-    }
-}
-
-/*
-        ___ Boxing ___
+/*      Borders
 */
 @each $key, $value in $sides {
     .border-#{$key} {
@@ -77,17 +109,51 @@ a {
 }
 
 /*
-        ___ Forms ___
+		___ Recipes section in Results and Profile page ___
 */
-.field-error {
-    color: #F44336;
-    font-size: 12px;
+.recipes-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    // scroll handle correction
+    margin-right: 10px;
+
+    // override rcpcard rules on recipes result page
+    .rcpcard {
+        width: 100%;
+    }
+}
+
+@media (min-width: 500px) {
+    .recipes-section {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: stretch;
+        margin-left: 10px;
+
+        .rcpcard {
+            flex-grow: 1;
+            flex-basis: 220px;
+        }
+    }
+}
+
+@media (min-width: 1326px) {
+    .recipes-section {
+        max-width: 1200px;
+
+        .rcpcard {
+            flex-basis: 240px;
+        }
+    }
 }
 
 /*
-		___ Materializecss override ___
+		___ Materializecss Override ___
 */
-
+/*      Layout Override
+*/
 .row {
     margin-bottom: 0;
 }
@@ -101,8 +167,72 @@ a {
     }
 }
 
-//		Buttons
+/*      Forms Override
+*/
+.field-error {
+    color: #F44336;
+    font-size: 12px;
+}
 
+.input-field > label {
+    color: $mz-coolgray;
+    font-style: italic;
+}
+
+.dropdown-content li span {
+    color: $mz-orange;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+    background: $mz-orange;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    background: $mz-orange;
+    margin-top: -6px;
+}
+
+input[type=range] + .thumb {
+    background-color: $mz-orange;
+}
+
+input:not([type]):focus:not([readonly]),
+input[type="text"]:not(.browser-default):focus:not([readonly]),
+input[type="password"]:not(.browser-default):focus:not([readonly]),
+input[type="email"]:not(.browser-default):focus:not([readonly]),
+input[type="url"]:not(.browser-default):focus:not([readonly]),
+input[type="time"]:not(.browser-default):focus:not([readonly]),
+input[type="date"]:not(.browser-default):focus:not([readonly]),
+input[type="datetime"]:not(.browser-default):focus:not([readonly]),
+input[type="datetime-local"]:not(.browser-default):focus:not([readonly]),
+input[type="tel"]:not(.browser-default):focus:not([readonly]),
+input[type="number"]:not(.browser-default):focus:not([readonly]),
+input[type="search"]:not(.browser-default):focus:not([readonly]),
+textarea.materialize-textarea:focus:not([readonly]) {
+    border-bottom-color: $mz-lightorange !important;
+    box-shadow: 0 1px 0 0 $mz-lightorange !important;
+}
+
+.select-wrapper input.select-dropdown:focus {
+    border-bottom-color: $mz-lightorange !important;
+    box-shadow: 0 1px 0 0 $mz-lightorange !important;
+}
+
+.input-field .material-icons.prefix.active {
+    color: $mz-lightorange;
+}
+
+/*      Buttons
+*/
 .btn {
     color: $mz-orange;
     background-color: unset;
@@ -139,8 +269,8 @@ a {
     right: 1em;
 }
 
-//		Tabs
-
+/*      Tabs
+*/
 .tabs li {
     &.indicator {
         background-color: $mz-lightorange;
@@ -162,8 +292,8 @@ a {
     }
 }
 
-//		Modals
-
+/*      Modals
+*/
 .modal {
     max-width: 600px;
 }
@@ -188,130 +318,5 @@ a {
     .modal .modal-footer {
         height: auto;
         padding: 0 1em 1em 0;
-    }
-}
-
-//		Pagination
-
-.pagination li {
-    &.active {
-        background-color: $mz-orange;
-    }
-
-    &:not(.disabled):not(.active) {
-        a:hover {
-            color: $mz-orange;
-        }
-    }
-}
-
-//    Forms
-
-.input-field > label {
-    color: $mz-coolgray;
-    font-style: italic;
-}
-
-.dropdown-content li span {
-    color: $mz-orange;
-}
-
-/*
-		___ Recipes on home and profile pages ___
-*/
-.rcp-sel {
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-.rcp-sel-title {
-    color: $mz-darkblue;
-    font: {
-        family: 'Donegal One', serif;
-
-    }
-    padding-top: 0.5em;
-    margin-left: 1em;
-}
-
-.rcp-sel-short {
-    overflow-x: scroll;
-    white-space: nowrap;
-    display: flex;
-    padding: 10px;
-
-    // override rcpcard rules on home short selections
-    .rcpcard {
-        width: 220px;
-    }
-
-    .rcpcard-header {
-        width: 220px;
-    }
-}
-
-@media (min-width: 768px) {
-    .rcp-sel {
-        width: 80%;
-        max-width: 960px;
-        margin-right: auto;
-        margin-left: auto;
-    }
-    .rcp-sel-short {
-        overflow-x: unset;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        align-items: stretch;
-        margin-left: 10px;
-
-        .rcpcard {
-            flex-grow: 1;
-            flex-basis: 240px;
-        }
-
-        .rcpcard-header {
-            width: unset;
-        }
-    }
-}
-
-/*
-		___ Recipes on results and profile page ___
-*/
-.rcp-results {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    // scroll handle correction
-    margin-right: 10px;
-
-    // override rcpcard rules on recipes result page
-    .rcpcard {
-        width: 100%;
-    }
-}
-
-@media (min-width: 500px) {
-    .rcp-results {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        align-items: stretch;
-        margin-left: 10px;
-
-        .rcpcard {
-            flex-grow: 1;
-            flex-basis: 220px;
-        }
-    }
-}
-
-@media (min-width: 1326px) {
-    .rcp-results {
-        max-width: 1200px;
-
-        .rcpcard {
-            flex-basis: 240px;
-        }
     }
 }

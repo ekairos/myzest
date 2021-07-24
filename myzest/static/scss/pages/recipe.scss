@@ -1,3 +1,6 @@
+/*
+		___ Recipe Page ___
+*/
 .rcp-header {
     position: relative;
     width: 100%;
@@ -38,8 +41,7 @@
     }
 }
 
-/*
-		--- Popup image viewer ---
+/*      Popup image viewer
 */
 .viewer-window {
     display: none;
@@ -81,11 +83,11 @@
     }
 }
 
-/*    - Popup image viewer animation -
+/*      Popup image viewer animation
 */
 @keyframes zoomIn {
     from {
-        transform: scale(0.2);
+        transform: scale(0.4);
         opacity: 0
     }
     to {

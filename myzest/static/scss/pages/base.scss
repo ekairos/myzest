@@ -1,9 +1,12 @@
-html, body {
-    font-size: 14px;
-    height: 100%;
-    font-family: 'Lato', sans-serif;
+/*
+        ___ Base Page Rules ___
+*/
+.main-wrapper {
+    min-height: calc(100% - 165px);
 }
 
+/*      Main Navigation
+*/
 #myzest-nav {
     background-color: $mz-darkblue;
     @include thinshw(outset);
@@ -27,12 +30,28 @@ html, body {
 
 .sidenav {
     @include thinshw(outset);
+    li {
+        &:hover {
+            background-color: $mz-lightcoolgray;
+        }
+
+        &.active {
+            color: $mz-darkorange;
+            background-color: $mz-darkblue;
+
+            &:hover a {
+                color: $mz-darkorange;
+            }
+
+            a {
+                color: $mz-lightorange;
+            }
+        }
+    }
 }
 
-.main-wrapper {
-    min-height: calc(100% - 165px);
-}
-
+/*      Main Footer
+*/
 #main-footer {
     height: 165px;
     padding-top: 20px;
@@ -60,8 +79,7 @@ html, body {
     font-size: .8rem;
 }
 
-/*
-		Alerts - flash messages
+/*      Alerts - flash messages
 */
 div.card-panel {
     position: absolute;
@@ -92,4 +110,13 @@ div.card-panel {
     color: $mz-darkorange;
     background-color: $mz-brightorange;
     border-color: $mz-lightorange;
+}
+
+/*      Slide Search Panel
+*/
+#slide-search {
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 100%;
+    @include thinshw(outset);
 }
