@@ -1,5 +1,10 @@
 # MyZest
 
+_This project was submitted among others to Code Institute as part of my training as Software Developer.  
+I was proudly awarded First Class Honours._
+
+_This project is not maintained anymore._
+
 ![cssvalidation](https://img.shields.io/badge/W3C%20CSS%20Validation-%20no%20errors-sucess)
 ![htmlvalidation](https://img.shields.io/badge/W3C%20HTML%20Validation-%20no%20errors-sucess)
 ![JSvalidation](https://img.shields.io/badge/JSHint%20Validation-%20Ok-green)
