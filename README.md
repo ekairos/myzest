@@ -107,7 +107,7 @@ Enables the users to decide for each of their recipe to share it or keep it invi
     Looking for a unique place showing all her recipes and get encouraging feedback.
     - MVP  
     MyZest provides a profile page so any users can easily access all her recipes as well as her favorites to get inspiration from her..  
-    I have chosen the “fav count” score rating against the classic 5 star system as poor or voluntary unfair rating can be discouraging and even offensive leading to a negative emotional experience.  
+    I have chosen the “fav count” score rating against the classic 5 stars system as poor or voluntary unfair rating can be discouraging and even offensive leading to a negative emotional experience.  
     The author profile page provides Yoko’s score being the total number a recipe of her have been faved. Her overall score sits next to the number of recipes she’s sharing. Each recipe has its own scoring being the number it has been added to a user fav list.
 
 #### User Stories
@@ -115,22 +115,22 @@ Enables the users to decide for each of their recipe to share it or keep it invi
 As Marise, I need to be able to quickly retrieve a recipe’s ingredient list and instructions.  
 From landing page I can :  
 - Login then access my profile to select a recipe of mine or one I’ve saved in my favorite list. Then click the one recipe to access clear list of ingredients and instructions.  
-That is 3 page load – 4 clicks/taps and filling 2 fields.  
+That is 3 pages load – 4 clicks/taps and filling 2 fields.  
 - Call the search form, change any criteria from its default state and validate. Her search criteria are saved from one page to next, saving her time to refine them quickly. Depending on the number of recipes returned she may browse through several pages. She can then select a recipe.  
-That is 2 page load (plus search result pages) – from 2 clicks/taps and filling from 0 up to 6 fields.
+That is 2 pages load (plus search result pages) – from 2 clicks/taps and filling from 0 up to 6 fields.
 _The amount of recipes by pages will grow with Database to keep browsing through search result faster._
 
 As Tom, I want to try an alteration to a recipe I’ve executed already (and save it in MyZest).  
 From landing page I can :  
 - Login then access my profile. Choose one of my recipes. When ready to save changes click the edit icon. Then make any changes to the recipe and save them.
-That is 4 page load, 5 clicks/taps and 2 login field process ( plus recipe form editing).  
+That is 4 pages load, 5 clicks/taps and 2 login field process ( plus recipe form editing).  
 _For further improvement, user will be able to rearrange instructions and ingredients list order._
 
 As Yoko, I want to upload a recipe of mine and check its success in MyZest community.  
 From landing page I can :  
 - Login through the ‘add recipe’ nav link redirects me directly to the add recipe form after asking for login credentials. 
 The form requires 6 essential fields (Name, description, difficulty, photo and minimum 1 ingredient and 1 instruction step ).  
-That is 3 page load, 4 clicks/taps 2 login fields, plus form interaction ( 6 required fields ).
+That is 3 pages load, 4 clicks/taps 2 login fields, plus form interaction ( 6 required fields ).
 
 _On small devices burger button in navbar adds one tap for user stories requiring to login._
 
@@ -222,7 +222,7 @@ They are retrieved by the app for the user when searching, adding or editing a r
 ### Testing
 
 - [Selenium 3.1](https://selenium.dev)
-    - I use Selenium WebDriver with Python for End To End testing to ensure MyZest provides appropriate feedback to the user interaction.
+    - I use Selenium WebDriver with Python for End-To-End testing to ensure MyZest provides appropriate feedback to the user interaction.
 
 
 ## Contributing
@@ -250,7 +250,8 @@ They are retrieved by the app for the user when searching, adding or editing a r
 ### Tests
   
 ***IMPORTANT !  
-Make sure to run your tests using a different database***. As well educated tests they clean up after themselves !  
+Make sure to run your tests using a different database***.  
+As well educated tests they clean up after themselves !  
 _It also makes some tests and assertions easier to write.
 You need to set a different URI in the `config.py` file ( as `test_mongo_uri = <uri> ` )_  
 
@@ -345,7 +346,7 @@ Once this is correctly setup, you can commit push from deployment branch to hero
 
 ### Author
 
-My Self: [Gareths3](https://github.com/gareths3)
+[My Self](https://github.com/ekairos)
 
 ### Acknowledgments
 
@@ -382,9 +383,3 @@ For the Terms of use and privacy pages some help and inspiration came from :
 - [Terms Feed](https://www.termsfeed.com/)
 - [GDPR](https://gdpr.eu/privacy-notice/)
 - [WIPO](https://www.wipo.int/portal/en/)
-
-
-## License
-
-This project is licensed under the MIT License.
-See the [LICENSE.md](./LICENSE.md) file for license rights and limitations (MIT).
